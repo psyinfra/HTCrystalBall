@@ -26,26 +26,34 @@ def define_slots():
 
 
 def check_slots(static, dynamic, num_cpu, amount_ram, amount_disk=0, num_gpu=0):
+    #  print out what the user gave as input
     res = "REQUESTED_CPU: " + str(num_cpu) + " Cores, REQUESTED_RAM: " + str(amount_ram) + " GB\n"
+    #  Check all DYNAMIC slots
     for slot in dynamic:
         available_cores = slot["total_cores"] - slot["cores_blocked"]
         available_ram = slot["total_ram"] - slot["ram_blocked"]
+        # if the job fits, calculate and return the usage
         if num_cpu <= available_cores and amount_ram <= available_ram:
             cpu_share = int(round((num_cpu/slot["total_cores"])*100))
             ram_share = int(round((amount_ram/slot["total_ram"])*100))
+            #  add the interpretation to the output
             res += "The requested job might use " + str(cpu_share) + "% of the cores and " + \
-                   str(ram_share) + "% of the RAM on node " + slot["node"] + ".\nThis means that " + \
+                   str(ram_share) + "% of the RAM on DYNAMIC node " + slot["node"] + ".\nThis means that " + \
                    str(int(available_cores/num_cpu)-1) + " other jobs with similar requirements can run at the same time.\n"
 
+    #  Check all STATIC slots
     for slot in static:
         available_cores = slot["total_cores"] - slot["cores_blocked"]
         available_ram = slot["total_ram"] - slot["ram_blocked"]
+        # if the job fits, calculate and return the usage
         if num_cpu <= available_cores and amount_ram <= available_ram:
+            #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
             cpu_share = int(round((num_cpu/slot["total_cores"])*100)) if num_cpu == 1 else 100
             similar_jobs = int(available_cores - num_cpu) if num_cpu == 1 else 0
             ram_share = int(round((amount_ram/slot["total_ram"])*100)) if num_cpu == 1 else 100
+            #  add the interpretation to the output
             res += "The requested job might use " + str(cpu_share) + "% of the cores and " + \
-                   str(ram_share) + "% of the RAM on node " + slot["node"] + ".\nThis means that " + \
+                   str(ram_share) + "% of the RAM on STATIC node " + slot["node"] + ".\nThis means that " + \
                    str(similar_jobs) + " other jobs with similar requirements can run at the same time.\n"
     return res
 

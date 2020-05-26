@@ -26,7 +26,7 @@ def define_slots():
 
 
 def check_slots(static, dynamic, num_cpu, amount_ram, amount_disk=0, num_gpu=0):
-    res = ""
+    res = "REQUESTED_CPU: " + str(num_cpu) + " Cores, REQUESTED_RAM: " + str(amount_ram) + " GB\n"
     for slot in dynamic:
         available_cores = slot["total_cores"] - slot["cores_blocked"]
         available_ram = slot["total_ram"] - slot["ram_blocked"]

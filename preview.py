@@ -18,7 +18,7 @@ def define_environment():
 # a collection of slots will be defined as a list of dictionarys for each different slot configuration
 def define_slots():
     #  define all existing static slot configurations
-    static_slots = [{"node": "cpu1", "total_cores": 32, "total_ram": 500, "cores_blocked": 0, "ram_blocked": 0,
+    static_slots = [{"node": "cpu1", "total_slots": 32, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
                      "single_slot": {"cpu_cores": 1, "ram_amount": 15}}]
 
     #  define all existing partitionable configurations

@@ -1,4 +1,5 @@
 import argparse
+from tabulate import tabulate
 
 
 def define_environment():
@@ -27,40 +28,129 @@ def define_slots():
     return static_slots, partitionable_slots
 
 
-def check_slots(static, dynamic, num_cpu, amount_ram, amount_disk=0, num_gpu=0):
+def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu):
     #  print out what the user gave as input
-    res = "REQUESTED_CPU: " + str(num_cpu) + " Cores, REQUESTED_RAM: " + str(amount_ram) + " GB\n"
-    #  Check all DYNAMIC slots
-    for slot in dynamic:
-        available_cores = slot["total_cores"] - slot["cores_blocked"]
-        available_ram = slot["total_ram"] - slot["ram_blocked"]
-        # if the job fits, calculate and return the usage
-        if num_cpu <= available_cores and amount_ram <= available_ram:
-            cpu_share = int(round((num_cpu/slot["total_cores"])*100))
-            ram_share = int(round((amount_ram/slot["total_ram"])*100))
-            #  add the interpretation to the output
-            res += "The requested job might use " + str(cpu_share) + "% of the cores and " + \
-                   str(ram_share) + "% of the RAM on DYNAMIC node " + slot["node"] + ".\nThis means that " + \
-                   str(int(available_cores/num_cpu)-1) + " other jobs with similar requirements can run at the same time.\n"
+    data = [['CPUS', str(num_cpu)], ['RAM', str(amount_ram) + " GB"], ['STORAGE', str(amount_disk) + " GB"],
+            ['GPUS', str(num_gpu)]]
+    res = "===================================\n"
+    res += "|   Parameter   |   Input Value   |\n"
+    res += "-----------------------------------\n"
+    res += "|     CPUS      |        " + str(num_cpu) + "        |\n"
+    res += "|      RAM      |      " + str(amount_ram) + " GB      |\n"
+    if amount_disk != 0:
+        res += "|    STORAGE    |    " + str(amount_disk) + " GB    |\n"
+    if num_gpu != 0:
+        res += "|      GPUS     |       " + str(num_gpu) + "     |\n"
+    res += "===================================\n\n"
+    print("---------------------- INPUT ----------------------")
+    print(tabulate(data, headers=["Parameter", "Input Value"]) + "\n\n")
 
-    #  Check all STATIC slots
-    for slot in static:
-        available_cores = slot["total_cores"] - slot["cores_blocked"]
-        available_ram = slot["total_ram"] - slot["ram_blocked"]
+
+def pretty_print_slots(result):
+    #  print out what the result is
+    data = []
+    res = "=====================================================================" \
+          "===================================================================\n"
+    res += "|    Node    |   Slot Type   | Total Cores/Slots |   Total RAM   | Single Slot Cores | " \
+           "Single Slot RAM | Cores/Slots free |  RAM free  |\n"
+    res += "--------------------------------------------------------------------" \
+           "--------------------------------------------------------------------\n"
+    for node in result['nodes']:
+        row = [node['name'], node['type'], str(node['workers']), str(node['ram'])]
+        res += "|    " + node['name'] + "    |    " + node['type'] + "    |         " \
+               + str(node['workers']) + "        |     " + str(node['ram']) + "    |"
+        if node['type'] == "static":
+            row.append(str(node['slot_cores']))
+            row.append(str(node['slot_ram']))
+            res += "        " + str(node['slot_cores']) + "       |     " + str(node['slot_ram']) + "    |"
+        else:
+            row.append("------")
+            row.append("------")
+            res += "     ----------    |   -----------   |"
+        row.append(str(node['slot_free']))
+        row.append(str(node['ram_free']))
+        res += "        " + str(node['slot_free']) + "        |   " + str(node['ram_free']) + "   |\n"
+        data.append(row)
+    res += "======================================================================" \
+           "==================================================================\n\n"
+    print("---------------------- NODES ----------------------")
+    print(tabulate(data, headers=["Node", "Slot Type", "Total Cores/Slots", "Total RAM",
+                                  "Single Slot Cores", "Single Slot RAM", "Cores/Slots free", "RAM free"]) + "\n\n")
+
+    data = []
+    res = "================================================================================================\n"
+    res += "|    Node    |    type   |    job fits   | Core usage | RAM usage |   Amount of similar jobs   |\n"
+    res += "------------------------------------------------------------------------------------------------\n"
+    for node in result['preview']:
+        row = [node['name'], node['type'], node['fits'], node['cpu_usage'], node['ram_usage'], str(node['sim_jobs'])]
+        res += "|    " + node['name'] + "    |    " + node['type'] + "   |    " + node['fits'] \
+               + "   | " + node['cpu_usage'] + " | " + node['ram_usage'] + " |  " + str(node['sim_jobs']) + "   |\n"
+        data.append(row)
+    res += "================================================================================================\n\n"
+    print("---------------------- PREVIEW ----------------------")
+    print(tabulate(data, headers=["Node", "Slot type", "Job fits", "Core usage",
+                                  "RAM usage", "Amount of similar jobs"]) + "\n\n")
+
+
+def check_slots(static, dynamic, num_cpu, amount_ram, amount_disk=0, num_gpu=0):
+    pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu)
+
+    preview_res = {'nodes': [], 'preview': []}
+
+    #  Check all DYNAMIC nodes
+    for node in dynamic:
+        available_cores = node["total_cores"] - node["cores_blocked"]
+        available_ram = node["total_ram"] - node["ram_blocked"]
+        node_dict = {'name': node["node"],
+                     'type': 'dynamic',
+                     'workers': str(node["total_cores"]),
+                     'ram': str(node["total_ram"]) + " GB",
+                     'slot_free': str(available_cores),
+                     'ram_free': str(available_ram) + " GB"}
+        preview_res['nodes'].append(node_dict)
         # if the job fits, calculate and return the usage
+        preview_node = {'name': node["node"], 'type': 'dynamic', 'fits': 'NO',
+                        'cpu_usage': '------', 'ram_usage': '------', 'sim_jobs': '------'}
         if num_cpu <= available_cores and amount_ram <= available_ram:
+            preview_node['cpu_usage'] = str(int(round((num_cpu / node["total_cores"]) * 100))) + "%"
+            preview_node['ram_usage'] = str(int(round((amount_ram / node["total_ram"]) * 100))) + "%"
+            preview_node['fits'] = 'YES'
+            preview_node['sim_jobs'] = str(int(available_cores / num_cpu) - 1)
+        preview_res['preview'].append(preview_node)
+
+    #  Check all STATIC nodes
+    for node in static:
+        available_slots = node["total_slots"] - node["slots_in_use"]
+        single_slot = node["single_slot"]
+        node_dict = {'name': node["node"], 'type': 'static',
+                     'workers': str(node["total_slots"]),
+                     'ram': str(node["total_ram"]) + " GB",
+                     'slot_cores': str(single_slot["cpu_cores"]),
+                     'slot_ram': str(single_slot["ram_amount"]) + " GB",
+                     'slot_free': str(available_slots),
+                     'ram_free': '---'}
+        preview_res['nodes'].append(node_dict)
+        # if the job fits, calculate and return the usage
+        preview_node = {'name': node["node"],
+                        'type': 'static',
+                        'fits': 'NO',
+                        'cpu_usage': '------',
+                        'ram_usage': '------',
+                        'sim_jobs': '------'}
+        if num_cpu <= single_slot["cpu_cores"] and amount_ram <= single_slot["ram_amount"]:
             #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
-            cpu_share = int(round((num_cpu/slot["total_cores"])*100)) if num_cpu == 1 else 100
-            similar_jobs = int(available_cores - num_cpu) if num_cpu == 1 else 0
-            ram_share = int(round((amount_ram/slot["total_ram"])*100)) if num_cpu == 1 else 100
-            #  add the interpretation to the output
-            res += "The requested job might use " + str(cpu_share) + "% of the cores and " + \
-                   str(ram_share) + "% of the RAM on STATIC node " + slot["node"] + ".\nThis means that " + \
-                   str(similar_jobs) + " other jobs with similar requirements can run at the same time.\n"
-    return res
+            preview_node['cpu_usage'] = str(
+                int(round((num_cpu / node["total_slots"]) * 100)) if num_cpu == 1 else 0) + "%"
+            preview_node['sim_jobs'] = str(int(available_slots - num_cpu) if num_cpu == 1 else 0)
+            preview_node['ram_usage'] = str(
+                int(round((amount_ram / node["total_ram"]) * 100)) if num_cpu == 1 else 0) + "%"
+            preview_node['fits'] = 'YES'
+        preview_res['preview'].append(preview_node)
+
+    pretty_print_slots(preview_res)
 
 
 if __name__ == "__main__":
     static_slots, dynamic_slots = define_slots()
-    answer = check_slots(static_slots, dynamic_slots, 2, 20)
-    print("Check finished! Answer:\n" + answer)
+    check_slots(static_slots, dynamic_slots, 2, 20)
+    print("Check finished!")

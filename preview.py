@@ -6,8 +6,10 @@ def define_environment():
     parser.add_argument("-v", "--verbose", help="Print extended log to stdout", action='store_true')
     parser.add_argument("-c", "--cpu", help="Set number of requested CPU Cores", type=int, action='store_const')
     parser.add_argument("-g", "--gpu", help="Set number of requested GPU Units", type=int, action='store_const')
-    parser.add_argument("-d", "--disk", help="Set amount of requested disk storage in GB", type=int, action='store_const')
-    parser.add_argument("-r", "--ram", help="Set amount of requested memory storage in GB", type=int, action='store_const')
+    parser.add_argument("-d", "--disk", help="Set amount of requested disk storage in GB", type=int,
+                        action='store_const')
+    parser.add_argument("-r", "--ram", help="Set amount of requested memory storage in GB", type=int,
+                        action='store_const')
 
     p = parser.parse_args()
     return p

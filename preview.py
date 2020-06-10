@@ -85,8 +85,10 @@ def check_slots(static, dynamic, num_cpu, amount_ram, amount_disk=0, num_gpu=0):
         preview_node = {'name': node["node"], 'type': 'dynamic', 'fits': 'NO',
                         'cpu_usage': '------', 'ram_usage': '------', 'sim_jobs': '------'}
         if num_cpu <= available_cores and amount_ram <= available_ram:
-            preview_node['cpu_usage'] = str(int(round((num_cpu / node["total_cores"]) * 100))) + "%"
-            preview_node['ram_usage'] = str(int(round((amount_ram / node["total_ram"]) * 100))) + "%"
+            preview_node['cpu_usage'] = str(num_cpu)+"/"+str(node["total_cores"])+" (" + \
+                                        str(int(round((num_cpu / node["total_cores"]) * 100))) + "%)"
+            preview_node['ram_usage'] = str(amount_ram)+"/"+str(node["total_ram"])+" GB (" + \
+                                        str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
             preview_node['fits'] = 'YES'
             preview_node['sim_jobs'] = str(int(available_cores / num_cpu) - 1)
         preview_res['preview'].append(preview_node)
@@ -112,11 +114,11 @@ def check_slots(static, dynamic, num_cpu, amount_ram, amount_disk=0, num_gpu=0):
                         'sim_jobs': '------'}
         if num_cpu <= single_slot["cpu_cores"] and amount_ram <= single_slot["ram_amount"]:
             #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
-            preview_node['cpu_usage'] = str(
-                int(round((num_cpu / node["total_slots"]) * 100)) if num_cpu == 1 else 0) + "%"
+            preview_node['cpu_usage'] = str(num_cpu)+"/"+str(single_slot["cpu_cores"])+" ("+str(
+                int(round((num_cpu / single_slot["cpu_cores"]) * 100)) if num_cpu == 1 else 0) + "%)"
             preview_node['sim_jobs'] = str(int(available_slots - num_cpu) if num_cpu == 1 else 0)
-            preview_node['ram_usage'] = str(
-                int(round((amount_ram / node["total_ram"]) * 100)) if num_cpu == 1 else 0) + "%"
+            preview_node['ram_usage'] = str(amount_ram)+"/"+str(single_slot["ram_amount"])+" GB ("+str(
+                int(round((amount_ram / single_slot["ram_amount"]) * 100)) if num_cpu == 1 else 0) + "%)"
             preview_node['fits'] = 'YES'
         preview_res['preview'].append(preview_node)
 
@@ -125,5 +127,5 @@ def check_slots(static, dynamic, num_cpu, amount_ram, amount_disk=0, num_gpu=0):
 
 if __name__ == "__main__":
     static_slots, dynamic_slots = define_slots()
-    check_slots(static_slots, dynamic_slots, 2, 20)
+    check_slots(static_slots, dynamic_slots, 1, 5)
     print("Check finished!")

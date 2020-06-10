@@ -32,16 +32,6 @@ def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu):
     #  print out what the user gave as input
     data = [['CPUS', str(num_cpu)], ['RAM', str(amount_ram) + " GB"], ['STORAGE', str(amount_disk) + " GB"],
             ['GPUS', str(num_gpu)]]
-    res = "===================================\n"
-    res += "|   Parameter   |   Input Value   |\n"
-    res += "-----------------------------------\n"
-    res += "|     CPUS      |        " + str(num_cpu) + "        |\n"
-    res += "|      RAM      |      " + str(amount_ram) + " GB      |\n"
-    if amount_disk != 0:
-        res += "|    STORAGE    |    " + str(amount_disk) + " GB    |\n"
-    if num_gpu != 0:
-        res += "|      GPUS     |       " + str(num_gpu) + "     |\n"
-    res += "===================================\n\n"
     print("---------------------- INPUT ----------------------")
     print(tabulate(data, headers=["Parameter", "Input Value"]) + "\n\n")
 
@@ -49,44 +39,27 @@ def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu):
 def pretty_print_slots(result):
     #  print out what the result is
     data = []
-    res = "=====================================================================" \
-          "===================================================================\n"
-    res += "|    Node    |   Slot Type   | Total Cores/Slots |   Total RAM   | Single Slot Cores | " \
-           "Single Slot RAM | Cores/Slots free |  RAM free  |\n"
-    res += "--------------------------------------------------------------------" \
-           "--------------------------------------------------------------------\n"
     for node in result['nodes']:
         row = [node['name'], node['type'], str(node['workers']), str(node['ram'])]
-        res += "|    " + node['name'] + "    |    " + node['type'] + "    |         " \
-               + str(node['workers']) + "        |     " + str(node['ram']) + "    |"
         if node['type'] == "static":
             row.append(str(node['slot_cores']))
             row.append(str(node['slot_ram']))
-            res += "        " + str(node['slot_cores']) + "       |     " + str(node['slot_ram']) + "    |"
         else:
             row.append("------")
             row.append("------")
-            res += "     ----------    |   -----------   |"
         row.append(str(node['slot_free']))
         row.append(str(node['ram_free']))
-        res += "        " + str(node['slot_free']) + "        |   " + str(node['ram_free']) + "   |\n"
         data.append(row)
-    res += "======================================================================" \
-           "==================================================================\n\n"
+
     print("---------------------- NODES ----------------------")
     print(tabulate(data, headers=["Node", "Slot Type", "Total Cores/Slots", "Total RAM",
                                   "Single Slot Cores", "Single Slot RAM", "Cores/Slots free", "RAM free"]) + "\n\n")
 
     data = []
-    res = "================================================================================================\n"
-    res += "|    Node    |    type   |    job fits   | Core usage | RAM usage |   Amount of similar jobs   |\n"
-    res += "------------------------------------------------------------------------------------------------\n"
     for node in result['preview']:
         row = [node['name'], node['type'], node['fits'], node['cpu_usage'], node['ram_usage'], str(node['sim_jobs'])]
-        res += "|    " + node['name'] + "    |    " + node['type'] + "   |    " + node['fits'] \
-               + "   | " + node['cpu_usage'] + " | " + node['ram_usage'] + " |  " + str(node['sim_jobs']) + "   |\n"
         data.append(row)
-    res += "================================================================================================\n\n"
+
     print("---------------------- PREVIEW ----------------------")
     print(tabulate(data, headers=["Node", "Slot type", "Job fits", "Core usage",
                                   "RAM usage", "Amount of similar jobs"]) + "\n\n")

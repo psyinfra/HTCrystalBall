@@ -21,12 +21,15 @@ def define_environment():
 def define_slots():
     #  define all existing static slot configurations
     static_slots = [{"node": "cpu1", "total_slots": 32, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
-                     "single_slot": {"cpu_cores": 1, "ram_amount": 15}}]
+                     "single_slot": {"cores": 1, "ram_amount": 15}}]
 
     #  define all existing partitionable configurations
     partitionable_slots = [{"node": "cpu2", "total_cores": 32, "total_ram": 500, "cores_blocked": 0, "ram_blocked": 0}]
 
-    return static_slots, partitionable_slots
+    gpu_slots = [{"node": "gpu1", "total_slots": 8, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
+                     "single_slot": {"cores": 1, "ram_amount": 15}}]
+
+    return static_slots, partitionable_slots, gpu_slots
 
 
 def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu):
@@ -45,6 +48,9 @@ def pretty_print_slots(result):
         if node['type'] == "static":
             row.append(str(node['slot_cores']))
             row.append(str(node['slot_ram']))
+        elif node['type'] == "gpu/static":
+            row.append(str(node['slot_cores']))
+            row.append(str(node['slot_ram']))
         else:
             row.append("------")
             row.append("------")
@@ -58,7 +64,7 @@ def pretty_print_slots(result):
 
     data = []
     for node in result['preview']:
-        row = [node['name'], node['type'], node['fits'], node['cpu_usage'], node['ram_usage'], str(node['sim_jobs'])]
+        row = [node['name'], node['type'], node['fits'], node['core_usage'], node['ram_usage'], str(node['sim_jobs'])]
         data.append(row)
 
     print("---------------------- PREVIEW ----------------------")

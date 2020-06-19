@@ -133,14 +133,14 @@ def pretty_print_slots(result):
                           "[dark_blue]" + str(node['slot_free']) + "[/dark_blue]",
                           "[dark_blue]" + str(node['ram_free']) + "[/dark_blue]")
         elif node['type'] == "gpu/static":
-            table.add_row("[purple4]"+node['name']+"[/purple4]",
-                          "[purple4]"+node['type']+"[/purple4]",
-                          "[purple4]"+str(node['workers'])+"[/purple4]",
-                          "[purple4]"+str(node['ram'])+"[/purple4]",
-                          "[purple4]"+str(node['slot_cores'])+"[/purple4]",
-                          "[purple4]"+str(node['slot_ram'])+"[/purple4]",
-                          "[purple4]"+str(node['slot_free'])+"[/purple4]",
-                          "[purple4]"+str(node['ram_free'])+"[/purple4]")
+            table.add_row("[purple4]" + node['name'] + "[/purple4]",
+                          "[purple4]" + node['type'] + "[/purple4]",
+                          "[purple4]" + str(node['workers']) + "[/purple4]",
+                          "[purple4]" + str(node['ram']) + "[/purple4]",
+                          "[purple4]" + str(node['slot_cores']) + "[/purple4]",
+                          "[purple4]" + str(node['slot_ram']) + "[/purple4]",
+                          "[purple4]" + str(node['slot_free']) + "[/purple4]",
+                          "[purple4]" + str(node['ram_free']) + "[/purple4]")
         else:
             table.add_row("[dark_red]" + node['name'] + "[/dark_red]",
                           "[dark_red]" + node['type'] + "[/dark_red]",

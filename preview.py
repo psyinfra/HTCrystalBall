@@ -293,3 +293,32 @@ def manage_calculation(cpu, gpu, ram, disk):
 
 
 # TODO: Add TESTING, account for different slot sizes on the same node
+def run_tests():
+    # single cpu, ram in GB
+    cpu_test = 1
+    ram_test = "10GB"
+    gpu_test = 0
+    disk_test = ""
+
+    manage_calculation(cpu_test, gpu_test, ram_test, disk_test)
+
+
+if __name__ == "__main__":
+    static_slots, dynamic_slots, gpu_slots = define_slots()
+    test = True
+    args = define_environment()
+
+    if test:
+        run_tests()
+    else:
+        cpu_in = args.cpu
+        if cpu_in is None:
+            cpu_in = 0
+        gpu_in = args.gpu
+        if gpu_in is None:
+            gpu_in = 0
+
+        ram_in = args.ram
+        disk_in = args.disk
+
+        manage_calculation(cpu_in, gpu_in, ram_in, disk_in)

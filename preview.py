@@ -73,9 +73,7 @@ def define_slots():
     #  define all existing partitionable configurations
     partitionable_slots = [{"node": "cpu2", "total_cores": 32, "total_ram": 500, "cores_blocked": 0, "ram_blocked": 0}]
 
-    # TODO: when requesting a GPU, a CPU count is also REQUIRED
-    # TODO: remove .idea using .gitignore, rename file and project, fix help output non-optional without brackets
-    #  and usage not showing -h
+    # TODO: fix help output non-optional without brackets and usage not showing -h
     gpu_slots = [{"node": "gpu1", "total_slots": 8, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
                   "single_slot": {"cores": 1, "ram_amount": 15}}]
 
@@ -295,9 +293,9 @@ if __name__ == "__main__":
 
     if args.verbose:
         print("verbosity turned on")
-    if CPU == 0 and GPU == 0:
-        print("No number of CPU or GPU workers given --- ABORTING")
-    elif RAM == 0 and DISK == 0:
+    if cpu == 0:
+        print("No number of CPU workers given --- ABORTING")
+    elif ram == 0.0 and disk == 0.0:
         print("No RAM or DISK amount given --- ABORTING")
     else:
         check_slots(static_slots, dynamic_slots, gpu_slots, CPU, RAM, DISK, GPU)

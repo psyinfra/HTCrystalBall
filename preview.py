@@ -1,7 +1,11 @@
+#!/usr/bin/env python3
+
 import argparse
 from tabulate import tabulate
 
 
+# TODO: Add K(B), M(B), G(B), T(B) as units for Disk and RAM
+# TODO: Account for base2 units, not base10, deal with Mibibytes not Gibibytes
 def define_environment():
     parser = argparse.ArgumentParser(description="To get a preview for any job you are trying to execute using "
                                                  "HTCondor, please pass at least either the number of CPUs or GPUs and "
@@ -26,6 +30,9 @@ def define_slots():
     #  define all existing partitionable configurations
     partitionable_slots = [{"node": "cpu2", "total_cores": 32, "total_ram": 500, "cores_blocked": 0, "ram_blocked": 0}]
 
+    # TODO: when requesting a GPU, a CPU count is also REQUIRED
+    # TODO: remove .idea using .gitignore, rename file and project, fix help output non-optional without brackets
+    #  and usage not showing -h
     gpu_slots = [{"node": "gpu1", "total_slots": 8, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
                      "single_slot": {"cores": 1, "ram_amount": 15}}]
 
@@ -40,6 +47,7 @@ def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu):
     print(tabulate(data, headers=["Parameter", "Input Value"]) + "\n\n")
 
 
+# TODO: how to handle output for twenty nodes? Order by fits and then order by usage.
 def pretty_print_slots(result):
     #  print out what the result is
     data = []
@@ -188,3 +196,6 @@ if __name__ == "__main__":
     else:
         check_slots(static_slots, dynamic_slots, gpu_slots, CPU, RAM, DISK, GPU)
         print("Check finished!")
+
+
+# TODO: Add TESTING, account for different slot sizes on the same node

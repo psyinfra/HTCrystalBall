@@ -36,7 +36,7 @@ def define_slots():
     # TODO: remove .idea using .gitignore, rename file and project, fix help output non-optional without brackets
     #  and usage not showing -h
     gpu_slots = [{"node": "gpu1", "total_slots": 8, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
-                     "single_slot": {"cores": 1, "ram_amount": 15}}]
+                  "single_slot": {"cores": 1, "ram_amount": 15}}]
 
     return static_slots, partitionable_slots, gpu_slots
 
@@ -138,12 +138,12 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
             preview_node = {'name': node["node"], 'type': 'dynamic', 'fits': 'NO',
                             'core_usage': '------', 'ram_usage': '------', 'sim_jobs': '------'}
             if num_cpu <= available_cores and amount_ram <= available_ram:
-                preview_node['core_usage'] = str(num_cpu)+"/"+str(node["total_cores"])+" (" + \
-                                            str(int(round((num_cpu / node["total_cores"]) * 100))) + "%)"
-                preview_node['ram_usage'] = str(amount_ram)+"/"+str(node["total_ram"])+" GB (" + \
-                                            str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
+                preview_node['core_usage'] = str(num_cpu) + "/" + str(node["total_cores"]) + " (" + \
+                    str(int(round((num_cpu / node["total_cores"]) * 100))) + "%)"
+                preview_node['ram_usage'] = str(amount_ram) + "/" + str(node["total_ram"]) + " GB (" + \
+                    str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
                 preview_node['fits'] = 'YES'
-                preview_node['sim_jobs'] = str(int(available_cores / num_cpu) - 1)
+                preview_node['sim_jobs'] = str(int(available_cores / num_cpu))
             preview_res['preview'].append(preview_node)
 
         #  Check all STATIC nodes
@@ -167,10 +167,10 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                             'sim_jobs': '------'}
             if num_cpu <= single_slot["cores"] and amount_ram <= single_slot["ram_amount"]:
                 #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
-                preview_node['core_usage'] = str(num_cpu)+"/"+str(single_slot["cores"])+" ("+str(
+                preview_node['core_usage'] = str(num_cpu) + "/" + str(single_slot["cores"]) + " (" + str(
                     int(round((num_cpu / single_slot["cores"]) * 100)) if num_cpu == 1 else 0) + "%)"
-                preview_node['sim_jobs'] = str(int(available_slots - num_cpu) if num_cpu == 1 else 0)
-                preview_node['ram_usage'] = str(amount_ram)+"/"+str(single_slot["ram_amount"])+" GB ("+str(
+                preview_node['sim_jobs'] = str(available_slots if num_cpu == 1 else 0)
+                preview_node['ram_usage'] = str(amount_ram) + "/" + str(single_slot["ram_amount"]) + " GB (" + str(
                     int(round((amount_ram / single_slot["ram_amount"]) * 100)) if num_cpu == 1 else 0) + "%)"
                 preview_node['fits'] = 'YES'
             preview_res['preview'].append(preview_node)
@@ -234,6 +234,5 @@ if __name__ == "__main__":
     else:
         check_slots(static_slots, dynamic_slots, gpu_slots, CPU, RAM, DISK, GPU)
         print("Check finished!")
-
 
 # TODO: Add TESTING, account for different slot sizes on the same node

@@ -12,6 +12,20 @@ def storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtT]i?[bB]?)?$")):
         raise argparse.ArgumentTypeError
     return arg_value
 
+
+def split_number_unit(user_input):
+    if user_input == "":
+        return 0, "GiB"
+
+    string_index = 0
+    while user_input[:string_index + 1].isnumeric():
+        string_index += 1
+
+    amount = int(user_input[:string_index])
+    unit = "GiB" if user_input[string_index:] == "" else user_input[string_index:]
+
+    return amount, unit
+
 # TODO: Add K(B), M(B), G(B), T(B) as units for Disk and RAM
 # TODO: Account for base2 units, not base10, deal with Mibibytes not Gibibytes
 def define_environment():

@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 
 import argparse
-from tabulate import tabulate
+import re
 from rich.console import Console
 from rich.table import Column, Table
 
+
+# define Add K(B), M(B), G(B), T(B) as units for Disk and RAM
+def storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtT]i?[bB]?)?$")):
+    if not pat.match(arg_value):
+        raise argparse.ArgumentTypeError
+    return arg_value
 
 # TODO: Add K(B), M(B), G(B), T(B) as units for Disk and RAM
 # TODO: Account for base2 units, not base10, deal with Mibibytes not Gibibytes
@@ -16,8 +22,8 @@ def define_environment():
     parser.add_argument("-v", "--verbose", help="Print extended log to stdout", action='store_true')
     parser.add_argument("-c", "--cpu", help="Set number of requested CPU Cores", type=int)
     parser.add_argument("-g", "--gpu", help="Set number of requested GPU Units", type=int)
-    parser.add_argument("-d", "--disk", help="Set amount of requested disk storage in GB", type=int)
-    parser.add_argument("-r", "--ram", help="Set amount of requested memory storage in GB", type=int)
+    parser.add_argument("-d", "--disk", help="Set amount of requested disk storage in GB", type=storage_size)
+    parser.add_argument("-r", "--ram", help="Set amount of requested memory storage in GB", type=storage_size)
 
     p = parser.parse_args()
     return p

@@ -274,22 +274,12 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
     pretty_print_slots(preview_res)
 
 
-if __name__ == "__main__":
-    static_slots, dynamic_slots, gpu_slots = define_slots()
-    args = define_environment()
+def manage_calculation(cpu, gpu, ram, disk):
+    ram, ram_unit = split_number_unit(ram)
+    ram = calc_to_bin(ram, ram_unit)
 
-    CPU = args.cpu
-    if CPU is None:
-        CPU = 0
-    GPU = args.gpu
-    if GPU is None:
-        GPU = 0
-    RAM = args.ram
-    if RAM is None:
-        RAM = 0
-    DISK = args.disk
-    if DISK is None:
-        DISK = 0
+    disk, disk_unit = split_number_unit(disk)
+    disk = calc_to_bin(disk, disk_unit)
 
     if args.verbose:
         print("verbosity turned on")
@@ -298,7 +288,8 @@ if __name__ == "__main__":
     elif ram == 0.0 and disk == 0.0:
         print("No RAM or DISK amount given --- ABORTING")
     else:
-        check_slots(static_slots, dynamic_slots, gpu_slots, CPU, RAM, DISK, GPU)
+        check_slots(static_slots, dynamic_slots, gpu_slots, cpu, ram, disk, gpu)
         print("Check finished!")
+
 
 # TODO: Add TESTING, account for different slot sizes on the same node

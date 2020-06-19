@@ -2,6 +2,8 @@
 
 import argparse
 from tabulate import tabulate
+from rich.console import Console
+from rich.table import Column, Table
 
 
 # TODO: Add K(B), M(B), G(B), T(B) as units for Disk and RAM
@@ -41,16 +43,46 @@ def define_slots():
 
 def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu):
     #  print out what the user gave as input
-    data = [['CPUS', str(num_cpu)], ['RAM', str(amount_ram) + " GB"], ['STORAGE', str(amount_disk) + " GB"],
-            ['GPUS', str(num_gpu)]]
-    print("---------------------- INPUT ----------------------")
-    print(tabulate(data, headers=["Parameter", "Input Value"]) + "\n\n")
+    console = Console()
+
+    table = Table(show_header=True, header_style="bold blue")
+    table.add_column("Parameter", style="dim")
+    table.add_column("Input Value", justify="right")
+    table.add_row(
+        "CPUS",
+        str(num_cpu)
+    )
+    table.add_row(
+        "RAM",
+        str(amount_ram) + " GB"
+    )
+    table.add_row(
+        "STORAGE",
+        str(amount_disk) + " GB"
+    )
+    table.add_row(
+        "GPUS",
+        str(num_gpu)
+    )
+    console.print("---------------------- INPUT ----------------------")
+    console.print(table)
 
 
 # TODO: how to handle output for twenty nodes? Order by fits and then order by usage.
 def pretty_print_slots(result):
-    #  print out what the result is
-    data = []
+    #  print out the nodes
+    console = Console()
+
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Node", style="dim", width=12)
+    table.add_column("Slot Type")
+    table.add_column("Total Cores/Slots", justify="right")
+    table.add_column("Total RAM", justify="right")
+    table.add_column("Single Slot Cores", justify="right")
+    table.add_column("Single Slot RAM", justify="right")
+    table.add_column("Cores/Slots free", justify="right")
+    table.add_column("RAM free", justify="right")
+
     for node in result['nodes']:
         row = [node['name'], node['type'], str(node['workers']), str(node['ram'])]
         if node['type'] == "static":
@@ -64,20 +96,25 @@ def pretty_print_slots(result):
             row.append("------")
         row.append(str(node['slot_free']))
         row.append(str(node['ram_free']))
-        data.append(row)
 
-    print("---------------------- NODES ----------------------")
-    print(tabulate(data, headers=["Node", "Slot Type", "Total Cores/Slots", "Total RAM",
-                                  "Single Slot Cores", "Single Slot RAM", "Cores/Slots free", "RAM free"]) + "\n\n")
+        table.add_row(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
 
-    data = []
+    console.print("---------------------- NODES ----------------------")
+    console.print(table)
+
+    table = Table(show_header=True, header_style="bold green")
+    table.add_column("Node", style="dim", width=12)
+    table.add_column("Slot Type")
+    table.add_column("Job fits", justify="right")
+    table.add_column("Core usage", justify="right")
+    table.add_column("RAM usage", justify="center")
+    table.add_column("Amount of similar jobs", justify="right")
+
     for node in result['preview']:
-        row = [node['name'], node['type'], node['fits'], node['core_usage'], node['ram_usage'], str(node['sim_jobs'])]
-        data.append(row)
+        table.add_row(node['name'], node['type'], node['fits'], node['core_usage'], node['ram_usage'], str(node['sim_jobs']))
 
-    print("---------------------- PREVIEW ----------------------")
-    print(tabulate(data, headers=["Node", "Slot type", "Job fits", "Core usage",
-                                  "RAM usage", "Amount of similar jobs"]) + "\n\n")
+    console.print("---------------------- PREVIEW ----------------------")
+    console.print(table)
 
 
 def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, num_gpu=0):
@@ -141,6 +178,7 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
         #  Check all GPU nodes
         for node in gpu:
             available_slots = node["total_slots"] - node["slots_in_use"]
+            available_ram = node["total_ram"] - node["ram_in_use"]
             single_slot = node["single_slot"]
             node_dict = {'name': node["node"], 'type': 'gpu/static',
                          'workers': str(node["total_slots"]),
@@ -148,7 +186,7 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                          'slot_cores': str(single_slot["cores"]),
                          'slot_ram': str(single_slot["ram_amount"]) + " GB",
                          'slot_free': str(available_slots),
-                         'ram_free': '---'}
+                         'ram_free': str(available_ram) + " GB"}
             preview_res['nodes'].append(node_dict)
             # if the job fits, calculate and return the usage
             preview_node = {'name': node["node"],
@@ -161,7 +199,7 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
                 preview_node['core_usage'] = str(num_gpu) + "/" + str(single_slot["cores"]) + " (" + str(
                     int(round((num_gpu / single_slot["cores"]) * 100)) if num_gpu == 1 else 0) + "%)"
-                preview_node['sim_jobs'] = str(int(available_slots - num_gpu) if num_gpu == 1 else 0)
+                preview_node['sim_jobs'] = str(available_slots if num_gpu == 1 else 0)
                 preview_node['ram_usage'] = str(amount_ram) + "/" + str(single_slot["ram_amount"]) + " GB (" + str(
                     int(round((amount_ram / single_slot["ram_amount"]) * 100)) if num_gpu == 1 else 0) + "%)"
                 preview_node['fits'] = 'YES'

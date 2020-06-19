@@ -26,8 +26,29 @@ def split_number_unit(user_input):
 
     return amount, unit
 
-# TODO: Add K(B), M(B), G(B), T(B) as units for Disk and RAM
-# TODO: Account for base2 units, not base10, deal with Mibibytes not Gibibytes
+
+# Account for base2 units, not base10, converts everything to Gibibytes
+def calc_to_bin(number, unit):
+    unit_indicator = unit.lower()
+    if unit_indicator == "kb" or unit_indicator == "k":
+        return number * (10 ** 3) / (2 ** 30)
+    elif unit_indicator == "kib":
+        return number / (2 ** 20)
+    elif unit_indicator == "mb" or unit_indicator == "m":
+        return number * (10 ** 6) / (2 ** 30)
+    elif unit_indicator == "mib":
+        return number / (2 ** 10)
+    elif unit_indicator == "gb" or unit_indicator == "g":
+        return number * (10 ** 9) / (2 ** 30)
+    elif unit_indicator == "tb" or unit_indicator == "t":
+        return number * (10 ** 12) / (2 ** 30)
+    elif unit_indicator == "tib":
+        return number * (2 ** 10)
+    # assume it's already GiB
+    else:
+        return number
+
+
 def define_environment():
     parser = argparse.ArgumentParser(description="To get a preview for any job you are trying to execute using "
                                                  "HTCondor, please pass at least either the number of CPUs or GPUs and "

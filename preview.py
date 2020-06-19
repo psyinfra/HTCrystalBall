@@ -14,11 +14,11 @@ def storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtT]i?[bB]?)?$")):
 
 
 def split_number_unit(user_input):
-    if user_input == "":
+    if user_input == "" or user_input is None:
         return 0, "GiB"
 
     string_index = 0
-    while user_input[:string_index + 1].isnumeric():
+    while user_input[:string_index + 1].isnumeric() and string_index < len(user_input):
         string_index += 1
 
     amount = int(user_input[:string_index])
@@ -289,7 +289,6 @@ def manage_calculation(cpu, gpu, ram, disk):
         print("No RAM or DISK amount given --- ABORTING")
     else:
         check_slots(static_slots, dynamic_slots, gpu_slots, cpu, ram, disk, gpu)
-        print("Check finished!")
 
 
 # TODO: Add TESTING, account for different slot sizes on the same node
@@ -305,7 +304,7 @@ def run_tests():
 
 if __name__ == "__main__":
     static_slots, dynamic_slots, gpu_slots = define_slots()
-    test = True
+    test = False
     args = define_environment()
 
     if test:

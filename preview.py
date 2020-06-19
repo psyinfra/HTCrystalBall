@@ -84,25 +84,38 @@ def pretty_print_slots(result):
     table.add_column("RAM free", justify="right")
 
     for node in result['nodes']:
-        row = [node['name'], node['type'], str(node['workers']), str(node['ram'])]
         if node['type'] == "static":
-            row.append(str(node['slot_cores']))
-            row.append(str(node['slot_ram']))
+            table.add_row("[dark_blue]" + node['name'] + "[/dark_blue]",
+                          "[dark_blue]" + node['type'] + "[/dark_blue]",
+                          "[dark_blue]" + str(node['workers']) + "[/dark_blue]",
+                          "[dark_blue]" + str(node['ram']) + "[/dark_blue]",
+                          "[dark_blue]" + str(node['slot_cores']) + "[/dark_blue]",
+                          "[dark_blue]" + str(node['slot_ram']) + "[/dark_blue]",
+                          "[dark_blue]" + str(node['slot_free']) + "[/dark_blue]",
+                          "[dark_blue]" + str(node['ram_free']) + "[/dark_blue]")
         elif node['type'] == "gpu/static":
-            row.append(str(node['slot_cores']))
-            row.append(str(node['slot_ram']))
+            table.add_row("[purple4]"+node['name']+"[/purple4]",
+                          "[purple4]"+node['type']+"[/purple4]",
+                          "[purple4]"+str(node['workers'])+"[/purple4]",
+                          "[purple4]"+str(node['ram'])+"[/purple4]",
+                          "[purple4]"+str(node['slot_cores'])+"[/purple4]",
+                          "[purple4]"+str(node['slot_ram'])+"[/purple4]",
+                          "[purple4]"+str(node['slot_free'])+"[/purple4]",
+                          "[purple4]"+str(node['ram_free'])+"[/purple4]")
         else:
-            row.append("------")
-            row.append("------")
-        row.append(str(node['slot_free']))
-        row.append(str(node['ram_free']))
-
-        table.add_row(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
+            table.add_row("[dark_red]" + node['name'] + "[/dark_red]",
+                          "[dark_red]" + node['type'] + "[/dark_red]",
+                          "[dark_red]" + str(node['workers']) + "[/dark_red]",
+                          "[dark_red]" + str(node['ram']) + "[/dark_red]",
+                          "[dark_red]------[/dark_red]",
+                          "[dark_red]------[/dark_red]",
+                          "[dark_red]" + str(node['slot_free']) + "[/dark_red]",
+                          "[dark_red]" + str(node['ram_free']) + "[/dark_red]")
 
     console.print("---------------------- NODES ----------------------")
     console.print(table)
 
-    table = Table(show_header=True, header_style="bold green")
+    table = Table(show_header=True, header_style="bold cyan")
     table.add_column("Node", style="dim", width=12)
     table.add_column("Slot Type")
     table.add_column("Job fits", justify="right")
@@ -111,7 +124,20 @@ def pretty_print_slots(result):
     table.add_column("Amount of similar jobs", justify="right")
 
     for node in result['preview']:
-        table.add_row(node['name'], node['type'], node['fits'], node['core_usage'], node['ram_usage'], str(node['sim_jobs']))
+        if node['fits'] == "YES":
+            table.add_row("[green]" + node['name'] + "[/green]",
+                          "[green]" + node['type'] + "[/green]",
+                          "[green]" + node['fits'] + "[/green]",
+                          "[green]" + node['core_usage'] + "[/green]",
+                          "[green]" + node['ram_usage'] + "[/green]",
+                          "[green]" + str(node['sim_jobs']) + "[/green]")
+        else:
+            table.add_row("[red]" + node['name'] + "[/red]",
+                          "[red]" + node['type'] + "[/red]",
+                          "[red]" + node['fits'] + "[/red]",
+                          "[red]" + node['core_usage'] + "[/red]",
+                          "[red]" + node['ram_usage'] + "[/red]",
+                          "[red]" + str(node['sim_jobs']) + "[/red]")
 
     console.print("---------------------- PREVIEW ----------------------")
     console.print(table)

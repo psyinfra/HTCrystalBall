@@ -110,7 +110,7 @@ def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu):
     console.print(table)
 
 
-# TODO: how to handle output for twenty nodes? Order by fits and then order by usage.
+# TODO: how to handle output for twenty nodes? Order by fits and then order by usage?
 def pretty_print_slots(result):
     #  print out the nodes
     console = Console()
@@ -170,14 +170,14 @@ def pretty_print_slots(result):
             table.add_row("[green]" + node['name'] + "[/green]",
                           "[green]" + node['type'] + "[/green]",
                           "[green]" + node['fits'] + "[/green]",
-                          "[green]" + node['core_usage'] + "[/green]",
+                          "[green]" + node['core_usage'] + " Cores[/green]",
                           "[green]" + node['ram_usage'] + "[/green]",
                           "[green]" + str(node['sim_jobs']) + "[/green]")
         else:
             table.add_row("[red]" + node['name'] + "[/red]",
                           "[red]" + node['type'] + "[/red]",
                           "[red]" + node['fits'] + "[/red]",
-                          "[red]" + node['core_usage'] + "[/red]",
+                          "[red]" + node['core_usage'] + " Cores[/red]",
                           "[red]" + node['ram_usage'] + "[/red]",
                           "[red]" + str(node['sim_jobs']) + "[/red]")
 
@@ -212,6 +212,14 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                     str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
                 preview_node['fits'] = 'YES'
                 preview_node['sim_jobs'] = str(int(available_cores / num_cpu))
+            else:
+                preview_node['core_usage'] = str(num_cpu) + "/" + str(node["total_cores"]) + " (" + str(
+                    int(round((num_cpu / node["total_cores"]) * 100))) + "%)"
+                preview_node['sim_jobs'] = "------"
+                preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
+                    node["total_ram"]) + " GiB (" \
+                    + str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
+                preview_node['fits'] = 'NO'
             preview_res['preview'].append(preview_node)
 
         #  Check all STATIC nodes
@@ -272,13 +280,13 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                             'core_usage': '------',
                             'ram_usage': '------',
                             'sim_jobs': '------'}
-            if num_gpu <= single_slot["cores"] and amount_ram <= single_slot["ram_amount"]:
+            if num_gpu <= slot_size["cores"] and amount_ram <= slot_size["ram_amount"]:
                 #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
-                preview_node['core_usage'] = str(num_gpu) + "/" + str(single_slot["cores"]) + " (" + str(
-                    int(round((num_gpu / single_slot["cores"]) * 100)) if num_gpu == 1 else 0) + "%)"
+                preview_node['core_usage'] = str(num_gpu) + "/" + str(slot_size["cores"]) + " (" + str(
+                    int(round((num_gpu / slot_size["cores"]) * 100)) if num_gpu == 1 else 0) + "%)"
                 preview_node['sim_jobs'] = str(available_slots if num_gpu == 1 else 0)
-                preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(single_slot["ram_amount"]) + " GiB (" + str(
-                    int(round((amount_ram / single_slot["ram_amount"]) * 100)) if num_gpu == 1 else 0) + "%)"
+                preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(slot_size["ram_amount"]) + " GiB (" + str(
+                    int(round((amount_ram / slot_size["ram_amount"]) * 100)) if num_gpu == 1 else 0) + "%)"
                 preview_node['fits'] = 'YES'
             preview_res['preview'].append(preview_node)
 

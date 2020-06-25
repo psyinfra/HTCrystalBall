@@ -49,13 +49,18 @@ def calc_to_bin(number, unit):
         return number
 
 
+# fixed help output non-optional without brackets and usage not showing -h
 def define_environment():
     parser = argparse.ArgumentParser(description="To get a preview for any job you are trying to execute using "
-                                                 "HTCondor, please pass at least either the number of CPUs or GPUs and "
-                                                 "either the amount of RAM or diskspace to this script according to "
-                                                 "the usage example shown above.")
+                                  "HTCondor, please pass at least the number of CPUs and "
+                                  "either the amount of RAM or diskspace "
+                                  "(including units eg. 100MB, 90MiB, 10GB, 15GiB) to this script according to "
+                                  "the usage example shown above.", prog='htc_preview.py',
+                      usage='%(prog)s -c CPU [-g GPU] [-d DISK] [-r RAM] [-v]',
+                      epilog="PLEASE NOTE: HTCondor always uses binary storage "
+                                  "sizes, so 10GB will be converted to 9.31 GiB.")
     parser.add_argument("-v", "--verbose", help="Print extended log to stdout", action='store_true')
-    parser.add_argument("-c", "--cpu", help="Set number of requested CPU Cores", type=int)
+    parser.add_argument("-c", "--cpu", help="Set number of requested CPU Cores", type=int, required=True)
     parser.add_argument("-g", "--gpu", help="Set number of requested GPU Units", type=int)
     parser.add_argument("-d", "--disk", help="Set amount of requested disk storage in GB", type=storage_size)
     parser.add_argument("-r", "--ram", help="Set amount of requested memory storage in GB", type=storage_size)
@@ -76,7 +81,6 @@ def define_slots():
     #  define all existing partitionable configurations
     partitionable_slots = [{"node": "cpu2", "total_cores": 32, "total_ram": 500, "cores_blocked": 0, "ram_blocked": 0}]
 
-    # TODO: fix help output non-optional without brackets and usage not showing -h
     gpu_slots = [{"node": "gpu1", "total_slots": 8, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
                   "single_slot": {"cores": 1, "ram_amount": 15}}]
 
@@ -207,9 +211,9 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                             'core_usage': '------', 'ram_usage': '------', 'sim_jobs': '------'}
             if num_cpu <= available_cores and amount_ram <= available_ram:
                 preview_node['core_usage'] = str(num_cpu) + "/" + str(node["total_cores"]) + " (" + \
-                    str(int(round((num_cpu / node["total_cores"]) * 100))) + "%)"
+                                             str(int(round((num_cpu / node["total_cores"]) * 100))) + "%)"
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(node["total_ram"]) + " GiB (" + \
-                    str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
+                                            str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
                 preview_node['fits'] = 'YES'
                 preview_node['sim_jobs'] = str(int(available_cores / num_cpu))
             else:
@@ -218,7 +222,7 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 preview_node['sim_jobs'] = "------"
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     node["total_ram"]) + " GiB (" \
-                    + str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
+                                            + str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
                 preview_node['fits'] = 'NO'
             preview_res['preview'].append(preview_node)
 
@@ -248,7 +252,7 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 preview_node['sim_jobs'] = str(available_slots)
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     slot_size["ram_amount"]) + " GiB (" \
-                    + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
+                                            + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
                 preview_node['fits'] = 'YES'
             else:
                 preview_node['core_usage'] = str(num_cpu) + "/" + str(slot_size["cores"]) + " (" + str(
@@ -256,7 +260,7 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 preview_node['sim_jobs'] = "------"
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     slot_size["ram_amount"]) + " GiB (" \
-                    + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
+                                            + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
                 preview_node['fits'] = 'NO'
             preview_res['preview'].append(preview_node)
     elif num_gpu != 0:
@@ -285,7 +289,8 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 preview_node['core_usage'] = str(num_gpu) + "/" + str(slot_size["cores"]) + " (" + str(
                     int(round((num_gpu / slot_size["cores"]) * 100)) if num_gpu == 1 else 0) + "%)"
                 preview_node['sim_jobs'] = str(available_slots if num_gpu == 1 else 0)
-                preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(slot_size["ram_amount"]) + " GiB (" + str(
+                preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
+                    slot_size["ram_amount"]) + " GiB (" + str(
                     int(round((amount_ram / slot_size["ram_amount"]) * 100)) if num_gpu == 1 else 0) + "%)"
                 preview_node['fits'] = 'YES'
             preview_res['preview'].append(preview_node)

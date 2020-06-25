@@ -180,29 +180,29 @@ def pretty_print_slots(result):
             table.add_row("[dark_blue]" + node['name'] + "[/dark_blue]",
                           "[dark_blue]" + node['type'] + "[/dark_blue]",
                           "[dark_blue]" + str(node['workers']) + "[/dark_blue]",
-                          "[dark_blue]" + str(node['ram']) + "[/dark_blue]",
+                          "[dark_blue]" + str(node['ram']) + " GiB[/dark_blue]",
                           "[dark_blue]" + str(node['slot_cores']) + "[/dark_blue]",
-                          "[dark_blue]" + str(node['slot_ram']) + "[/dark_blue]",
+                          "[dark_blue]" + str(node['slot_ram']) + " GiB[/dark_blue]",
                           "[dark_blue]" + str(node['slot_free']) + "[/dark_blue]",
-                          "[dark_blue]" + str(node['ram_free']) + "[/dark_blue]")
+                          "[dark_blue]" + str(node['ram_free']) + " GiB[/dark_blue]")
         elif node['type'] == "gpu/static":
             table.add_row("[purple4]" + node['name'] + "[/purple4]",
                           "[purple4]" + node['type'] + "[/purple4]",
                           "[purple4]" + str(node['workers']) + "[/purple4]",
-                          "[purple4]" + str(node['ram']) + "[/purple4]",
+                          "[purple4]" + str(node['ram']) + " GiB[/purple4]",
                           "[purple4]" + str(node['slot_cores']) + "[/purple4]",
-                          "[purple4]" + str(node['slot_ram']) + "[/purple4]",
+                          "[purple4]" + str(node['slot_ram']) + " GiB[/purple4]",
                           "[purple4]" + str(node['slot_free']) + "[/purple4]",
-                          "[purple4]" + str(node['ram_free']) + "[/purple4]")
+                          "[purple4]" + str(node['ram_free']) + " GiB[/purple4]")
         else:
             table.add_row("[dark_red]" + node['name'] + "[/dark_red]",
                           "[dark_red]" + node['type'] + "[/dark_red]",
                           "[dark_red]" + str(node['workers']) + "[/dark_red]",
-                          "[dark_red]" + str(node['ram']) + "[/dark_red]",
+                          "[dark_red]" + str(node['ram']) + " GiB[/dark_red]",
                           "[dark_red]------[/dark_red]",
                           "[dark_red]------[/dark_red]",
                           "[dark_red]" + str(node['slot_free']) + "[/dark_red]",
-                          "[dark_red]" + str(node['ram_free']) + "[/dark_red]")
+                          "[dark_red]" + str(node['ram_free']) + " GiB[/dark_red]")
 
     console.print("---------------------- NODES ----------------------")
     console.print(table)
@@ -214,6 +214,7 @@ def pretty_print_slots(result):
     table.add_column("Slot usage", justify="right")
     table.add_column("RAM usage", justify="center")
     table.add_column("Amount of similar jobs", justify="right")
+    table.add_column("Wall Time on IDLE", justify="right")
 
     for node in result['preview']:
         if node['fits'] == "YES":
@@ -222,21 +223,23 @@ def pretty_print_slots(result):
                           "[green]" + node['fits'] + "[/green]",
                           "[green]" + node['core_usage'] + " Cores[/green]",
                           "[green]" + node['ram_usage'] + "[/green]",
-                          "[green]" + str(node['sim_jobs']) + "[/green]")
+                          "[green]" + str(node['sim_jobs']) + "[/green]",
+                          "[green]" + str(node['wall_time_on_idle']) + " min[/green]")
         else:
             table.add_row("[red]" + node['name'] + "[/red]",
                           "[red]" + node['type'] + "[/red]",
                           "[red]" + node['fits'] + "[/red]",
                           "[red]" + node['core_usage'] + " Cores[/red]",
                           "[red]" + node['ram_usage'] + "[/red]",
-                          "[red]" + str(node['sim_jobs']) + "[/red]")
+                          "[red]" + str(node['sim_jobs']) + "[/red]",
+                          "[red]" + str(node['wall_time_on_idle']) + " min[/red]")
 
     console.print("---------------------- PREVIEW ----------------------")
     console.print(table)
 
 
-def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, num_gpu=0):
-    pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu)
+def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, num_gpu=0, num_jobs=1, job_duration=0):
+    pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, job_duration)
 
     preview_res = {'nodes': [], 'preview': []}
 
@@ -248,13 +251,18 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
             node_dict = {'name': node["node"],
                          'type': 'dynamic',
                          'workers': str(node["total_cores"]),
-                         'ram': str(node["total_ram"]) + " GiB",
+                         'ram': str(node["total_ram"]),
                          'slot_free': str(available_cores),
-                         'ram_free': str(available_ram) + " GiB"}
+                         'ram_free': str(available_ram)}
             preview_res['nodes'].append(node_dict)
             # if the job fits, calculate and return the usage
-            preview_node = {'name': node["node"], 'type': 'dynamic', 'fits': 'NO',
-                            'core_usage': '------', 'ram_usage': '------', 'sim_jobs': '------'}
+            preview_node = {'name': node["node"],
+                            'type': 'dynamic',
+                            'fits': 'NO',
+                            'core_usage': '------',
+                            'ram_usage': '------',
+                            'sim_jobs': '------',
+                            'wall_time_on_idle': 0}
             if num_cpu <= available_cores and amount_ram <= available_ram:
                 preview_node['core_usage'] = str(num_cpu) + "/" + str(node["total_cores"]) + " (" + \
                                              str(int(round((num_cpu / node["total_cores"]) * 100))) + "%)"
@@ -268,8 +276,14 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 preview_node['sim_jobs'] = "------"
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     node["total_ram"]) + " GiB (" \
-                                            + str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
+                    + str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
                 preview_node['fits'] = 'NO'
+
+            if num_cpu <= node["total_cores"] and job_duration != 0:
+                cpu_fits = int(node["total_cores"] / num_cpu)
+                jobs_parallel = cpu_fits if amount_ram == 0 else min(cpu_fits, int(node["total_ram"] / amount_ram))
+                preview_node['wall_time_on_idle'] = str(math.ceil(num_jobs / jobs_parallel) * job_duration)
+
             preview_res['preview'].append(preview_node)
 
         #  Check all STATIC nodes
@@ -278,9 +292,9 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
             slot_size = node["slot_size"]
             node_dict = {'name': node["node"], 'type': 'static',
                          'workers': str(node["total_slots"]),
-                         'ram': str(node["total_ram"]) + " GiB",
+                         'ram': str(node["total_ram"]),
                          'slot_cores': str(slot_size["cores"]),
-                         'slot_ram': str(slot_size["ram_amount"]) + " GiB",
+                         'slot_ram': str(slot_size["ram_amount"]),
                          'slot_free': str(available_slots),
                          'ram_free': '---'}
             preview_res['nodes'].append(node_dict)
@@ -290,7 +304,8 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                             'fits': 'NO',
                             'core_usage': '------',
                             'ram_usage': '------',
-                            'sim_jobs': '------'}
+                            'sim_jobs': '------',
+                            'wall_time_on_idle': 0}
             if num_cpu <= slot_size["cores"] and amount_ram <= slot_size["ram_amount"]:
                 #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
                 preview_node['core_usage'] = str(num_cpu) + "/" + str(slot_size["cores"]) + " (" + str(
@@ -298,15 +313,22 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 preview_node['sim_jobs'] = str(available_slots)
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     slot_size["ram_amount"]) + " GiB (" \
-                                            + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
+                    + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
                 preview_node['fits'] = 'YES'
+                if job_duration != 0:
+                    cpu_fits = int(slot_size["cores"] / num_cpu)
+                    jobs_on_idle_slot = cpu_fits if amount_ram == 0 else min(cpu_fits, int(slot_size["ram_amount"] /
+                                                                                           amount_ram))
+                    preview_node['wall_time_on_idle'] = str(
+                        math.ceil(num_jobs / jobs_on_idle_slot / node["total_slots"]) *
+                        job_duration)
             else:
                 preview_node['core_usage'] = str(num_cpu) + "/" + str(slot_size["cores"]) + " (" + str(
                     int(round((num_cpu / slot_size["cores"]) * 100))) + "%)"
                 preview_node['sim_jobs'] = "------"
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     slot_size["ram_amount"]) + " GiB (" \
-                                            + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
+                    + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
                 preview_node['fits'] = 'NO'
             preview_res['preview'].append(preview_node)
     elif num_gpu != 0:
@@ -317,11 +339,11 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
             slot_size = node["slot_size"]
             node_dict = {'name': node["node"], 'type': 'gpu/static',
                          'workers': str(node["total_slots"]),
-                         'ram': str(node["total_ram"]) + " GiB",
+                         'ram': str(node["total_ram"]),
                          'slot_cores': str(slot_size["cores"]),
-                         'slot_ram': str(slot_size["ram_amount"]) + " GiB",
+                         'slot_ram': str(slot_size["ram_amount"]),
                          'slot_free': str(available_slots),
-                         'ram_free': str(available_ram) + " GiB"}
+                         'ram_free': str(available_ram)}
             preview_res['nodes'].append(node_dict)
             # if the job fits, calculate and return the usage
             preview_node = {'name': node["node"],
@@ -381,18 +403,16 @@ def manage_calculation(cpu=0, gpu=0, ram="", disk="", jobs=0, job_duration=""):
 
 # TODO: Add TESTING, account for different slot sizes on the same node
 def run_tests():
-    # single cpu, ram in GB
-    cpu_test = 1
-    ram_test = "10GB"
-    gpu_test = 0
-    disk_test = ""
-
-    manage_calculation(cpu_test, gpu_test, ram_test, disk_test)
+    # single job, ram in GB
+    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m")
+    manage_calculation(cpu=2, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m")
+    manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m")
+    manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m")
 
 
 if __name__ == "__main__":
-    static_slots, dynamic_slots, gpu_slots = define_slots()
-    test = False
+    static_slts, dynamic_slts, gpu_slts = define_slots()
+    test = True
     args = define_environment()
 
     if test:

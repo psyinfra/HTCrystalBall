@@ -52,16 +52,17 @@ def calc_to_bin(number, unit):
 # fixed help output non-optional without brackets and usage not showing -h
 def define_environment():
     parser = argparse.ArgumentParser(description="To get a preview for any job you are trying to execute using "
-                                  "HTCondor, please pass at least the number of CPUs and "
-                                  "either the amount of RAM or diskspace "
-                                  "(including units eg. 100MB, 90MiB, 10GB, 15GiB) to this script according to "
-                                  "the usage example shown above.", prog='htc_preview.py',
-                      usage='%(prog)s -c CPU [-g GPU] [-d DISK] [-r RAM] [-v]',
-                      epilog="PLEASE NOTE: HTCondor always uses binary storage "
-                                  "sizes, so 10GB will be converted to 9.31 GiB.")
+                                                 "HTCondor, please pass at least the number of CPUs and "
+                                                 "either the amount of RAM or diskspace "
+                                                 "(including units eg. 100MB, 90MiB, 10GB, 15GiB) to this script "
+                                                 "according to the usage example shown above.", prog='htc_preview.py',
+                                     usage='%(prog)s -c CPU [-g GPU] [-d DISK] [-r RAM] [-j JOBS] [-v]',
+                                     epilog="PLEASE NOTE: HTCondor always uses binary storage "
+                                            "sizes, so 10GB will be converted to 9.31 GiB.")
     parser.add_argument("-v", "--verbose", help="Print extended log to stdout", action='store_true')
     parser.add_argument("-c", "--cpu", help="Set number of requested CPU Cores", type=int, required=True)
     parser.add_argument("-g", "--gpu", help="Set number of requested GPU Units", type=int)
+    parser.add_argument("-j", "--jobs", help="Set number of jobs to be executed", type=int)
     parser.add_argument("-d", "--disk", help="Set amount of requested disk storage in GB", type=storage_size)
     parser.add_argument("-r", "--ram", help="Set amount of requested memory storage in GB", type=storage_size)
 
@@ -343,5 +344,7 @@ if __name__ == "__main__":
 
         ram_in = args.ram
         disk_in = args.disk
+
+        jobs_in = args.jobs
 
         manage_calculation(cpu_in, gpu_in, ram_in, disk_in)

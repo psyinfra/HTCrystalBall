@@ -13,6 +13,13 @@ def storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtT]i?[bB]?)?$")):
     return arg_value
 
 
+# define time units for job duration
+def duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS:\-]?))?$")):
+    if not pat.match(arg_value):
+        raise argparse.ArgumentTypeError
+    return arg_value
+
+
 def split_number_unit(user_input):
     if user_input == "" or user_input is None:
         return 0, "GiB"
@@ -63,6 +70,7 @@ def define_environment():
     parser.add_argument("-c", "--cpu", help="Set number of requested CPU Cores", type=int, required=True)
     parser.add_argument("-g", "--gpu", help="Set number of requested GPU Units", type=int)
     parser.add_argument("-j", "--jobs", help="Set number of jobs to be executed", type=int)
+    parser.add_argument("-d", "--duration", help="Set the duration for one job to be executed", type=duration)
     parser.add_argument("-d", "--disk", help="Set amount of requested disk storage in GB", type=storage_size)
     parser.add_argument("-r", "--ram", help="Set amount of requested memory storage in GB", type=storage_size)
 
@@ -346,5 +354,5 @@ if __name__ == "__main__":
         disk_in = args.disk
 
         jobs_in = args.jobs
-
+        job_duration = args.duration
         manage_calculation(cpu_in, gpu_in, ram_in, disk_in)

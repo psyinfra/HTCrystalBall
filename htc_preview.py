@@ -408,6 +408,7 @@ def run_tests():
     manage_calculation(cpu=2, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m")
     manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m")
     manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m")
+    manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=32, job_duration="10m")
 
 
 if __name__ == "__main__":

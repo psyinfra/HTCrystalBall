@@ -2,6 +2,7 @@
 
 import argparse
 import re
+import math
 from rich.console import Console
 from rich.table import Column, Table
 
@@ -14,7 +15,7 @@ def storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtT]i?[bB]?)?$")):
 
 
 # define time units for job duration
-def duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS:\-]?))?$")):
+def duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS]?))?$")):
     if not pat.match(arg_value):
         raise argparse.ArgumentTypeError
     return arg_value
@@ -30,6 +31,20 @@ def split_number_unit(user_input):
 
     amount = int(user_input[:string_index])
     unit = "GiB" if user_input[string_index:] == "" else user_input[string_index:]
+
+    return amount, unit
+
+
+def split_duration_unit(user_input):
+    if user_input == "" or user_input is None:
+        return 0, "min"
+
+    string_index = 0
+    while user_input[:string_index + 1].isnumeric() and string_index < len(user_input):
+        string_index += 1
+
+    amount = int(user_input[:string_index])
+    unit = "min" if user_input[string_index:] == "" else user_input[string_index:]
 
     return amount, unit
 
@@ -56,14 +71,28 @@ def calc_to_bin(number, unit):
         return number
 
 
+def calc_to_min(number, unit):
+    unit_indicator = unit.lower()
+    if unit_indicator == "d" or unit_indicator == "dd":
+        return number * 24 * 60
+    elif unit_indicator == "h" or unit_indicator == "hh":
+        return number * 60
+    elif unit_indicator == "s" or unit_indicator == "ss":
+        return number / 60
+    # assume it's already minutes
+    else:
+        return number
+
+
 # fixed help output non-optional without brackets and usage not showing -h
 def define_environment():
     parser = argparse.ArgumentParser(description="To get a preview for any job you are trying to execute using "
                                                  "HTCondor, please pass at least the number of CPUs and "
                                                  "either the amount of RAM or diskspace "
                                                  "(including units eg. 100MB, 90MiB, 10GB, 15GiB) to this script "
-                                                 "according to the usage example shown above.", prog='htc_preview.py',
-                                     usage='%(prog)s -c CPU [-g GPU] [-d DISK] [-r RAM] [-j JOBS] [-v]',
+                                                 "according to the usage example shown above. For JOB Duration please "
+                                                 "use d, h, m or s", prog='htc_preview.py',
+                                     usage='%(prog)s -c CPU [-g GPU] [-D DISK] [-r RAM] [-j JOBS] [-d DURATION] [-v]',
                                      epilog="PLEASE NOTE: HTCondor always uses binary storage "
                                             "sizes, so 10GB will be converted to 9.31 GiB.")
     parser.add_argument("-v", "--verbose", help="Print extended log to stdout", action='store_true')
@@ -71,7 +100,7 @@ def define_environment():
     parser.add_argument("-g", "--gpu", help="Set number of requested GPU Units", type=int)
     parser.add_argument("-j", "--jobs", help="Set number of jobs to be executed", type=int)
     parser.add_argument("-d", "--duration", help="Set the duration for one job to be executed", type=duration)
-    parser.add_argument("-d", "--disk", help="Set amount of requested disk storage in GB", type=storage_size)
+    parser.add_argument("-D", "--Disk", help="Set amount of requested disk storage in GB", type=storage_size)
     parser.add_argument("-r", "--ram", help="Set amount of requested memory storage in GB", type=storage_size)
 
     p = parser.parse_args()
@@ -351,8 +380,10 @@ if __name__ == "__main__":
             gpu_in = 0
 
         ram_in = args.ram
-        disk_in = args.disk
+        disk_in = args.Disk
 
         jobs_in = args.jobs
-        job_duration = args.duration
-        manage_calculation(cpu_in, gpu_in, ram_in, disk_in)
+        if jobs_in is None:
+            jobs_in = 1
+        duration = args.duration
+        manage_calculation(cpu_in, gpu_in, ram_in, disk_in, jobs_in, duration)

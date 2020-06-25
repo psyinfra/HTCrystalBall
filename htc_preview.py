@@ -125,7 +125,7 @@ def define_slots():
     return static_slots, partitionable_slots, gpu_slots
 
 
-def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu):
+def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, num_duration):
     #  print out what the user gave as input
     console = Console()
 
@@ -147,6 +147,14 @@ def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu):
     table.add_row(
         "GPUS",
         str(num_gpu)
+    )
+    table.add_row(
+        "JOBS",
+        str(num_jobs)
+    )
+    table.add_row(
+        "JOB DURATION",
+        "{0:.2f}".format(num_duration) + " min"
     )
     console.print("---------------------- INPUT ----------------------")
     console.print(table)
@@ -321,27 +329,45 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                             'fits': 'NO',
                             'core_usage': '------',
                             'ram_usage': '------',
-                            'sim_jobs': '------'}
+                            'sim_jobs': '------',
+                            'wall_time_on_idle': 0}
             if num_gpu <= slot_size["cores"] and amount_ram <= slot_size["ram_amount"]:
                 #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
                 preview_node['core_usage'] = str(num_gpu) + "/" + str(slot_size["cores"]) + " (" + str(
-                    int(round((num_gpu / slot_size["cores"]) * 100)) if num_gpu == 1 else 0) + "%)"
-                preview_node['sim_jobs'] = str(available_slots if num_gpu == 1 else 0)
+                    int(round((num_gpu / slot_size["cores"]) * 100))) + "%)"
+                preview_node['sim_jobs'] = str(available_slots)
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     slot_size["ram_amount"]) + " GiB (" + str(
-                    int(round((amount_ram / slot_size["ram_amount"]) * 100)) if num_gpu == 1 else 0) + "%)"
+                    int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
                 preview_node['fits'] = 'YES'
+                if job_duration != 0:
+                    gpu_fits = int(slot_size["cores"] / num_gpu)
+                    jobs_on_idle_slot = gpu_fits if amount_ram == 0 else min(gpu_fits, int(slot_size["ram_amount"] /
+                                                                                           amount_ram))
+                    preview_node['wall_time_on_idle'] = str(
+                        math.ceil(num_jobs / jobs_on_idle_slot / node["total_slots"]) *
+                        job_duration)
+            else:
+                preview_node['core_usage'] = str(num_gpu) + "/" + str(slot_size["cores"]) + " (" + str(
+                    int(round((num_gpu / slot_size["cores"]) * 100))) + "%)"
+                preview_node['sim_jobs'] = "------"
+                preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
+                    slot_size["ram_amount"]) + " GiB (" \
+                    + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
+                preview_node['fits'] = 'NO'
             preview_res['preview'].append(preview_node)
-
     pretty_print_slots(preview_res)
 
 
-def manage_calculation(cpu, gpu, ram, disk):
+def manage_calculation(cpu=0, gpu=0, ram="", disk="", jobs=0, job_duration=""):
     ram, ram_unit = split_number_unit(ram)
     ram = calc_to_bin(ram, ram_unit)
 
     disk, disk_unit = split_number_unit(disk)
     disk = calc_to_bin(disk, disk_unit)
+
+    job_duration, duration_unit = split_duration_unit(job_duration)
+    job_duration = calc_to_min(job_duration, duration_unit)
 
     if args.verbose:
         print("verbosity turned on")
@@ -350,7 +376,7 @@ def manage_calculation(cpu, gpu, ram, disk):
     elif ram == 0.0 and disk == 0.0:
         print("No RAM or DISK amount given --- ABORTING")
     else:
-        check_slots(static_slots, dynamic_slots, gpu_slots, cpu, ram, disk, gpu)
+        check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram/cpu, disk, gpu, jobs, job_duration)
 
 
 # TODO: Add TESTING, account for different slot sizes on the same node

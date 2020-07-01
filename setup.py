@@ -37,11 +37,17 @@ setuptools.setup(
     python_requires="!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     packages=setuptools.find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     install_requires=[
-        'argparse'
+        'argparse',
+        'rich',
+        'math',
+        're'
     ],
     tests_require=[
         'pyflakes',
         'pytest',
         'vcrpy',
     ],
+    data_files=[
+            ('share/man/man1', ['man/man1/htc_preview.1'])
+      ],
 )

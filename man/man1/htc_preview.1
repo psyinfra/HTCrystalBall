@@ -1,0 +1,73 @@
+.Dd July 1, 2020
+.Dt HTC_Preview 1
+.Os \" Current operating system.
+
+.Sh NAME
+.Nm htcondor_preview
+.Nd calculate and preview available HTCondor nodes for given jobs
+
+.Sh SYNOPSIS
+.Nm
+.Op CPU
+.Ar ...
+.Op OPTIONS
+
+.Sh DESCRIPTION
+The
+.Nm
+script takes an HTCondor submit file or a bunch of parameters as input with given flags and
+prints out a readable result of available HTCondor nodes
+.Pp
+Its arguments are as follows:
+.Bl -tag -width Ds
+
+.It Ar CPU
+pass a number of requested CPU cores
+
+.It Ar OPTIONS
+
+.It Fl h | Fl Fl help
+This will print a small help function, just like this.
+
+.It Fl g | Fl Fl gpu
+pass a number of requested GPUs
+
+.It Fl r | Fl Fl ram
+pass the amount of requested RAM including a unit, e.g. 10GB or 15GiB
+
+.It Fl D | Fl Fl Disk
+pass the amount of requested Disk space including a unit, e.g. 10GB or 15GiB
+
+.It Fl j | Fl Fl jobs
+pass the number of jobs to be executed, the requested resources will be assigned to each job
+
+.It Fl d | Fl Fl duration
+pass the estimated time for one job to be executed
+
+default: pretty
+
+.Sh CONFIG
+furthermore all these variables|settings can be set inside an HTCondor submit file.
+See the #Todo: link to config explanation
+
+.Sh EXAMPLES
+htc_preview -s mycondor.submit
+
+.Sh SEE ALSO
+The
+.Nm
+repository is available at
+.Lk https://github.com/psyinfra/htcondor_preview
+Bug reports, patches, and (constructive) input are always welcome.
+
+
+.Sh EXIT STATUS
+The
+.Nm
+script will exit normally in any case, if no other output is given, that tells the opposite.
+.Ex
+
+
+.Sh AUTHOR
+.An Jona Marcus Fischer,
+.Mt j.fischer@fz-juelich.de

@@ -97,12 +97,13 @@ def define_environment():
                                      epilog="PLEASE NOTE: HTCondor always uses binary storage "
                                             "sizes, so 10GB will be converted to 9.31 GiB.")
     parser.add_argument("-v", "--verbose", help="Print extended log to stdout", action='store_true')
-    parser.add_argument("-c", "--cpu", help="Set number of requested CPU Cores", type=int, required=True)
+    parser.add_argument("-c", "--cpu", help="Set number of requested CPU Cores", type=int)
     parser.add_argument("-g", "--gpu", help="Set number of requested GPU Units", type=int)
     parser.add_argument("-j", "--jobs", help="Set number of jobs to be executed", type=int)
     parser.add_argument("-d", "--duration", help="Set the duration for one job to be executed", type=duration)
     parser.add_argument("-D", "--Disk", help="Set amount of requested disk storage in GB", type=storage_size)
     parser.add_argument("-r", "--ram", help="Set amount of requested memory storage in GB", type=storage_size)
+    parser.add_argument("-m", "--maxnodes", help="Set maximum of nodes to run jobs on", type=int)
 
     p = parser.parse_args()
     return p
@@ -123,7 +124,7 @@ def define_slots():
     return static_slots, partitionable_slots, gpu_slots
 
 
-def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, num_duration):
+def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, num_duration, max_nodes):
     #  print out what the user gave as input
     console = Console()
 
@@ -153,6 +154,10 @@ def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, num_
     table.add_row(
         "JOB DURATION",
         "{0:.2f}".format(num_duration) + " min"
+    )
+    table.add_row(
+        "MAXIMUM NODES",
+        str(max_nodes)
     )
     console.print("---------------------- INPUT ----------------------")
     console.print(table)
@@ -236,12 +241,13 @@ def pretty_print_slots(result):
     console.print(table)
 
 
-def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, num_gpu=0, num_jobs=1, job_duration=0):
-    pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, job_duration)
+def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, num_gpu=0, num_jobs=1, job_duration=0,
+                maxnodes=0):
+    pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, job_duration, maxnodes)
 
     preview_res = {'nodes': [], 'preview': []}
 
-    if num_cpu != 0:
+    if num_cpu != 0 and num_gpu == 0:
         #  Check all DYNAMIC nodes
         for node in dynamic:
             available_cores = node["total_cores"] - node["cores_blocked"]
@@ -267,11 +273,11 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(node["total_ram"]) + " GiB (" + \
                                             str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
                 preview_node['fits'] = 'YES'
-                preview_node['sim_jobs'] = str(int(available_cores / num_cpu))
+                preview_node['sim_jobs'] = int(available_cores / num_cpu)
             else:
                 preview_node['core_usage'] = str(num_cpu) + "/" + str(node["total_cores"]) + " (" + str(
                     int(round((num_cpu / node["total_cores"]) * 100))) + "%)"
-                preview_node['sim_jobs'] = "------"
+                preview_node['sim_jobs'] = 0
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     node["total_ram"]) + " GiB (" \
                     + str(int(round((amount_ram / node["total_ram"]) * 100))) + "%)"
@@ -308,7 +314,7 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
                 preview_node['core_usage'] = str(num_cpu) + "/" + str(slot_size["cores"]) + " (" + str(
                     int(round((num_cpu / slot_size["cores"]) * 100))) + "%)"
-                preview_node['sim_jobs'] = str(available_slots)
+                preview_node['sim_jobs'] = available_slots
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     slot_size["ram_amount"]) + " GiB (" \
                     + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
@@ -323,7 +329,7 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
             else:
                 preview_node['core_usage'] = str(num_cpu) + "/" + str(slot_size["cores"]) + " (" + str(
                     int(round((num_cpu / slot_size["cores"]) * 100))) + "%)"
-                preview_node['sim_jobs'] = "------"
+                preview_node['sim_jobs'] = 0
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     slot_size["ram_amount"]) + " GiB (" \
                     + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
@@ -355,7 +361,7 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                 #  On STATIC nodes it's like ALL or NOTHING, when there are more than one CPUs requested
                 preview_node['core_usage'] = str(num_gpu) + "/" + str(slot_size["cores"]) + " (" + str(
                     int(round((num_gpu / slot_size["cores"]) * 100))) + "%)"
-                preview_node['sim_jobs'] = str(available_slots)
+                preview_node['sim_jobs'] = available_slots
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     slot_size["ram_amount"]) + " GiB (" + str(
                     int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
@@ -370,16 +376,26 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
             else:
                 preview_node['core_usage'] = str(num_gpu) + "/" + str(slot_size["cores"]) + " (" + str(
                     int(round((num_gpu / slot_size["cores"]) * 100))) + "%)"
-                preview_node['sim_jobs'] = "------"
+                preview_node['sim_jobs'] = 0
                 preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
                     slot_size["ram_amount"]) + " GiB (" \
                     + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
                 preview_node['fits'] = 'NO'
             preview_res['preview'].append(preview_node)
+
+    preview_res['preview'] = order_node_preview(preview_res['preview'])
+    if maxnodes != 0 and len(preview_res['preview']) > maxnodes:
+        preview_res['preview'] = preview_res['preview'][:maxnodes]
+
     pretty_print_slots(preview_res)
 
 
-def manage_calculation(cpu=0, gpu=0, ram="", disk="", jobs=0, job_duration=""):
+# order the list of checked nodes by fits and number of similar jobs
+def order_node_preview(node_preview):
+    return sorted(node_preview, key=lambda nodes: (nodes["sim_jobs"]), reverse=True)
+
+
+def manage_calculation(cpu=0, gpu=0, ram="", disk="", jobs=0, job_duration="", maxnodes=0):
     ram, ram_unit = split_number_unit(ram)
     ram = calc_to_bin(ram, ram_unit)
 
@@ -396,17 +412,17 @@ def manage_calculation(cpu=0, gpu=0, ram="", disk="", jobs=0, job_duration=""):
     elif ram == 0.0 and disk == 0.0:
         print("No RAM or DISK amount given --- ABORTING")
     else:
-        check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram/cpu, disk, gpu, jobs, job_duration)
+        check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram/cpu, disk, gpu, jobs, job_duration, maxnodes)
 
 
 # TODO: Add TESTING, account for different slot sizes on the same node
 def run_tests():
     # single job, ram in GB
-    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m")
-    manage_calculation(cpu=2, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m")
-    manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m")
-    manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m")
-    manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=32, job_duration="10m")
+    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=3)
+    manage_calculation(cpu=2, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=3)
+    manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2)
+    manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2)
+    manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=32, job_duration="10m", maxnodes=1)
 
 
 if __name__ == "__main__":
@@ -431,4 +447,8 @@ if __name__ == "__main__":
         if jobs_in is None:
             jobs_in = 1
         duration = args.duration
-        manage_calculation(cpu_in, gpu_in, ram_in, disk_in, jobs_in, duration)
+
+        nodes_in = args.maxnodes
+        if nodes_in is None:
+            nodes_in = 0
+        manage_calculation(cpu_in, gpu_in, ram_in, disk_in, jobs_in, duration, nodes_in)

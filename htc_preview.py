@@ -412,13 +412,21 @@ def manage_calculation(cpu=0, gpu=0, ram="", disk="", jobs=0, job_duration="", m
     elif ram == 0.0 and disk == 0.0:
         print("No RAM or DISK amount given --- ABORTING")
     else:
-        check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram/cpu, disk, gpu, jobs, job_duration, maxnodes)
+        check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram, disk, gpu, jobs, job_duration, maxnodes)
 
 
 # TODO: Add TESTING, account for different slot sizes on the same node
 def run_tests():
     # single job, ram in GB
-    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=3)
+    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
+    manage_calculation(cpu=1, gpu=1, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
+    manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
+    manage_calculation(cpu=1, gpu=1, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
+    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=1, job_duration="10m", maxnodes=0)
+    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=128, job_duration="15m", maxnodes=0)
+    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=1)
+    manage_calculation(cpu=8, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
+    manage_calculation(cpu=8, gpu=0, ram="80GB", disk="0", jobs=4, job_duration="1h", maxnodes=0)
     manage_calculation(cpu=2, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=3)
     manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2)
     manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2)
@@ -427,7 +435,7 @@ def run_tests():
 
 if __name__ == "__main__":
     static_slts, dynamic_slts, gpu_slts = define_slots()
-    test = True
+    test = False
     args = define_environment()
 
     if test:

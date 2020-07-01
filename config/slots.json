@@ -39,7 +39,7 @@
         "total_ram": 500,
         "slots_in_use": 0,
         "ram_in_use": 0,
-        "single_slot": {
+        "slot_size": {
           "cores": 1,
           "ram_amount": 15
         }

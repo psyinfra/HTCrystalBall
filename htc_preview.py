@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import re
 import math
 from rich.console import Console
@@ -109,18 +110,15 @@ def define_environment():
 
 # a collection of slots will be defined as a list of dictionarys for each different slot configuration
 def define_slots():
+    with open('config/slots.json') as f:
+        data = json.load(f)
     #  define all existing static slot configurations
-    static_slots = [{"node": "cpu1", "total_slots": 32, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
-                     "slot_size": {"cores": 1, "ram_amount": 15}},
-                    {"node": "cpu1", "total_slots": 16, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
-                     "slot_size": {"cores": 2, "ram_amount": 30}}
-                    ]
+    static_slots = data["static"]
 
     #  define all existing partitionable configurations
-    partitionable_slots = [{"node": "cpu2", "total_cores": 32, "total_ram": 500, "cores_blocked": 0, "ram_blocked": 0}]
+    partitionable_slots = data["dynamic"]
 
-    gpu_slots = [{"node": "gpu1", "total_slots": 8, "total_ram": 500, "slots_in_use": 0, "ram_in_use": 0,
-                  "single_slot": {"cores": 1, "ram_amount": 15}}]
+    gpu_slots = data["gpu"]
 
     return static_slots, partitionable_slots, gpu_slots
 

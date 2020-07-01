@@ -1,0 +1,48 @@
+{
+    "static": [
+      {
+        "node": "cpu1",
+        "total_slots": 32,
+        "total_ram": 500,
+        "slots_in_use": 0,
+        "ram_in_use": 0,
+        "slot_size": {
+          "cores": 1,
+          "ram_amount": 15
+        }
+      },
+      {
+        "node": "cpu1",
+        "total_slots": 16,
+        "total_ram": 500,
+        "slots_in_use": 0,
+        "ram_in_use": 0,
+        "slot_size": {
+          "cores": 2,
+          "ram_amount": 30
+        }
+      }
+    ],
+  "dynamic": [
+      {
+        "node": "cpu2",
+        "total_cores": 32,
+        "total_ram": 500,
+        "cores_blocked": 0,
+        "ram_blocked": 0
+      }
+    ],
+    "gpu": [
+      {
+        "node": "gpu1",
+        "total_slots": 8,
+        "total_ram": 500,
+        "slots_in_use": 0,
+        "ram_in_use": 0,
+        "single_slot": {
+          "cores": 1,
+          "ram_amount": 15
+        }
+      }
+    ]
+  }

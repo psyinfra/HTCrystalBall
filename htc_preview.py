@@ -8,6 +8,66 @@ from rich.console import Console
 from rich.table import Column, Table
 
 
+class PreviewTest:
+    def test_storage_parser(self):
+        assert storage_size("20GB") == "20GB"
+        assert storage_size("20") == "20"
+        assert storage_size("20iGB") == "20GiB"
+        assert storage_size("20GBt") == "20GB"
+        assert storage_size("20GB3") == "20GB"
+
+    def test_split_storage(self, number, unit):
+        assert split_number_unit(str(number)) == number, "GiB"
+        assert split_number_unit(str(number) + "GiB") == number, "GiB"
+        assert split_number_unit("0" + unit) == "GiB"
+        assert split_number_unit(str(number)) == number
+
+    def test_split_time(self, number, unit):
+        assert split_duration_unit(str(number)) == number, "min"
+        assert split_duration_unit(str(number) + "min") == number, "min"
+        assert split_duration_unit("0" + unit) == "min"
+        assert split_duration_unit(str(number)) == number
+
+    def test_conversions(self):
+        assert calc_to_bin(10.0, "GiB") == 10.0
+        assert calc_to_bin(10.0, "GiB") == 10
+        assert calc_to_bin(10.0, "GB") == 10.0
+        assert calc_to_bin(10, "GiB") == 10.0
+        assert calc_to_bin(10.0, "MiB") == 10.0
+
+        assert calc_to_min(10.0, "h") == 10.0
+        assert calc_to_min(10.0, "min") == 10
+        assert calc_to_min(10.0, "min") == 10.0
+        assert calc_to_min(10, "min") == 10.0
+        assert calc_to_min(10.0, "s") == 10.0
+
+    def test_calc_manager(self):
+        assert manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(cpu=0, gpu=1, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(cpu=1, gpu=0, ram="0", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(cpu=1, gpu=1, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=128, job_duration="15m", maxnodes=0) == True
+        assert manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=1) == True
+        assert manage_calculation(cpu=8, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(cpu=8, gpu=0, ram="80GB", disk="0", jobs=4, job_duration="1h", maxnodes=0) == True
+        assert manage_calculation(cpu=2, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=3) == True
+        assert manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2) == True
+        assert manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2) == True
+        assert manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=32, job_duration="10m", maxnodes=1) == True
+
+    def test_slot_config(self):
+        slots = define_slots()
+        assert "static" in slots
+        assert "dynamic" in slots
+        assert "gpu" in slots
+
+    def test_slot_checking(self):
+        slots = define_slots()
+
+        assert "preview" in check_slots(slots["static"], slots["dynamic"], slots["gpu"], 1, 10.0, 0.0, 0, 1, 0.0, 0)
+
+
 # define Add K(B), M(B), G(B), T(B) as units for Disk and RAM
 def storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtT]i?[bB]?)?$")):
     if not pat.match(arg_value):
@@ -413,24 +473,7 @@ def manage_calculation(cpu=0, gpu=0, ram="", disk="", jobs=0, job_duration="", m
         print("No RAM or DISK amount given --- ABORTING")
     else:
         check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram, disk, gpu, jobs, job_duration, maxnodes)
-
-
-# TODO: Add TESTING, account for different slot sizes on the same node
-def run_tests():
-    # single job, ram in GB
-    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
-    manage_calculation(cpu=1, gpu=1, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
-    manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
-    manage_calculation(cpu=1, gpu=1, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
-    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=1, job_duration="10m", maxnodes=0)
-    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=128, job_duration="15m", maxnodes=0)
-    manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=1)
-    manage_calculation(cpu=8, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0)
-    manage_calculation(cpu=8, gpu=0, ram="80GB", disk="0", jobs=4, job_duration="1h", maxnodes=0)
-    manage_calculation(cpu=2, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=3)
-    manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2)
-    manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2)
-    manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=32, job_duration="10m", maxnodes=1)
+        return True
 
 
 if __name__ == "__main__":
@@ -439,7 +482,7 @@ if __name__ == "__main__":
     args = define_environment()
 
     if test:
-        run_tests()
+        print("TESTING")
     else:
         cpu_in = args.cpu
         if cpu_in is None:

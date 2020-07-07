@@ -82,36 +82,36 @@ def duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS]?))?$")):
     return arg_value
 
 
-def split_number_unit(user_input):
+def split_number_unit(user_input: str) -> [float, str]:
     if user_input == "" or user_input is None:
-        return 0, "GiB"
+        return [0.0, "GiB"]
 
     string_index = 0
     while user_input[:string_index + 1].isnumeric() and string_index < len(user_input):
         string_index += 1
 
-    amount = int(user_input[:string_index])
+    amount = float(user_input[:string_index])
     unit = "GiB" if user_input[string_index:] == "" else user_input[string_index:]
 
-    return amount, unit
+    return [amount, unit]
 
 
-def split_duration_unit(user_input):
+def split_duration_unit(user_input: str) -> [float, str]:
     if user_input == "" or user_input is None:
-        return 0, "min"
+        return [0.0, "min"]
 
     string_index = 0
     while user_input[:string_index + 1].isnumeric() and string_index < len(user_input):
         string_index += 1
 
-    amount = int(user_input[:string_index])
+    amount = float(user_input[:string_index])
     unit = "min" if user_input[string_index:] == "" else user_input[string_index:]
 
-    return amount, unit
+    return [amount, unit]
 
 
 # Account for base2 units, not base10, converts everything to Gibibytes
-def calc_to_bin(number, unit):
+def calc_to_bin(number: float, unit: str) -> float:
     unit_indicator = unit.lower()
     if unit_indicator == "kb" or unit_indicator == "k":
         return number * (10 ** 3) / (2 ** 30)
@@ -132,7 +132,7 @@ def calc_to_bin(number, unit):
         return number
 
 
-def calc_to_min(number, unit):
+def calc_to_min(number: float, unit: str) -> float:
     unit_indicator = unit.lower()
     if unit_indicator == "d" or unit_indicator == "dd":
         return number * 24 * 60
@@ -170,22 +170,15 @@ def define_environment():
 
 
 # a collection of slots will be defined as a list of dictionarys for each different slot configuration
-def define_slots():
+def define_slots() -> dict:
     with open('config/slots.json') as f:
         data = json.load(f)
-    #  define all existing static slot configurations
-    static_slots = data["static"]
-
-    #  define all existing partitionable configurations
-    partitionable_slots = data["dynamic"]
-
-    gpu_slots = data["gpu"]
-
-    return static_slots, partitionable_slots, gpu_slots
+    return data
 
 
-def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, num_duration, max_nodes):
-    #  print out what the user gave as input
+#  print out what the user gave as input
+def pretty_print_input(num_cpu: int, amount_ram: float, amount_disk: float, num_gpu: int, num_jobs: int,
+                       num_duration: float, max_nodes: int):
     console = Console()
 
     table = Table(show_header=True, header_style="bold blue")
@@ -224,7 +217,7 @@ def pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, num_
 
 
 # TODO: how to handle output for twenty nodes? Order by fits and then order by usage?
-def pretty_print_slots(result):
+def pretty_print_slots(result: dict):
     #  print out the nodes
     console = Console()
 
@@ -301,8 +294,9 @@ def pretty_print_slots(result):
     console.print(table)
 
 
-def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, num_gpu=0, num_jobs=1, job_duration=0,
-                maxnodes=0):
+def check_slots(static: list, dynamic: list, gpu: list, num_cpu: int, amount_ram: float, amount_disk: float,
+                num_gpu: int, num_jobs: int, job_duration: float,
+                maxnodes: int) -> dict:
     pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, job_duration, maxnodes)
 
     preview_res = {'nodes': [], 'preview': []}
@@ -442,42 +436,50 @@ def check_slots(static, dynamic, gpu, num_cpu=0, amount_ram=0, amount_disk=0, nu
                     + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
                 preview_node['fits'] = 'NO'
             preview_res['preview'].append(preview_node)
+    else:
+        return {}
 
     preview_res['preview'] = order_node_preview(preview_res['preview'])
     if maxnodes != 0 and len(preview_res['preview']) > maxnodes:
         preview_res['preview'] = preview_res['preview'][:maxnodes]
 
     pretty_print_slots(preview_res)
+    return preview_res
 
 
 # order the list of checked nodes by fits and number of similar jobs
-def order_node_preview(node_preview):
+def order_node_preview(node_preview: list) -> list:
     return sorted(node_preview, key=lambda nodes: (nodes["sim_jobs"]), reverse=True)
 
 
-def manage_calculation(cpu=0, gpu=0, ram="", disk="", jobs=0, job_duration="", maxnodes=0):
-    ram, ram_unit = split_number_unit(ram)
+def manage_calculation(cpu: int, gpu: int, ram: str, disk: str, jobs: int, job_duration: str, maxnodes: int) -> bool:
+    [ram, ram_unit] = split_number_unit(ram)
     ram = calc_to_bin(ram, ram_unit)
-
-    disk, disk_unit = split_number_unit(disk)
+    [disk, disk_unit] = split_number_unit(disk)
     disk = calc_to_bin(disk, disk_unit)
 
-    job_duration, duration_unit = split_duration_unit(job_duration)
+    [job_duration, duration_unit] = split_duration_unit(job_duration)
     job_duration = calc_to_min(job_duration, duration_unit)
 
     if args.verbose:
         print("verbosity turned on")
     if cpu == 0:
         print("No number of CPU workers given --- ABORTING")
+        return False
     elif ram == 0.0 and disk == 0.0:
         print("No RAM or DISK amount given --- ABORTING")
+        return False
     else:
         check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram, disk, gpu, jobs, job_duration, maxnodes)
         return True
 
 
 if __name__ == "__main__":
-    static_slts, dynamic_slts, gpu_slts = define_slots()
+    slot_config = define_slots()
+    static_slts = slot_config["static"]
+    dynamic_slts = slot_config["dynamic"]
+    gpu_slts = slot_config["gpu"]
+
     test = False
     args = define_environment()
 

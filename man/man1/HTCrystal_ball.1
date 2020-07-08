@@ -1,14 +1,15 @@
 .Dd July 1, 2020
-.Dt HTC_Preview 1
+.Dt HTCrystal_ball 1
 .Os \" Current operating system.
 
 .Sh NAME
-.Nm htcondor_preview
+.Nm HTCrystal_ball
 .Nd calculate and preview available HTCondor nodes for given jobs
 
 .Sh SYNOPSIS
 .Nm
 .Op CPU
+.Op RAM
 .Ar ...
 .Op OPTIONS
 
@@ -35,32 +36,31 @@ This will print a small help function, just like this.
 .It Fl g | Fl Fl gpu
 pass a number of requested GPUs
 
-.It Fl D | Fl Fl Disk
+.It Fl d | Fl Fl disk
 pass the amount of requested Disk space including a unit, e.g. 10GB or 15GiB
 
 .It Fl j | Fl Fl jobs
 pass the number of jobs to be executed, the requested resources will be assigned to each job
 
-.It Fl d | Fl Fl duration
+.It Fl t | Fl Fl time
 pass the estimated time for one job to be executed
 
 .It Fl m | Fl Fl max-nodes
 pass the maximum number of nodes for all jobs to be executed (due to matlab licensing)q
 
-default: pretty
-
 .Sh CONFIG
 furthermore all these variables|settings can be set inside an HTCondor submit file.
-See the #Todo: link to config explanation
+See the HTCondor documentation at
+.Lk https://htcondor.readthedocs.io/en/latest/man-pages/
 
 .Sh EXAMPLES
-htc_preview -s mycondor.submit
+HTCrystal_ball -c 4 -r 10G
 
 .Sh SEE ALSO
 The
 .Nm
 repository is available at
-.Lk https://github.com/psyinfra/htcondor_preview
+.Lk https://github.com/psyinfra/HTCrystal_ball
 Bug reports, patches, and (constructive) input are always welcome.
 
 

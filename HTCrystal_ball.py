@@ -136,7 +136,7 @@ class TestPreview:
                                       slots["gpu"], 0, 10.0, 0.0, 0, 1, 0.0, 0)
 
 
-def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtT]i?[bB]?)?$")):
+def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")):
     """
     Defines and checks for valid storage inputs.
     :param arg_value:
@@ -254,7 +254,7 @@ def define_environment():
                     "either the amount of RAM or diskspace "
                     "(including units eg. 100MB, 90MiB, 10GB, 15GiB) to this script "
                     "according to the usage example shown above. For JOB Duration please "
-                    "use d, h, m or s", prog='htc_preview.py',
+                    "use d, h, m or s", prog='HTCrystal_ball.py',
         usage='%(prog)s -c CPU -r RAM [-g GPU] [-D DISK] [-j JOBS] [-d DURATION] [-v]',
         epilog="PLEASE NOTE: HTCondor always uses binary storage "
                "sizes, so 10GB will be converted to 9.31 GiB.")
@@ -266,12 +266,12 @@ def define_environment():
                         type=int)
     parser.add_argument("-j", "--jobs", help="Set number of jobs to be executed",
                         type=int)
-    parser.add_argument("-d", "--duration", help="Set the duration for one job "
-                                                 "to be executed", type=validate_duration)
-    parser.add_argument("-D", "--Disk", help="Set amount of requested disk "
-                                             "storage in GB", type=validate_storage_size)
+    parser.add_argument("-t", "--time", help="Set the duration for one job "
+                                             "to be executed", type=validate_duration)
+    parser.add_argument("-d", "--disk", help="Set amount of requested disk "
+                                             "storage", type=validate_storage_size)
     parser.add_argument("-r", "--ram", help="Set amount of requested memory "
-                                            "storage in GB", type=validate_storage_size, required=True)
+                                            "storage", type=validate_storage_size, required=True)
     parser.add_argument("-m", "--maxnodes", help="Set maximum of nodes to "
                                                  "run jobs on", type=int)
 
@@ -281,7 +281,7 @@ def define_environment():
 
 def define_slots() -> dict:
     """
-    Loads the slot configuration.
+    Loads the slot configuration. TODO: Add filters for slot types
     :return:
     """
     with open('config/slots.json') as config_file:
@@ -314,11 +314,11 @@ def pretty_print_input(num_cpu: int, amount_ram: float, amount_disk: float, num_
     )
     table.add_row(
         "RAM",
-        "{0:.2f}".format(amount_ram) + " GiB (converted)"
+        "{0:.2f}".format(amount_ram) + " GiB"
     )
     table.add_row(
         "STORAGE",
-        "{0:.2f}".format(amount_disk) + " GiB (converted)"
+        "{0:.2f}".format(amount_disk) + " GiB"
     )
     table.add_row(
         "GPUS",
@@ -330,7 +330,7 @@ def pretty_print_input(num_cpu: int, amount_ram: float, amount_disk: float, num_
     )
     table.add_row(
         "JOB DURATION",
-        "{0:.2f}".format(num_duration) + " min (converted)"
+        "{0:.2f}".format(num_duration) + " min"
     )
     table.add_row(
         "MAXIMUM NODES",
@@ -667,12 +667,12 @@ if __name__ == "__main__":
         GPU_WORKERS = 0
 
     RAM_AMOUNT = CMD_ARGS.ram
-    DISK_SPACE = CMD_ARGS.Disk
+    DISK_SPACE = CMD_ARGS.disk
 
     JOB_AMOUNT = CMD_ARGS.jobs
     if JOB_AMOUNT is None:
         JOB_AMOUNT = 1
-    JOB_DURATION = CMD_ARGS.duration
+    JOB_DURATION = CMD_ARGS.time
 
     MATLAB_NODES = CMD_ARGS.maxnodes
     if MATLAB_NODES is None:

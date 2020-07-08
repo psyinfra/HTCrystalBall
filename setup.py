@@ -15,14 +15,14 @@ __version__ = '.'.join(map(str, (0, 1, 0)))
 # Provide a little info about who we are
 #
 setuptools.setup(
-    name='HTCon_preview',
+    name='HTCrystal_ball',
     version=__version__,
     author='Jona Fischer and many others',
     author_email='j.fischer@fz-juelich.de',
     description='HTCondor preview script',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://jugit.fz-juelich.de/inm7/infrastructure/loony_tools/htcondor_preview',
+    url='https://github.com/psyinfra/HTCrystal_ball',
     license='MIT',
     classifiers=[
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -43,11 +43,9 @@ setuptools.setup(
         're'
     ],
     tests_require=[
-        'pyflakes',
         'pytest',
-        'vcrpy',
     ],
     data_files=[
-            ('share/man/man1', ['man/man1/htc_preview.1'])
+            ('share/man/man1', ['man/man1/HTCrystal_ball.1'])
       ],
 )

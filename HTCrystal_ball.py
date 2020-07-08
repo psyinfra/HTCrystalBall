@@ -154,7 +154,21 @@ def define_slots() -> dict:
     """
     with open('config/slots.json') as config_file:
         data = json.load(config_file)
-    return data
+    return data["slots"]
+
+
+def filter_slots(slots: dict, slot_type: str) -> list:
+    """
+    Filter the slots stored in a dictionary according to their type
+    :param slots:
+    :param slot_type:
+    :return:
+    """
+    res = []
+    for slot in slots:
+        if slot["type"] == slot_type:
+            res.append(slot)
+    return res
 
 
 #  print out what the user gave as input
@@ -499,9 +513,9 @@ def prepare_checking(arg_values, cpu: int, gpu: int, ram: str, disk: str,
     :return:
     """
     slot_config = define_slots()
-    static_slts = slot_config["static"]
-    dynamic_slts = slot_config["dynamic"]
-    gpu_slts = slot_config["gpu"]
+    static_slts = filter_slots(slot_config, "static")
+    dynamic_slts = filter_slots(slot_config, "dynamic")
+    gpu_slts = filter_slots(slot_config, "gpu")
 
     [ram, ram_unit] = split_number_unit(ram)
     ram = calc_to_bin(ram, ram_unit)

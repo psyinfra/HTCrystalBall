@@ -18,6 +18,7 @@ def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]
     :return:
     """
     if not pat.match(arg_value):
+        print("ERROR: Invalid storage value given: '"+arg_value+"'\n")
         raise argparse.ArgumentTypeError
     return arg_value
 
@@ -30,6 +31,7 @@ def validate_duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS]?))?$")):
     :return:
     """
     if not pat.match(arg_value):
+        print("ERROR: Invalid time value given: '"+arg_value+"'\n")
         raise argparse.ArgumentTypeError
     return arg_value
 
@@ -123,7 +125,7 @@ def define_environment():
                     "(including units eg. 100MB, 90MiB, 10GB, 15GiB) to this script "
                     "according to the usage example shown above. For JOB Duration please "
                     "use d, h, m or s", prog='htcrystal_ball.py',
-        usage='%(prog)s -c CPU -r RAM [-g GPU] [-D DISK] [-j JOBS] [-d DURATION] [-v]',
+        usage='%(prog)s -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-d DURATION] [-v]',
         epilog="PLEASE NOTE: HTCondor always uses binary storage "
                "sizes, so 10GB will be converted to 9.31 GiB.")
     parser.add_argument("-v", "--verbose", help="Print extended log to stdout",

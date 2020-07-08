@@ -255,7 +255,7 @@ def define_environment():
                     "(including units eg. 100MB, 90MiB, 10GB, 15GiB) to this script "
                     "according to the usage example shown above. For JOB Duration please "
                     "use d, h, m or s", prog='htc_preview.py',
-        usage='%(prog)s -c CPU [-g GPU] [-D DISK] [-r RAM] [-j JOBS] [-d DURATION] [-v]',
+        usage='%(prog)s -c CPU -r RAM [-g GPU] [-D DISK] [-j JOBS] [-d DURATION] [-v]',
         epilog="PLEASE NOTE: HTCondor always uses binary storage "
                "sizes, so 10GB will be converted to 9.31 GiB.")
     parser.add_argument("-v", "--verbose", help="Print extended log to stdout",
@@ -271,7 +271,7 @@ def define_environment():
     parser.add_argument("-D", "--Disk", help="Set amount of requested disk "
                                              "storage in GB", type=validate_storage_size)
     parser.add_argument("-r", "--ram", help="Set amount of requested memory "
-                                            "storage in GB", type=validate_storage_size)
+                                            "storage in GB", type=validate_storage_size, required=True)
     parser.add_argument("-m", "--maxnodes", help="Set maximum of nodes to "
                                                  "run jobs on", type=int)
 
@@ -647,8 +647,8 @@ def prepare_checking(arg_values, cpu: int, gpu: int, ram: str, disk: str,
         print("verbosity turned on")
     if cpu == 0:
         print("No number of CPU workers given --- ABORTING")
-    elif ram == 0.0 and disk == 0.0:
-        print("No RAM or DISK amount given --- ABORTING")
+    elif ram == 0.0:
+        print("No RAM amount given --- ABORTING")
     else:
         check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram, disk, gpu,
                     jobs, job_duration, maxnodes)

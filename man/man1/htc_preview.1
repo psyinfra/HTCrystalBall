@@ -21,8 +21,11 @@ prints out a readable result of available HTCondor nodes
 Its arguments are as follows:
 .Bl -tag -width Ds
 
-.It Ar CPU
+.It Ar c | Ar Ar cpu
 pass a number of requested CPU cores
+
+.It Ar r | Ar Ar ram
+pass the amount of requested RAM including a unit, e.g. 10GB or 15GiB
 
 .It Ar OPTIONS
 
@@ -31,9 +34,6 @@ This will print a small help function, just like this.
 
 .It Fl g | Fl Fl gpu
 pass a number of requested GPUs
-
-.It Fl r | Fl Fl ram
-pass the amount of requested RAM including a unit, e.g. 10GB or 15GiB
 
 .It Fl D | Fl Fl Disk
 pass the amount of requested Disk space including a unit, e.g. 10GB or 15GiB

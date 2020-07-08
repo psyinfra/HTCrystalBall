@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.table import Column, Table
 
 
-class PreviewTest:
+class TestPreview:
     def test_storage_parser(self):
         assert storage_size("20GB") == "20GB"
         assert storage_size("20") == "20"
@@ -16,15 +16,19 @@ class PreviewTest:
         assert storage_size("20GBt") == "20GB"
         assert storage_size("20GB3") == "20GB"
 
-    def test_split_storage(self, number, unit):
-        assert split_number_unit(str(number)) == number, "GiB"
-        assert split_number_unit(str(number) + "GiB") == number, "GiB"
+    def test_split_storage(self):
+        number = 10
+        unit = "GB"
+        assert split_number_unit(str(number)) == [number, "GiB"]
+        assert split_number_unit(str(number) + "GiB") == [number, "GiB"]
         assert split_number_unit("0" + unit) == "GiB"
         assert split_number_unit(str(number)) == number
 
-    def test_split_time(self, number, unit):
-        assert split_duration_unit(str(number)) == number, "min"
-        assert split_duration_unit(str(number) + "min") == number, "min"
+    def test_split_time(self):
+        number = 10
+        unit = "min"
+        assert split_duration_unit(str(number)) == [number, "min"]
+        assert split_duration_unit(str(number) + "min") == [number, "min"]
         assert split_duration_unit("0" + unit) == "min"
         assert split_duration_unit(str(number)) == number
 
@@ -42,19 +46,19 @@ class PreviewTest:
         assert calc_to_min(10.0, "s") == 10.0
 
     def test_calc_manager(self):
-        assert manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
-        assert manage_calculation(cpu=0, gpu=1, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
-        assert manage_calculation(cpu=1, gpu=0, ram="0", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
-        assert manage_calculation(cpu=1, gpu=1, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
-        assert manage_calculation(cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=1, job_duration="10m", maxnodes=0) == True
-        assert manage_calculation(cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=128, job_duration="15m", maxnodes=0) == True
-        assert manage_calculation(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=1) == True
-        assert manage_calculation(cpu=8, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
-        assert manage_calculation(cpu=8, gpu=0, ram="80GB", disk="0", jobs=4, job_duration="1h", maxnodes=0) == True
-        assert manage_calculation(cpu=2, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=3) == True
-        assert manage_calculation(cpu=1, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2) == True
-        assert manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=1, job_duration="10m", maxnodes=2) == True
-        assert manage_calculation(cpu=2, gpu=0, ram="20GB", disk="0", jobs=32, job_duration="10m", maxnodes=1) == True
+        assert manage_calculation(None, cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(None, cpu=0, gpu=1, ram="10GB", disk="0", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(None, cpu=1, gpu=0, ram="0", disk="", jobs=1, job_duration="", maxnodes=0) == True
+        assert manage_calculation(None, cpu=1, gpu=1, ram="20GB", disk="", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(None, cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(None, cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=128, job_duration="15m", maxnodes=0) == True
+        assert manage_calculation(None, cpu=1, gpu=0, ram="10GB", disk="", jobs=1, job_duration="10m", maxnodes=1) == True
+        assert manage_calculation(None, cpu=8, gpu=0, ram="10GB", disk="", jobs=1, job_duration="10m", maxnodes=0) == True
+        assert manage_calculation(None, cpu=8, gpu=0, ram="80GB", disk="", jobs=4, job_duration="1h", maxnodes=0) == True
+        assert manage_calculation(None, cpu=2, gpu=0, ram="10GB", disk="", jobs=1, job_duration="10m", maxnodes=3) == True
+        assert manage_calculation(None, cpu=1, gpu=0, ram="20GB", disk="", jobs=1, job_duration="10m", maxnodes=2) == True
+        assert manage_calculation(None, cpu=2, gpu=0, ram="20GB", disk="", jobs=1, job_duration="", maxnodes=2) == True
+        assert manage_calculation(None, cpu=2, gpu=0, ram="20GB", disk="", jobs=32, job_duration="10m", maxnodes=1) == True
 
     def test_slot_config(self):
         slots = define_slots()
@@ -452,7 +456,12 @@ def order_node_preview(node_preview: list) -> list:
     return sorted(node_preview, key=lambda nodes: (nodes["sim_jobs"]), reverse=True)
 
 
-def manage_calculation(cpu: int, gpu: int, ram: str, disk: str, jobs: int, job_duration: str, maxnodes: int) -> bool:
+def manage_calculation(args, cpu: int, gpu: int, ram: str, disk: str, jobs: int, job_duration: str, maxnodes: int) -> bool:
+    slot_config = define_slots()
+    static_slts = slot_config["static"]
+    dynamic_slts = slot_config["dynamic"]
+    gpu_slts = slot_config["gpu"]
+
     [ram, ram_unit] = split_number_unit(ram)
     ram = calc_to_bin(ram, ram_unit)
     [disk, disk_unit] = split_number_unit(disk)
@@ -461,7 +470,7 @@ def manage_calculation(cpu: int, gpu: int, ram: str, disk: str, jobs: int, job_d
     [job_duration, duration_unit] = split_duration_unit(job_duration)
     job_duration = calc_to_min(job_duration, duration_unit)
 
-    if args.verbose:
+    if args is not None and args.verbose:
         print("verbosity turned on")
     if cpu == 0:
         print("No number of CPU workers given --- ABORTING")
@@ -475,33 +484,23 @@ def manage_calculation(cpu: int, gpu: int, ram: str, disk: str, jobs: int, job_d
 
 
 if __name__ == "__main__":
-    slot_config = define_slots()
-    static_slts = slot_config["static"]
-    dynamic_slts = slot_config["dynamic"]
-    gpu_slts = slot_config["gpu"]
-
-    test = False
     args = define_environment()
+    cpu_in = args.cpu
+    if cpu_in is None:
+        cpu_in = 0
+    gpu_in = args.gpu
+    if gpu_in is None:
+        gpu_in = 0
 
-    if test:
-        print("TESTING")
-    else:
-        cpu_in = args.cpu
-        if cpu_in is None:
-            cpu_in = 0
-        gpu_in = args.gpu
-        if gpu_in is None:
-            gpu_in = 0
+    ram_in = args.ram
+    disk_in = args.Disk
 
-        ram_in = args.ram
-        disk_in = args.Disk
+    jobs_in = args.jobs
+    if jobs_in is None:
+        jobs_in = 1
+    duration = args.duration
 
-        jobs_in = args.jobs
-        if jobs_in is None:
-            jobs_in = 1
-        duration = args.duration
-
-        nodes_in = args.maxnodes
-        if nodes_in is None:
-            nodes_in = 0
-        manage_calculation(cpu_in, gpu_in, ram_in, disk_in, jobs_in, duration, nodes_in)
+    nodes_in = args.maxnodes
+    if nodes_in is None:
+        nodes_in = 0
+    manage_calculation(args, cpu_in, gpu_in, ram_in, disk_in, jobs_in, duration, nodes_in)

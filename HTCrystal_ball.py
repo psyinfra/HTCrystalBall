@@ -208,20 +208,14 @@ def calc_to_bin(number: float, unit: str) -> float:
     :return:
     """
     unit_indicator = unit.lower()
-    if unit_indicator in ("kb", "k"):
-        number = number * (10 ** 3) / (2 ** 30)
-    elif unit_indicator == "kib":
-        number = number / (2 ** 20)
-    elif unit_indicator in ("mb", "m"):
-        number = number * (10 ** 6) / (2 ** 30)
-    elif unit_indicator == "mib":
-        number = number / (2 ** 10)
-    elif unit_indicator in ("gb", "g"):
-        number = number * (10 ** 9) / (2 ** 30)
-    elif unit_indicator in ("tb", "t"):
-        number = number * (10 ** 12) / (2 ** 30)
-    elif unit_indicator == "tib":
-        number = number * (2 ** 10)
+    if unit_indicator in ("kb", "k", "kib"):
+        number = number / (10 ** 6)
+    elif unit_indicator in ("mb", "m", "mib"):
+        number = number / (10 ** 3)
+    elif unit_indicator in ("tb", "t", "tib"):
+        number = number * (10 ** 3)
+    elif unit_indicator in ("pb", "p", "pib"):
+        number = number * (10 ** 6)
     return number
 
 

@@ -148,7 +148,6 @@ def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtT]i?[bB]?)
     return arg_value
 
 
-#
 def validate_duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS]?))?$")):
     """
     Defines and checks for valid time inputs.
@@ -268,7 +267,7 @@ def define_environment():
     parser.add_argument("-j", "--jobs", help="Set number of jobs to be executed",
                         type=int)
     parser.add_argument("-d", "--duration", help="Set the duration for one job "
-                                                 "to be executed", type=JOB_DURATION)
+                                                 "to be executed", type=validate_duration)
     parser.add_argument("-D", "--Disk", help="Set amount of requested disk "
                                              "storage in GB", type=validate_storage_size)
     parser.add_argument("-r", "--ram", help="Set amount of requested memory "

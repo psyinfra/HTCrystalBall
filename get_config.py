@@ -1,70 +1,66 @@
 import json
 
 
-def slot_equals(slot_a: dict, slot_b: dict) -> bool:
-    """
-
-    :param slot_a:
-    :param slot_b:
-    :return:
-    """
-    equals = slot_a["SlotType"] == slot_b["SlotType"] and slot_a["SlotType"] == "Static" \
-        and slot_a["TotalCpus"] == slot_b["TotalCpus"] \
-        and slot_a["TotalDisk"] == slot_b["TotalDisk"] \
-        and slot_a["UtsnameNodename"] == slot_b["UtsnameNodename"] \
-        and slot_a["TotalMemory"] == slot_b["TotalMemory"] \
-        and slot_a["TotalSlotCpus"] == slot_b["TotalSlotCpus"] \
-        and slot_a["TotalSlotDisk"] == slot_b["TotalSlotDisk"] \
-        and slot_a["TotalSlotMemory"] == slot_b["TotalSlotMemory"] \
-        and slot_a["TotalSlots"] == slot_b["TotalSlots"]
-    return equals
+def dict_equals(dict_a: dict, dict_b: dict):
+    shared_items = {k: dict_a[k] for k in dict_a if k in dict_b and dict_a[k] == dict_b[k]}
+    print(len(shared_items))
+    if len(shared_items) == 9:
+        return True
+    else:
+        return False
 
 
-def slot_in_node(slot_a: dict, slots: dict) -> bool:
+def slot_in_node(slot_a: dict, slots: list) -> bool:
     count = 0
     while count < len(slots):
-        if slot_equals(slot_a, slots[count]):
+        if dict_equals(slot_a, slots[count]):
             return True
         count += 1
     return False
 
 
 def calc_disk_size(size: str) -> float:
-    return float("{0:.2f}".format(float(size)/2**20))
+    return float("{0:.2f}".format(float(size) / 2 ** 20))
 
 
 def calc_mem_size(size: str) -> float:
-    return float("{0:.2f}".format(float(size)/2**10))
+    return float("{0:.2f}".format(float(size) / 2 ** 10))
 
 
-def format_slots(slots: dict) -> dict:
+def format_slots(slots: list) -> dict:
     formatted = {"slots": []}
     count = 0
 
     while count < len(slots):
-        slot = {"node": slots[count]["UtsnameNodename"],
-                "total_ram": calc_mem_size(slots[count]["TotalMemory"]),
-                "total_disk": calc_disk_size(slots[count]["TotalDisk"]),
-                "slots_in_use": 0,
-                "ram_in_use": 0}
-        if slots[count]["SlotType"] == "Partitionable":
-            slot["type"] = "dynamic"
+        formatted_slot = {"node": slots[count]["UtsnameNodename"],
+                          "total_ram": calc_mem_size(slots[count]["TotalMemory"]),
+                          "total_disk": calc_disk_size(slots[count]["TotalDisk"]),
+                          "slots_in_use": 0,
+                          "ram_in_use": 0}
+        if slots[count]["SlotType"] == "Partitionable" or slots[count]["SlotType"] == "Dynamic":
+            if "gpu" in slots[count]["UtsnameNodename"]:
+                formatted_slot["type"] = "gpu"
+            else:
+                formatted_slot["type"] = "dynamic"
             number = slots[count]["TotalCpus"]
-            slot["total_slots"] = int(float(number))
-        elif slots[count]["SlotType"] == "Static":
-            slot["type"] = "static"
-            number = slots[count]["TotalSlots"]
-            slot["total_slots"] = int(float(number))
-            slot["slot_size"] = {}
+            formatted_slot["total_slots"] = int(float(number))
+            formatted_slot["slot_size"] = {}
             number = slots[count]["TotalSlotCpus"]
-            slot["slot_size"]["cores"] = int(float(number))
-            slot["slot_size"]["disk_amount"] = calc_disk_size(slots[count]["TotalSlotDisk"])
-            slot["slot_size"]["ram_amount"] = calc_mem_size(slots[count]["TotalSlotMemory"])
-        else:
-            slot["type"] = "gpu"
-            print("GPU!")
+            formatted_slot["slot_size"]["cores"] = int(float(number))
+            formatted_slot["slot_size"]["disk_amount"] = calc_disk_size(slots[count]["TotalSlotDisk"])
+            formatted_slot["slot_size"]["ram_amount"] = calc_mem_size(slots[count]["TotalSlotMemory"])
+        elif slots[count]["SlotType"] == "Static":
+            formatted_slot["type"] = "static"
+            number = slots[count]["TotalSlots"]
+            formatted_slot["total_slots"] = int(float(number))
+            formatted_slot["slot_size"] = {}
+            number = slots[count]["TotalSlotCpus"]
+            formatted_slot["slot_size"]["cores"] = int(float(number))
+            formatted_slot["slot_size"]["disk_amount"] = calc_disk_size(slots[count]["TotalSlotDisk"])
+            formatted_slot["slot_size"]["ram_amount"] = calc_mem_size(slots[count]["TotalSlotMemory"])
 
-        formatted["slots"].append(slot)
+        if not slot_in_node(slot, formatted["slots"]):
+            formatted["slots"].append(formatted_slot)
         count += 1
     return formatted
 
@@ -87,7 +83,7 @@ for line in content:
                 value = line.split('@')[0]
             slot[key] = value.replace("\"", "")
     else:
-        if not slot_in_node(slot, status["slots"]) and slot["SlotType"] != "Dynamic":
+        if not slot_in_node(slot, status["slots"]) and (slot["SlotType"] != "Dynamic" or "gpu" in slot["Name"]):
             status["slots"].append(slot)
         slot = {}
 

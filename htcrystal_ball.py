@@ -224,9 +224,9 @@ def pretty_print_input(num_cpu: int, amount_ram: float, amount_disk: float, num_
     console.print(table)
 
 
-def pretty_print_slots(result: dict):
+def pretty_print_nodes(result: dict):
     """
-    Prints out the nodes and the preview result to the console using rich tables.
+    Prints out the nodes to the console using rich tables.
     :param result:
     :return:
     """
@@ -273,6 +273,16 @@ def pretty_print_slots(result: dict):
 
     console.print("---------------------- NODES ----------------------")
     console.print(table)
+
+
+def pretty_print_slots(result: dict, verbose: bool):
+    """
+    Prints out the preview result to the console using rich tables.
+    :param result:
+    :param verbose:
+    :return:
+    """
+    console = Console()
 
     table = Table(show_header=True, header_style="bold cyan")
     table.add_column("Node", style="dim", width=12)
@@ -352,7 +362,10 @@ def check_slots(static: list, dynamic: list, gpu: list, num_cpu: int,
     if maxnodes != 0 and len(preview_res['preview']) > maxnodes:
         preview_res['preview'] = preview_res['preview'][:maxnodes]
 
-    pretty_print_slots(preview_res)
+    if verbose:
+        pretty_print_nodes(preview_res)
+    pretty_print_slots(preview_res, verbose)
+
     return preview_res
 
 

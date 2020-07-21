@@ -61,6 +61,7 @@ def format_slots(slots: list) -> dict:
 
     while count < len(slots):
         formatted_slot = {"node": slots[count]["UtsnameNodename"],
+                          "total_cpus": int(float(slots[count]["TotalCpus"])),
                           "total_ram": calc_mem_size(slots[count]["TotalMemory"]),
                           "total_disk": calc_disk_size(slots[count]["TotalDisk"]),
                           "slots_in_use": 0,

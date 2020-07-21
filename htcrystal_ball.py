@@ -288,28 +288,43 @@ def pretty_print_slots(result: dict, verbose: bool):
     table.add_column("Node", style="dim", width=12)
     table.add_column("Slot Type")
     table.add_column("Job fits", justify="right")
-    table.add_column("Slot usage", justify="right")
-    table.add_column("RAM usage", justify="center")
+    if verbose:
+        table.add_column("Slot usage", justify="right")
+        table.add_column("RAM usage", justify="center")
     table.add_column("Amount of similar jobs", justify="right")
     table.add_column("Wall Time on IDLE", justify="right")
 
     for node in result['preview']:
         if node['fits'] == "YES":
-            table.add_row("[green]" + node['name'] + "[/green]",
-                          "[green]" + node['type'] + "[/green]",
-                          "[green]" + node['fits'] + "[/green]",
-                          "[green]" + node['core_usage'] + " Cores[/green]",
-                          "[green]" + node['ram_usage'] + "[/green]",
-                          "[green]" + str(node['sim_jobs']) + "[/green]",
-                          "[green]" + str(node['wall_time_on_idle']) + " min[/green]")
+            if verbose:
+                table.add_row("[green]" + node['name'] + "[/green]",
+                              "[green]" + node['type'] + "[/green]",
+                              "[green]" + node['fits'] + "[/green]",
+                              "[green]" + node['core_usage'] + " Cores[/green]",
+                              "[green]" + node['ram_usage'] + "[/green]",
+                              "[green]" + str(node['sim_jobs']) + "[/green]",
+                              "[green]" + str(node['wall_time_on_idle']) + " min[/green]")
+            else:
+                table.add_row("[green]" + node['name'] + "[/green]",
+                              "[green]" + node['type'] + "[/green]",
+                              "[green]" + node['fits'] + "[/green]",
+                              "[green]" + str(node['sim_jobs']) + "[/green]",
+                              "[green]" + str(node['wall_time_on_idle']) + " min[/green]")
         else:
-            table.add_row("[red]" + node['name'] + "[/red]",
-                          "[red]" + node['type'] + "[/red]",
-                          "[red]" + node['fits'] + "[/red]",
-                          "[red]" + node['core_usage'] + " Cores[/red]",
-                          "[red]" + node['ram_usage'] + "[/red]",
-                          "[red]" + str(node['sim_jobs']) + "[/red]",
-                          "[red]" + str(node['wall_time_on_idle']) + " min[/red]")
+            if verbose:
+                table.add_row("[red]" + node['name'] + "[/red]",
+                              "[red]" + node['type'] + "[/red]",
+                              "[red]" + node['fits'] + "[/red]",
+                              "[red]" + node['core_usage'] + " Cores[/red]",
+                              "[red]" + node['ram_usage'] + "[/red]",
+                              "[red]" + str(node['sim_jobs']) + "[/red]",
+                              "[red]" + str(node['wall_time_on_idle']) + " min[/red]")
+            else:
+                table.add_row("[red]" + node['name'] + "[/red]",
+                              "[red]" + node['type'] + "[/red]",
+                              "[red]" + node['fits'] + "[/red]",
+                              "[red]" + str(node['sim_jobs']) + "[/red]",
+                              "[red]" + str(node['wall_time_on_idle']) + " min[/red]")
 
     console.print("---------------------- PREVIEW ----------------------")
     console.print(table)
@@ -317,7 +332,7 @@ def pretty_print_slots(result: dict, verbose: bool):
 
 def check_slots(static: list, dynamic: list, gpu: list, num_cpu: int,
                 amount_ram: float, amount_disk: float, num_gpu: int,
-                num_jobs: int, job_duration: float, maxnodes: int) -> dict:
+                num_jobs: int, job_duration: float, maxnodes: int, verbose: bool) -> dict:
     """
     Handles the checking for all node/slot types and invokes the output methods.
 
@@ -331,9 +346,11 @@ def check_slots(static: list, dynamic: list, gpu: list, num_cpu: int,
     :param num_jobs:
     :param job_duration:
     :param maxnodes:
+    :param verbose:
     :return:
     """
-    pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, job_duration, maxnodes)
+    if verbose:
+        pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu, num_jobs, job_duration, maxnodes)
 
     preview_res = {'nodes': [], 'preview': []}
 
@@ -502,7 +519,7 @@ def order_node_preview(node_preview: list) -> list:
 
 
 def prepare_checking(arg_values, cpu: int, gpu: int, ram: str, disk: str,
-                     jobs: int, job_duration: str, maxnodes: int) -> bool:
+                     jobs: int, job_duration: str, maxnodes: int, verbose: bool) -> bool:
     """
     Loads the Slot configuration, handles storage and time inputs,
     and invokes the checking for given job request if the request is valid.
@@ -514,6 +531,7 @@ def prepare_checking(arg_values, cpu: int, gpu: int, ram: str, disk: str,
     :param jobs:
     :param job_duration:
     :param maxnodes:
+    :param verbose:
     :return:
     """
     slot_config = define_slots()
@@ -529,7 +547,7 @@ def prepare_checking(arg_values, cpu: int, gpu: int, ram: str, disk: str,
     [job_duration, duration_unit] = split_duration_unit(job_duration)
     job_duration = calc_to_min(job_duration, duration_unit)
 
-    if arg_values is not None and arg_values.verbose:
+    if arg_values is not None and verbose:
         print("verbosity turned on")
     if cpu == 0:
         print("No number of CPU workers given --- ABORTING")
@@ -537,7 +555,7 @@ def prepare_checking(arg_values, cpu: int, gpu: int, ram: str, disk: str,
         print("No RAM amount given --- ABORTING")
     else:
         check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram, disk, gpu,
-                    jobs, job_duration, maxnodes)
+                    jobs, job_duration, maxnodes, verbose)
         return True
 
     return False
@@ -564,4 +582,4 @@ if __name__ == "__main__":
     if MATLAB_NODES is None:
         MATLAB_NODES = 0
     prepare_checking(CMD_ARGS, CPU_WORKERS, GPU_WORKERS, RAM_AMOUNT, DISK_SPACE,
-                     JOB_AMOUNT, JOB_DURATION, MATLAB_NODES)
+                     JOB_AMOUNT, JOB_DURATION, MATLAB_NODES, CMD_ARGS.verbose)

@@ -73,9 +73,12 @@ def format_slots(slots: list) -> dict:
         if slots[count]["SlotType"] == "Partitionable" or slots[count]["SlotType"] == "Dynamic":
             if "gpu" in slots[count]["UtsnameNodename"]:
                 formatted_slot["type"] = "gpu"
+                formatted_slot["total_slots"] = int(float(slots[count]["TotalGPUs"]))
+                formatted_slot["slot_size"]["gpus"] = int(float(slots[count]["TotalSlotGPUs"]))
+                formatted_slot["assigned_gpus"] = slots[count]["AssignedGPUs"]
             else:
                 formatted_slot["type"] = "dynamic"
-            formatted_slot["total_slots"] = int(float(slots[count]["TotalCpus"]))
+                formatted_slot["total_slots"] = int(float(slots[count]["TotalCpus"]))
 
         elif slots[count]["SlotType"] == "Static":
             formatted_slot["type"] = "static"
@@ -106,7 +109,7 @@ def read_slots(filename: str) -> dict:
             key = pairs[0].strip().replace("'", "")
             value = pairs[1].strip().replace("'", "")
             if key in ("SlotType", "TotalCpus", "TotalDisk", "UtsnameNodename", "Name", "TotalMemory", "TotalSlotCpus",
-                       "TotalSlotDisk", "TotalSlotMemory", "TotalSlots"):
+                       "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalGPUs", "TotalSlotGPUs", "AssignedGPUs"):
                 if key == "Name":
                     value = line.split('@')[0]
                 slot[key] = value.replace("\"", "")

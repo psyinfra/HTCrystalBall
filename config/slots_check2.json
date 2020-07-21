@@ -21,5 +21,4 @@
   {"node": "cpu22", "total_ram": 503.84, "total_disk": 3689.0, "slots_in_use": 0, "ram_in_use": 0, "slot_size": {"cores": 32, "disk_amount": 3504.55, "ram_amount": 500.0}, "type": "dynamic", "total_slots": 32},
   {"node": "cpu23", "total_ram": 503.84, "total_disk": 3689.0, "slots_in_use": 0, "ram_in_use": 0, "slot_size": {"cores": 1, "disk_amount": 110.67, "ram_amount": 15.0}, "type": "static", "total_slots": 32},
   {"node": "cpu24", "total_ram": 503.84, "total_disk": 3689.0, "slots_in_use": 0, "ram_in_use": 0, "slot_size": {"cores": 1, "disk_amount": 110.67, "ram_amount": 15.0}, "type": "static", "total_slots": 32},
-  {"node": "gpu1", "total_ram": 345.82, "total_disk": 3594.1, "slots_in_use": 0, "ram_in_use": 0, "slot_size": {"cores": 10, "disk_amount": 1617.34, "ram_amount": 165.99, "gpus": 4}, "type": "gpu", "total_slots": 8, "assigned_gpus": "CUDA0,CUDA1,CUDA2,CUDA3"},
-  {"node": "gpu1", "total_ram": 345.82, "total_disk": 3594.1, "slots_in_use": 0, "ram_in_use": 0, "slot_size": {"cores": 10, "disk_amount": 1617.34, "ram_amount": 165.99, "gpus": 4}, "type": "gpu", "total_slots": 8, "assigned_gpus": "CUDA4,CUDA5,CUDA6,CUDA7"}]}
+  {"node": "gpu1", "total_ram": 345.82, "total_disk": 3594.1, "slots_in_use": 0, "ram_in_use": 0, "slot_size": {"cores": 10, "disk_amount": 1617.34, "ram_amount": 165.99}, "type": "gpu", "total_slots": 20}]}

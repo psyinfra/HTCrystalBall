@@ -83,31 +83,31 @@ def test_calc_manager():
     :return:
     """
     assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="0", jobs=1,
-                                      job_duration="10m", maxnodes=0)
+                                      job_duration="10m", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=0, gpu=1, ram="10GB", disk="0", jobs=1,
-                                      job_duration="10m", maxnodes=0)
+                                      job_duration="10m", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="0", disk="", jobs=1,
-                                      job_duration="", maxnodes=0)
+                                      job_duration="", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=1, gpu=1, ram="20GB", disk="", jobs=1,
-                                      job_duration="10m", maxnodes=0)
+                                      job_duration="10m", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="10GB",
-                                      jobs=1, job_duration="10m", maxnodes=0)
+                                      jobs=1, job_duration="10m", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="10GB",
-                                      jobs=128, job_duration="15m", maxnodes=0)
+                                      jobs=128, job_duration="15m", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="",
-                                      jobs=1, job_duration="10m", maxnodes=1)
+                                      jobs=1, job_duration="10m", maxnodes=1, verbose=True)
     assert big_balls.prepare_checking(None, cpu=8, gpu=0, ram="10GB", disk="",
-                                      jobs=1, job_duration="10m", maxnodes=0)
+                                      jobs=1, job_duration="10m", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=8, gpu=0, ram="80GB", disk="",
-                                      jobs=4, job_duration="1h", maxnodes=0)
+                                      jobs=4, job_duration="1h", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=2, gpu=0, ram="10GB", disk="",
-                                      jobs=1, job_duration="10m", maxnodes=3)
+                                      jobs=1, job_duration="10m", maxnodes=3, verbose=True)
     assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="20GB", disk="",
-                                      jobs=1, job_duration="10m", maxnodes=2)
+                                      jobs=1, job_duration="10m", maxnodes=2, verbose=True)
     assert big_balls.prepare_checking(None, cpu=2, gpu=0, ram="20GB", disk="",
-                                      jobs=1, job_duration="", maxnodes=2)
+                                      jobs=1, job_duration="", maxnodes=2, verbose=True)
     assert big_balls.prepare_checking(None, cpu=2, gpu=0, ram="20GB", disk="",
-                                      jobs=32, job_duration="10m", maxnodes=1)
+                                      jobs=32, job_duration="10m", maxnodes=1, verbose=True)
 
 
 def test_slot_config():
@@ -138,16 +138,16 @@ def test_slot_checking():
     assert "preview" in big_balls.check_slots(big_balls.filter_slots(slots, "static"),
                                               big_balls.filter_slots(slots, "dynamic"),
                                               big_balls.filter_slots(slots, "gpu"),
-                                              1, 10.0, 0.0, 0, 1, 0.0, 0)
+                                              1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False)
     assert "nodes" in big_balls.check_slots(big_balls.filter_slots(slots, "static"),
                                             big_balls.filter_slots(slots, "dynamic"),
                                             big_balls.filter_slots(slots, "gpu"),
-                                            1, 10.0, 0.0, 0, 1, 0.0, 0)
+                                            1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False)
     assert "preview" in big_balls.check_slots(big_balls.filter_slots(slots, "static"),
                                               big_balls.filter_slots(slots, "dynamic"),
                                               big_balls.filter_slots(slots, "gpu"),
-                                              0, 10.0, 0.0, 0, 1, 0.0, 0)
+                                              0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False)
     assert "nodes" in big_balls.check_slots(big_balls.filter_slots(slots, "static"),
                                             big_balls.filter_slots(slots, "dynamic"),
                                             big_balls.filter_slots(slots, "gpu"),
-                                            0, 10.0, 0.0, 0, 1, 0.0, 0)
+                                            0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False)

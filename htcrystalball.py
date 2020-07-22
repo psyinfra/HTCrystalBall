@@ -437,7 +437,7 @@ def check_dynamic_slots(slot: dict, num_cpu: int, amount_ram: float,
                                     + str(int(round((amount_ram / slot["ram"]) * 100))) + "%)"
         preview_node['fits'] = 'NO'
 
-    if num_cpu <= slot["cores"] and job_duration != 0:
+    if num_cpu <= slot["cores"] and amount_ram <= slot["ram"] and job_duration != 0:
         cpu_fits = int(slot["cores"] / num_cpu)
         jobs_parallel = cpu_fits \
             if amount_ram == 0 \

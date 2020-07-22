@@ -37,10 +37,7 @@ setuptools.setup(
     python_requires="!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     packages=setuptools.find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     install_requires=[
-        'argparse',
-        'rich',
-        'math',
-        're'
+        'rich'
     ],
     tests_require=[
         'pytest',

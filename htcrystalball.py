@@ -538,43 +538,46 @@ def check_gpu_slots(slot: dict, slot_type: str, num_cores: int, num_gpu: int, am
                     'ram_usage': '------',
                     'sim_jobs': '------',
                     'wall_time_on_idle': 0}
-    if num_cores <= slot_size["cores"] and amount_ram <= slot_size["ram_amount"] \
-            and num_gpu <= slot_size["gpus"]:
+    if num_cores <= slot["cores"] and amount_ram <= slot["ram"] \
+            and num_gpu <= slot["gpus"]:
         preview_node['core_usage'] = str(num_cores) + "/" + \
-                                     str(slot_size["cores"]) + " (" + str(
-                                         int(round((num_cores / slot_size["cores"])
+                                     str(slot["cores"]) + " (" + str(
+                                         int(round((num_cores / slot["cores"])
                                                    * 100))) + "%)"
         preview_node['gpu_usage'] = str(num_gpu) + "/" + \
-            str(slot_size["gpus"]) + " (" + str(
-            int(round((num_gpu / slot_size["gpus"])
-                      * 100))) + "%)"
-        preview_node['sim_jobs'] = min(available_slots, slot_size["gpus"])
+            str(slot["gpus"]) + " (" + str(
+                int(round((num_gpu / slot["gpus"])
+                          * 100))) + "%)"
+        preview_node['sim_jobs'] = min(available_slots, slot["gpus"])
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
-            slot_size["ram_amount"]) + " GiB (" \
-            + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
+            slot["ram"]) + " GiB (" \
+            + str(int(round((amount_ram / slot["ram"]) * 100))) + "%)"
         preview_node['fits'] = 'YES'
         if job_duration != 0:
-            cpu_fits = int(slot_size["cores"] / num_cores)
-            gpu_fits = int(slot_size["gpus"] / num_gpu)
+            cpu_fits = int(slot["cores"] / num_cores)
+            gpu_fits = int(slot["gpus"] / num_gpu)
             jobs_on_idle_slot = min(cpu_fits, gpu_fits) \
                 if amount_ram == 0 \
-                else min(min(cpu_fits, gpu_fits), int(slot_size["ram_amount"] / amount_ram))
+                else min(min(cpu_fits, gpu_fits), int(slot["ram"] / amount_ram))
             preview_node['wall_time_on_idle'] = str(
-                math.ceil(num_jobs / jobs_on_idle_slot / slot_size["gpus"]) *
+                math.ceil(num_jobs / jobs_on_idle_slot / slot["gpus"]) *
                 job_duration)
     else:
         preview_node['core_usage'] = str(num_cores) + "/" + \
-                                     str(slot_size["cores"]) + " (" + str(
-                                         int(round((num_cores / slot_size["cores"])
+                                     str(slot["cores"]) + " (" + str(
+                                         int(round((num_cores / slot["cores"])
                                                    * 100))) + "%)"
-        preview_node['gpu_usage'] = str(num_gpu) + "/" + \
-            str(slot_size["gpus"]) + " (" + str(
-            int(round((num_gpu / slot_size["gpus"])
-                      * 100))) + "%)"
+        if slot["gpus"] == 0:
+            preview_node['gpu_usage'] = "No GPU ressource!"
+        else:
+            preview_node['gpu_usage'] = str(num_gpu) + "/" + \
+                str(slot["gpus"]) + " (" + str(
+                    int(round((num_gpu / slot["gpus"])
+                              * 100))) + "%)"
         preview_node['sim_jobs'] = 0
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
-            slot_size["ram_amount"]) + " GiB (" \
-            + str(int(round((amount_ram / slot_size["ram_amount"]) * 100))) + "%)"
+            slot["ram"]) + " GiB (" \
+            + str(int(round((amount_ram / slot["ram"]) * 100))) + "%)"
         preview_node['fits'] = 'NO'
     return [node_dict, preview_node]
 

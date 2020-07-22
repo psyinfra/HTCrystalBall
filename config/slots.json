@@ -57,6 +57,6 @@
   {"node": "cpu24", "slot_size": [{"cores": 1, "disk": 110.67, "ram": 15.0, "type": "static", "total_slots": 32}]},
   {"node": "gpu1", "slot_size": [
     {"cores": 10, "disk": 1617.34, "ram": 165.99, "type": "gpu", "total_slots": 17, "gpus": 4},
-    {"cores": 1, "disk": 212.05, "ram": 20.0, "type": "gpu", "total_slots": 17, "gpus": 0},
-    {"cores": 2, "disk": 3.59, "ram": 12.0, "type": "gpu", "total_slots": 17, "gpus": 0}]}
+    {"cores": 1, "disk": 212.05, "ram": 20.0, "type": "dynamic", "total_slots": 17},
+    {"cores": 2, "disk": 3.59, "ram": 12.0, "type": "dynamic", "total_slots": 17}]}
 ]}

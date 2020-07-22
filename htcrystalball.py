@@ -548,7 +548,7 @@ def check_gpu_slots(slot: dict, slot_type: str, num_cores: int, num_gpu: int, am
             str(slot["gpus"]) + " (" + str(
                 int(round((num_gpu / slot["gpus"])
                           * 100))) + "%)"
-        preview_node['sim_jobs'] = min(available_slots, slot["gpus"])
+        preview_node['sim_jobs'] = min(int(slot["gpus"] / num_gpu), int(available_slots / num_cores))
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
             slot["ram"]) + " GiB (" \
             + str(int(round((amount_ram / slot["ram"]) * 100))) + "%)"

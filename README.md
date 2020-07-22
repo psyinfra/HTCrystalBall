@@ -4,7 +4,7 @@
 
 A crystal ball, that lets you peer into the future.
 
-##INPUT
+## INPUT
 
 This tool provides a quick and easy way for you to preview how well your requested jobs might be using our HTcondor slots.
 Therefore you can provide multiple parameters:
@@ -17,12 +17,12 @@ Therefore you can provide multiple parameters:
 *  TIME: the estimated time for each job to run
 *  MAXNODES: the maximum number of nodes that a job can run on e.g. due to licensing limitations
 
-[!NOTE]
-> As HTCondor uses base-2 storage units instead of base 10, DISK and RAM are treated as base-2
+
+> NOTE: As HTCondor uses base-2 storage units instead of base 10, DISK and RAM are treated as base-2
 >and expect at least a letter that describes the unit like K, M, G or T.
 
-##OUTPUT
-###Basic Output
+## OUTPUT
+### Basic Output
 HTCrystalBall will give you a brief summary of the executed slot checking for your jobs like this:
 
 |Slot Type|Job fits|Amount of similar jobs|Wall Time on Idle|
@@ -35,7 +35,7 @@ HTCrystalBall will give you a brief summary of the executed slot checking for yo
 *  Amount of similar jobs: number of jobs similar to the one defined, that fit into a slot the same time.
 *  Wall time on Idle: Theoretical execution time for all similar jobs to be executed on a slot.
 
-###Advanced Output
+### Advanced Output
 When using VERBOSE HTCrystalBall will print out your given Input...
 
 |Parameter|Input Value|
@@ -64,7 +64,7 @@ When using VERBOSE HTCrystalBall will print out your given Input...
 |Name|static|NO|... (x %)|... (x %)|... (x %)|...|... min|
 |Name|dynamic|NO|... (x %)|... (x %)|... (x %)|...|... min|
 
-###Examples:
+### Examples:
 ./htcrystalball.py -c 2 -r 10G -g 2
 
     ---------------------- PREVIEW ----------------------

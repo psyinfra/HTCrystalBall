@@ -4,8 +4,8 @@ Module for testing the htcrystalball module
 """
 import os
 import sys
-import pytest
 import argparse
+import pytest
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, FILE_PATH + '/../')
@@ -89,10 +89,10 @@ def test_calc_manager():
     """
     assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="0", jobs=1,
                                       job_duration="10m", maxnodes=0, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=0, gpu=1, ram="10GB", disk="0", jobs=1,
-                                      job_duration="10m", maxnodes=0, verbose=True) == False
-    assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="0", disk="", jobs=1,
-                                      job_duration="", maxnodes=0, verbose=True) == False
+    assert not big_balls.prepare_checking(None, cpu=0, gpu=1, ram="10GB", disk="0", jobs=1,
+                                          job_duration="10m", maxnodes=0, verbose=True)
+    assert not big_balls.prepare_checking(None, cpu=1, gpu=0, ram="0", disk="", jobs=1,
+                                          job_duration="", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=1, gpu=1, ram="20GB", disk="", jobs=1,
                                       job_duration="10m", maxnodes=0, verbose=True)
     assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="10GB",
@@ -149,10 +149,10 @@ def test_slot_checking():
                                             big_balls.filter_slots(slots, "gpu"),
                                             1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False)
     assert big_balls.check_slots(big_balls.filter_slots(slots, "static"),
-                                              big_balls.filter_slots(slots, "dynamic"),
-                                              big_balls.filter_slots(slots, "gpu"),
-                                              0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False) == {}
+                                 big_balls.filter_slots(slots, "dynamic"),
+                                 big_balls.filter_slots(slots, "gpu"),
+                                 0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False) == {}
     assert big_balls.check_slots(big_balls.filter_slots(slots, "static"),
-                                            big_balls.filter_slots(slots, "dynamic"),
-                                            big_balls.filter_slots(slots, "gpu"),
-                                            0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False) == {}
+                                 big_balls.filter_slots(slots, "dynamic"),
+                                 big_balls.filter_slots(slots, "gpu"),
+                                 0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False) == {}

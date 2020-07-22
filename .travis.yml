@@ -10,7 +10,6 @@ matrix:
       - python: nightly
         dist: bionic
         sudo: true
-      - python: pypy
       - python: pypy3
     allow_failures:
         - python: 3.9-dev

@@ -167,9 +167,11 @@ def filter_slots(slots: dict, slot_type: str) -> list:
     :return:
     """
     res = []
-    for slot in slots:
-        if slot["type"] == slot_type:
-            res.append(slot)
+    for node in slots:
+        for slot in node["slot_size"]:
+            if slot["type"] == slot_type:
+                slot["node"] = node["node"]
+                res.append(slot)
     return res
 
 

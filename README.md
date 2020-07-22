@@ -9,17 +9,32 @@ A crystal ball, that lets you peer into the future.
 This tool provides a quick and easy way for you to preview how well your requested jobs might be using our HTcondor slots.
 Therefore you can provide multiple parameters:
 
-*  CPU: the number of CPU cores for your job
-*  RAM: the amount of RAM your job needs
-*  DISK: the amount of disk space your job needs
-*  GPU: the number of GPU units your job should use
-*  JOBS: the number of similar jobs you want to execute
-*  TIME: the estimated time for each job to run
-*  MAXNODES: the maximum number of nodes that a job can run on e.g. due to licensing limitations
+
+    ./htcrystalball.py -h
+
+    usage: htcrystalball.py -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-d DURATION] [-v]
+
+    To get a preview for any job you are trying to execute using HTCondor, please
+    pass at least the number of CPUs and either the amount of RAM or diskspace
+    (including units eg. 100MB, 90M, 10GB, 15G) to this script according to
+    the usage example shown above. For JOB Duration please use d, h, m or s
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -v, --verbose         Print extended log to stdout
+      -c CPU, --cpu CPU     Set number of requested CPU Cores
+      -g GPU, --gpu GPU     Set number of requested GPU Units
+      -j JOBS, --jobs JOBS  Set number of jobs to be executed
+      -t TIME, --time TIME  Set the duration for one job to be executed
+      -d DISK, --disk DISK  Set amount of requested disk storage
+      -r RAM, --ram RAM     Set amount of requested memory storage
+      -m MAXNODES, --maxnodes MAXNODES
+                            Set maximum of nodes to run jobs on
+
+    PLEASE NOTE: HTCondor always uses binary storage sizes, so inputs will
+    automatically be treated that way.
 
 
-> NOTE: As HTCondor uses base-2 storage units instead of base 10, DISK and RAM are treated as base-2
->and expect at least a letter that describes the unit like K, M, G or T.
 
 ## OUTPUT
 ### Basic Output

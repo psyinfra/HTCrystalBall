@@ -1,7 +1,26 @@
+group: travis_latest
 language: python
-python:
-- 3.7
-cache:
-- apt
+cache: pip
+matrix:
+    include:
+      - python: 3.4
+      - python: 3.5
+      - python: 3.6
+      - python: 3.7
+      - python: 3.8
+      - python: 3.9-dev
+      - python: nightly
+        dist: bionic
+        sudo: true
+      - python: pypy
+      - python: pypy3
+    allow_failures:
+        - python: 3.9-dev
+        - python: nightly
 install:
-- travis_retry pip install rich
+  - pip install -U -r requirements.txt
+  - pip install -U -r requirements-test.txt
+  - pip list
+script:
+  - pyflakes --version && pyflakes *.py
+  - pytest --version && pytest tests/

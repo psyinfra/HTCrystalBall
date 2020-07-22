@@ -151,7 +151,7 @@ def define_environment():
 
 def define_slots() -> dict:
     """
-    Loads the slot configuration. TODO: Add filters for slot types
+    Loads the slot configuration.
     :return:
     """
     with open('config/slots.json') as config_file:

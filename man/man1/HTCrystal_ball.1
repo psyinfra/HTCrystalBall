@@ -1,10 +1,10 @@
 .Dd July 1, 2020
-.Dt HTCrystal_ball 1
+.Dt HTCRYSTALBALL 1
 .Os \" Current operating system.
 
 .Sh NAME
-.Nm HTCrystal_ball
-.Nd calculate and preview available HTCondor nodes for given jobs
+.Nm htcrystalball
+.Nd calculate how many of a specified job size can run on an HTCondor pool
 
 .Sh SYNOPSIS
 .Nm
@@ -14,63 +14,73 @@
 .Op OPTIONS
 
 .Sh DESCRIPTION
-The
 .Nm
-script takes an HTCondor submit file or a bunch of parameters as input with given flags and
-prints out a readable result of available HTCondor nodes
+calculates how many jobs (of a user\[hy]specified number and size) can run
+on an HTCondor pool. It also can provide estimates of overall runtime and
+node\[hy]specific matching (aiding those with node\[hy]level licensing
+restrictions).
 .Pp
 Its arguments are as follows:
 .Bl -tag -width Ds
 
 .It Ar c | Ar Ar cpu
-pass a number of requested CPU cores
+The number of CPU cores.
 
 .It Ar r | Ar Ar ram
-pass the amount of requested RAM including a unit, e.g. 10GB or 15GiB
+The amount of RAM, including a unit (e.g. 10G).
 
 .It Ar OPTIONS
 
 .It Fl h | Fl Fl help
-This will print a small help function, just like this.
+Prints a summary of
+.Nm Ap s
+command\[hy]line options and exits.
 
 .It Fl g | Fl Fl gpu
-pass a number of requested GPUs
+The number of requested GPUs.
 
 .It Fl d | Fl Fl disk
-pass the amount of requested Disk space including a unit, e.g. 10GB or 15GiB
+The disk space, including a unit (e.g. 50G).
 
 .It Fl j | Fl Fl jobs
-pass the number of jobs to be executed, the requested resources will be assigned to each job
+The number of jobs to be executed.
 
 .It Fl t | Fl Fl time
-pass the estimated time for one job to be executed
+The estimated time for one job to be executed.
 
-.It Fl m | Fl Fl max-nodes
-pass the maximum number of nodes for all jobs to be executed (due to matlab licensing)q
+.It Fl m | Fl Fl max\[hy]nodes
+pass the maximum number of nodes for all jobs to be executed (due to Matlab licensing)
 
 .Sh CONFIG
-furthermore all these variables|settings can be set inside an HTCondor submit file.
+furthermore all these variables/settings can be set inside an HTCondor submit file.
 See the HTCondor documentation at
-.Lk https://htcondor.readthedocs.io/en/latest/man-pages/
+.Lk https://htcondor.readthedocs.io/en/latest/man\[hy]pages/
 
 .Sh EXAMPLES
-HTCrystal_ball -c 4 -r 10G
+.Dl htcrystalball \-c 4 \-r 10G
 
 .Sh SEE ALSO
 The
 .Nm
 repository is available at
-.Lk https://github.com/psyinfra/HTCrystal_ball
+.Lk https://github.com/psyinfra/HTCrystalBall
 Bug reports, patches, and (constructive) input are always welcome.
 
 
 .Sh EXIT STATUS
-The
 .Nm
-script will exit normally in any case, if no other output is given, that tells the opposite.
+exits 0 on success and 1 if an error occurs.
 .Ex
 
-
 .Sh AUTHOR
-.An Jona Marcus Fischer,
-.Mt j.fischer@fz-juelich.de
+.Nm
+was created by
+.An Jona Marcus Fischer
+.Mt j.fischer@fz\[hy]juelich.de .
+See the AUTHORS file for more information.
+.
+.Sh COPYRIGHT
+.Nm
+is released under the
+.Qq ISC License.
+See the LICENSE file for more information.

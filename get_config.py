@@ -32,6 +32,15 @@ def slot_in_node(slot_a: dict, slots: list) -> bool:
     return False
 
 
+def nodename_in_list(name: str, slots: list) -> int:
+    count = 0
+    while count < len(slots):
+        if name == slots[count]["node"]:
+            return count
+        count += 1
+    return -1
+
+
 def calc_disk_size(size: str) -> float:
     """
     Calculates the disk space in GiB (condor_status returns it in KiB not in GiB)
@@ -60,33 +69,35 @@ def format_slots(slots: list) -> dict:
     count = 0
 
     while count < len(slots):
-        formatted_slot = {"node": slots[count]["UtsnameNodename"],
-                          "total_cpus": int(float(slots[count]["TotalCpus"])),
-                          "total_ram": calc_mem_size(slots[count]["TotalMemory"]),
-                          "total_disk": calc_disk_size(slots[count]["TotalDisk"]),
-                          "slots_in_use": 0,
-                          "ram_in_use": 0,
-                          "slot_size": {"cores": int(float(slots[count]["TotalSlotCpus"])),
-                                        "disk_amount": calc_disk_size(slots[count]["TotalSlotDisk"]),
-                                        "ram_amount": calc_mem_size(slots[count]["TotalSlotMemory"])
-                                        }
-                          }
-        if slots[count]["SlotType"] == "Partitionable" or slots[count]["SlotType"] == "Dynamic":
-            if "gpu" in slots[count]["UtsnameNodename"]:
-                formatted_slot["type"] = "gpu"
-                formatted_slot["total_slots"] = int(float(slots[count]["TotalGPUs"]))
-                formatted_slot["slot_size"]["gpus"] = int(float(slots[count]["TotalSlotGPUs"]))
-                formatted_slot["assigned_gpus"] = slots[count]["AssignedGPUs"]
+        slot = slots[count]
+
+        slot_size = {"cores": int(float(slot["TotalSlotCpus"])),
+                     "disk": calc_disk_size(slot["TotalSlotDisk"]),
+                     "ram": calc_mem_size(slot["TotalSlotMemory"])}
+
+        if slot["SlotType"] == "Partitionable" or slot["SlotType"] == "Dynamic":
+            if "gpu" in slot["UtsnameNodename"] and slot["TotalSlotGPUs"] != 0:
+                slot_size["type"] = "gpu"
+                slot_size["total_slots"] = int(int(slot["TotalSlots"]))
+                slot_size["gpus"] = int(float(slot["TotalSlotGPUs"]))
             else:
-                formatted_slot["type"] = "dynamic"
-                formatted_slot["total_slots"] = int(float(slots[count]["TotalCpus"]))
+                slot_size["type"] = "dynamic"
+                slot_size["total_slots"] = int(float(slot["TotalSlots"]))
 
-        elif slots[count]["SlotType"] == "Static":
-            formatted_slot["type"] = "static"
-            formatted_slot["total_slots"] = int(float(slots[count]["TotalSlots"]))
+        elif slot["SlotType"] == "Static":
+            slot_size["type"] = "static"
+            slot_size["total_slots"] = int(float(slot["TotalSlots"]))
 
-        if not slot_in_node(formatted_slot, formatted["slots"]):
+        node_in_list = nodename_in_list(slot["UtsnameNodename"], formatted["slots"])
+
+        if node_in_list != -1:
+            if not slot_in_node(slot_size, formatted["slots"][node_in_list]["slot_size"]):
+                formatted["slots"][node_in_list]["slot_size"].append(slot_size)
+        else:
+            formatted_slot = {"node": slot["UtsnameNodename"],
+                              "slot_size": [slot_size]}
             formatted["slots"].append(formatted_slot)
+
         count += 1
     return formatted
 
@@ -110,12 +121,12 @@ def read_slots(filename: str) -> dict:
             key = pairs[0].strip().replace("'", "")
             value = pairs[1].strip().replace("'", "")
             if key in ("SlotType", "TotalCpus", "TotalDisk", "UtsnameNodename", "Name", "TotalMemory", "TotalSlotCpus",
-                       "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalGPUs", "TotalSlotGPUs", "AssignedGPUs"):
+                       "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalGPUs", "TotalSlotGPUs"):
                 if key == "Name":
                     value = line.split('@')[0]
                 slot[key] = value.replace("\"", "")
         else:
-            if not slot_in_node(slot, status["slots"]) and (slot["SlotType"] != "Dynamic" or "gpu" in slot["Name"]):
+            if not slot_in_node(slot, status["slots"]):
                 status["slots"].append(slot)
             slot = {}
 
@@ -129,7 +140,7 @@ def write_slots(filename: str, content: dict):
     :param content:
     :return:
     """
-    with open('config/slots_check.json', 'w') as json_file:
+    with open('config/slots_check3.json', 'w') as json_file:
         json.dump(content, json_file)
 
 

@@ -121,7 +121,7 @@ def define_environment():
     parser = argparse.ArgumentParser(
         description="To get a preview for any job you are trying to execute using "
                     "HTCondor, please pass at least the number of CPUs and "
-                    "either the amount of RAM or diskspace "
+                    "the amount of RAM "
                     "(including units eg. 100MB, 90M, 10GB, 15G) to this script "
                     "according to the usage example shown above. For JOB Duration please "
                     "use d, h, m or s", prog='htcrystalball.py',

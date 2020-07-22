@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Module for testing the htcrystal_ball module
+Module for testing the htcrystalball module
 """
 import os
 import sys
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, FILE_PATH + '/../')
-import htcrystal_ball as big_balls
+import htcrystalball as big_balls
 
 
 def test_storage_validator():

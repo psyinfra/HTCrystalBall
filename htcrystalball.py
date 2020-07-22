@@ -124,7 +124,7 @@ def define_environment():
                     "either the amount of RAM or diskspace "
                     "(including units eg. 100MB, 90MiB, 10GB, 15GiB) to this script "
                     "according to the usage example shown above. For JOB Duration please "
-                    "use d, h, m or s", prog='htcrystal_ball.py',
+                    "use d, h, m or s", prog='htcrystalball.py',
         usage='%(prog)s -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-d DURATION] [-v]',
         epilog="PLEASE NOTE: HTCondor always uses binary storage "
                "sizes, so 10GB will be converted to 9.31 GiB.")

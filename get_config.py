@@ -52,7 +52,7 @@ def calc_mem_size(size: str) -> float:
 
 def format_slots(slots: list) -> dict:
     """
-    Formats the dictionary of slots into one similar to the already used keys and values in htcrystal_ball
+    Formats the dictionary of slots into one similar to the already used keys and values in htcrystalball
     :param slots:
     :return:
     """

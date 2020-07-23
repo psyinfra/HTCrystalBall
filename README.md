@@ -28,8 +28,7 @@ Therefore you can provide multiple parameters:
       -t TIME, --time TIME  Set the duration for one job to be executed
       -d DISK, --disk DISK  Set amount of requested disk storage
       -r RAM, --ram RAM     Set amount of requested memory storage
-      -m MAXNODES, --maxnodes MAXNODES
-                            Set maximum of nodes to run jobs on
+      -m MAXNODES, --maxnodes  Set maximum of nodes to run jobs on
 
     PLEASE NOTE: HTCondor always uses binary storage sizes, so inputs will
     automatically be treated that way.

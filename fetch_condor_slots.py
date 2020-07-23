@@ -1,4 +1,7 @@
 import json
+import os
+
+SLOTS_CONFIGURATION = "config/slots_check.json"
 
 
 def dict_equals(dict_a: dict, dict_b: dict):
@@ -120,8 +123,8 @@ def read_slots(filename: str) -> dict:
             pairs = line.split(' = ')
             key = pairs[0].strip().replace("'", "")
             value = pairs[1].strip().replace("'", "")
-            if key in ("SlotType", "TotalCpus", "TotalDisk", "UtsnameNodename", "Name", "TotalMemory", "TotalSlotCpus",
-                       "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalGPUs", "TotalSlotGPUs"):
+            if key in ("SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
+                       "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"):
                 if key == "Name":
                     value = line.split('@')[0]
                 slot[key] = value.replace("\"", "")
@@ -145,12 +148,14 @@ def write_slots(filename: str, content: dict):
 
 
 if __name__ == "__main__":
-    in_file = "./htcondor_status_long.txt"
-    out_file = "config/slots_check.json"
+    in_file = "htcondor_status_long.txt"
 
-    slots_in = read_slots(in_file)
+    myCmd = 'condor_status -long > '+in_file
+    os.system(myCmd)
+
+    slots_in = read_slots("./"+in_file)
     slots_out = format_slots(slots_in["slots"])
 
-    write_slots(out_file, slots_out)
+    write_slots(SLOTS_CONFIGURATION, slots_out)
 
 print("DONE")

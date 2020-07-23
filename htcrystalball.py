@@ -9,6 +9,8 @@ import math
 from rich.console import Console
 from rich.table import Table
 
+SLOTS_CONFIGURATION = "config/slots_check.json"
+
 
 def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")):
     """
@@ -154,7 +156,7 @@ def define_slots() -> dict:
     Loads the slot configuration.
     :return:
     """
-    with open('config/slots.json') as config_file:
+    with open(SLOTS_CONFIGURATION) as config_file:
         data = json.load(config_file)
     return data["slots"]
 

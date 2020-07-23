@@ -9,7 +9,7 @@ import math
 from rich.console import Console
 from rich.table import Table
 
-SLOTS_CONFIGURATION = "config/slots_check.json"
+SLOTS_CONFIGURATION = "config/slots.json"
 
 
 def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")):

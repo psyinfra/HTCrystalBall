@@ -1,7 +1,7 @@
 import json
 import os
 
-SLOTS_CONFIGURATION = "config/slots_check.json"
+SLOTS_CONFIGURATION = "config/slots.json"
 
 
 def dict_equals(dict_a: dict, dict_b: dict):
@@ -150,8 +150,8 @@ def write_slots(filename: str, content: dict):
 if __name__ == "__main__":
     in_file = "htcondor_status_long.txt"
 
-    myCmd = 'condor_status -long > '+in_file
-    os.system(myCmd)
+    # myCmd = 'condor_status -long > '+in_file
+    # os.system(myCmd)
 
     slots_in = read_slots("./"+in_file)
     slots_out = format_slots(slots_in["slots"])

@@ -364,6 +364,13 @@ When using VERBOSE HTCrystalBall will print out your given Input...
     └──────────────┴───────────┴──────────┴──────────────────┴───────────────────────┴───────────┴────────────────────────┴───────────────────┘
 
 ## Testing
+Make sure you have the neccessary python modules:
+
+`pip install pytest`
+
+Run the following command to execute your test:
+
+`pytest -q tests/test_me.py`
 
 ## License
 

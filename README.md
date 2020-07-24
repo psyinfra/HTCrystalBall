@@ -80,7 +80,7 @@ To install and configure `HTCrystalBall` please follow these steps:
     
 3. configure the path of the slot configuration file to match your system
 
-4. adjust the keys to be fetched from the command command
+4. adjust the keys to be fetched from the command
 
 ## INPUT
 

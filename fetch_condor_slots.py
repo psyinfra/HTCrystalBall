@@ -9,6 +9,7 @@ SLOTS_CONFIGURATION = "config/slots.json"
 
 def dict_equals(dict_a: dict, dict_b: dict):
     """
+
     Compares keys and values of two dictionarys.
     If the number of shared items equals the length of
     both dictionarys, they are considered as equal.

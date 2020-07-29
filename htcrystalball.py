@@ -13,7 +13,9 @@ SLOTS_CONFIGURATION = "config/slots.json"
 
 
 def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")):
-    """Defines and checks for valid storage inputs.
+    """
+
+    Defines and checks for valid storage inputs.
     :param arg_value:
     :param pat:
     :return:
@@ -25,7 +27,9 @@ def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]
 
 
 def validate_duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS]?))?$")):
-    """Defines and checks for valid time inputs.
+    """
+
+    Defines and checks for valid time inputs.
     :param arg_value:
     :param pat:
     :return:
@@ -38,6 +42,7 @@ def validate_duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS]?))?$")):
 
 def split_number_unit(user_input: str) -> [float, str]:
     """
+
     Splits the user input for storage sizes into number and storage unit.
     If no value or unit is given, the unit is set to GiB.
     :param user_input:
@@ -58,6 +63,7 @@ def split_number_unit(user_input: str) -> [float, str]:
 
 def split_duration_unit(user_input: str) -> [float, str]:
     """
+
     Splits the user input for time into number and time unit.
     If no value or unit is given, the unit is set to minutes.
     :param user_input:

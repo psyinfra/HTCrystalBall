@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+
 Gets a systems condor slot configuration, formats it and writes it to a JSON file
 """
 import json

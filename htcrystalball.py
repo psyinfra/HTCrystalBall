@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Gives users a preview on how and where they can execute their HTcondor compatible scripts
-"""
+"""Gives users a preview on how and where they can execute their HTcondor compatible scripts"""
 import os
 
 import argparse
@@ -642,9 +640,6 @@ def prepare_checking(arg_values, cpu: int, gpu: int, ram: str, disk: str,
 
 
 if __name__ == "__main__":
-    fetch_slots = './fetch_condor_slots.py'
-    os.system(fetch_slots)
-
     CMD_ARGS = define_environment()
     CPU_WORKERS = CMD_ARGS.cpu
     if CPU_WORKERS is None:
@@ -664,5 +659,10 @@ if __name__ == "__main__":
     MATLAB_NODES = CMD_ARGS.maxnodes
     if MATLAB_NODES is None:
         MATLAB_NODES = 0
+
+    # fetch current slot configuration
+    fetch_slots = './fetch_condor_slots.py'
+    os.system(fetch_slots)
+
     prepare_checking(CMD_ARGS, CPU_WORKERS, GPU_WORKERS, RAM_AMOUNT, DISK_SPACE,
                      JOB_AMOUNT, JOB_DURATION, MATLAB_NODES, CMD_ARGS.verbose)

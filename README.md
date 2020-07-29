@@ -132,15 +132,15 @@ Our `crystal ball` will give you a brief summary of the executed slot checking f
 ### Advanced Output
 When using VERBOSE HTCrystalBall will print out your given Input...
 
-|  Parameter   |Input Value|
-| ------------ | --------- |
-|     CPUS     |    ...    |
-|      RAM     |    ...    |
-|    STORAGE   |    ...    |
-|     GPUS     |    ...    |
-|     JOBS     |    ...    |
-| JOB DURATION |    ...    |
-| MAXIMUM NODES|    ...    |
+|   Parameter   | Input Value |
+| ------------- |  ---------  |
+|     CPUS      |     ...     |
+|      RAM      |     ...     |
+|    STORAGE    |     ...     |
+|     GPUS      |     ...     |
+|     JOBS      |     ...     |
+| JOB DURATION  |     ...     |
+| MAXIMUM NODES |     ...     |
 
 ...the current slot configuration of Juseless...
 
@@ -158,7 +158,7 @@ When using VERBOSE HTCrystalBall will print out your given Input...
 |Name|  static |    NO  | ... (x %)|... (x %)|... (x %)|          ...         |     ... min     |
 |Name| dynamic |    NO  | ... (x %)|... (x %)|... (x %)|          ...         |     ... min     |
 
-### Examples:
+### Examples
 ./htcrystalball.py -c 2 -r 10G -g 2
 
     ---------------------- PREVIEW ----------------------

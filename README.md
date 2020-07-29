@@ -20,8 +20,9 @@ here is a list of hyperlinks for you to skip searching for a particular section:
 
 ## Description
 This project contains of two main parts
-*  fetching an HTCondor slot configuration to create a JSON file with a list of slots
-*  looking for suiting slots in a given configuration to execute user-defined 
+
+*   fetching an HTCondor slot configuration to create a JSON file with a list of slots
+*   looking for suiting slots in a given configuration to execute user-defined
 jobs a.k.a. the `crystal ball`
 
 and is intended for HTCondor (server) systems which describe ressources as slots 
@@ -32,6 +33,7 @@ information about the various slots. In our particular use-case we went for the 
 option that gives us way too much information but at least all the information we need. 
 As each line of the command output follows the pattern `key = value` we chose to parse
 it that way and only store the key-value pairs for
+
 *   UtsnameNodename
 *   TotalSlots
 *   Name
@@ -75,11 +77,11 @@ To install and configure `HTCrystalBall` please follow these steps:
 1.  clone this repo to the file system of any machine in your HTCondor cluster
     
     `git clone git@github.com:psyinfra/HTCrystalBall.git /this/is/your/path`
-   
+
 2.  `cd` into the newly created directory and install python modules using the setup.py
 
     `pip install .`
-    
+
 3.  configure the path of the slot configuration file to match your system
 
 4.  adjust the keys to be fetched from the command
@@ -123,17 +125,17 @@ Our `crystal ball` will give you a brief summary of the executed slot checking f
 |static|...|...|0 min|
 |dynamic|...|...|0 min|
 
-*  Job fits: If one job fits into a slot it will be highlighted in green color, if not in red.
-*  Amount of similar jobs: number of jobs similar to the one defined, that fit into a slot the same time.
-*  Wall time on Idle: Theoretical execution time for all similar jobs to be executed on a slot.
+*   Job fits: If one job fits into a slot it will be highlighted in green color, if not in red.
+*   Amount of similar jobs: number of jobs similar to the one defined, that fit into a slot the same time.
+*   Wall time on Idle: Theoretical execution time for all similar jobs to be executed on a slot.
 
 ### Advanced Output
 When using VERBOSE HTCrystalBall will print out your given Input...
 
 |Parameter|Input Value|
 |---|---|
-|CPUS|...|
-|RAM|...|
+|CPUS |...|
+|RAM |...|
 |STORAGE|...|
 |GPUS|...|
 |JOBS|...|

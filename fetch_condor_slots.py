@@ -169,4 +169,3 @@ if __name__ == "__main__":
 
     write_slots(slots_out)
 
-print("DONE")

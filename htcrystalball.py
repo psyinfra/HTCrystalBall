@@ -2,6 +2,8 @@
 """
 Gives users a preview on how and where they can execute their HTcondor compatible scripts
 """
+import os
+
 import argparse
 import json
 import re
@@ -156,6 +158,8 @@ def define_slots() -> dict:
     Loads the slot configuration.
     :return:
     """
+    fetch_slots = './fetch_condor_slots.py'
+    os.system(fetch_slots)
     with open(SLOTS_CONFIGURATION) as config_file:
         data = json.load(config_file)
     return data["slots"]

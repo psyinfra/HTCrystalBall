@@ -427,7 +427,8 @@ def check_dynamic_slots(slot: dict, num_cpu: int, amount_ram: float,
                                     str(int(round((amount_ram / slot["ram"]) * 100))) \
                                     + "%)"
         preview_node['fits'] = 'YES'
-        preview_node['sim_jobs'] = min(int(available_cores / num_cpu), int(slot["ram"] / amount_ram))
+        preview_node['sim_jobs'] = min(int(available_cores / num_cpu),
+                                       int(slot["ram"] / amount_ram))
     else:
         preview_node['core_usage'] = str(num_cpu) + "/" + \
                                      str(slot["cores"]) + " (" + str(
@@ -550,7 +551,8 @@ def check_gpu_slots(slot: dict, slot_type: str, num_cores: int, num_gpu: int, am
             str(slot["gpus"]) + " (" + str(
                 int(round((num_gpu / slot["gpus"])
                           * 100))) + "%)"
-        preview_node['sim_jobs'] = min(int(slot["gpus"] / num_gpu), int(available_slots / num_cores),
+        preview_node['sim_jobs'] = min(int(slot["gpus"] / num_gpu),
+                                       int(available_slots / num_cores),
                                        int(slot["ram"] / amount_ram))
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
             slot["ram"]) + " GiB (" \

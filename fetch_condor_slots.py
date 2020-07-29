@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+"""
+Gets a systems condor slot configuration, formats it and writes it to a JSON file
+"""
 import json
 import os
 
@@ -9,7 +11,8 @@ SLOTS_CONFIGURATION = "config/slots.json"
 def dict_equals(dict_a: dict, dict_b: dict):
     """
     Compares keys and values of two dictionarys.
-    If the number of shared items equals the length of both dictionarys, they are considered as equal.
+    If the number of shared items equals the length of
+    both dictionarys, they are considered as equal.
     :param dict_a:
     :param dict_b:
     :return:
@@ -17,8 +20,8 @@ def dict_equals(dict_a: dict, dict_b: dict):
     shared_items = {k: dict_a[k] for k in dict_a if k in dict_b and dict_a[k] == dict_b[k]}
     if len(shared_items) == len(dict_a) and len(shared_items) == len(dict_b):
         return True
-    else:
-        return False
+
+    return False
 
 
 def slot_in_node(slot_a: dict, slots: list) -> bool:
@@ -38,6 +41,12 @@ def slot_in_node(slot_a: dict, slots: list) -> bool:
 
 
 def nodename_in_list(name: str, slots: list) -> int:
+    """
+    Check if a nodename is already in a list
+    :param name:
+    :param slots:
+    :return:
+    """
     count = 0
     while count < len(slots):
         if name == slots[count]["node"]:
@@ -66,7 +75,8 @@ def calc_mem_size(size: str) -> float:
 
 def format_slots(slots: list) -> dict:
     """
-    Formats the dictionary of slots into one similar to the already used keys and values in htcrystalball
+    Formats the dictionary of slots into one similar to the
+    already used keys and values in htcrystalball
     :param slots:
     :return:
     """
@@ -115,8 +125,8 @@ def read_slots(filename: str) -> dict:
     """
     status = {"slots": []}
 
-    with open(filename) as f:
-        content = f.readlines()
+    with open(filename) as file:
+        content = file.readlines()
 
     slot = {}
     for line in content:
@@ -138,26 +148,25 @@ def read_slots(filename: str) -> dict:
     return status
 
 
-def write_slots(filename: str, content: dict):
+def write_slots(content: dict):
     """
     Writes the output dict into a config file
-    :param filename:
     :param content:
     :return:
     """
-    with open('config/slots_check3.json', 'w') as json_file:
+    with open(SLOTS_CONFIGURATION, 'w') as json_file:
         json.dump(content, json_file)
 
 
 if __name__ == "__main__":
-    in_file = "htcondor_status_long.txt"
+    IN_FILE = "htcondor_status_long.txt"
 
-    myCmd = 'condor_status -long > '+in_file
-    os.system(myCmd)
+    CONDOR_STATUS = 'condor_status -long > '+IN_FILE
+    os.system(CONDOR_STATUS)
 
-    slots_in = read_slots("./"+in_file)
+    slots_in = read_slots("./"+IN_FILE)
     slots_out = format_slots(slots_in["slots"])
 
-    write_slots(SLOTS_CONFIGURATION, slots_out)
+    write_slots(slots_out)
 
 print("DONE")

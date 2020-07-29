@@ -11,15 +11,19 @@ jobs:
       - python: nightly
       - python: pypy3
     allow_failures:
-        - python: 3.9-dev
-        - python: nightly
+      - python: 3.9-dev
+      - python: nightly
 before_install:
   - sudo apt-get -y install mandoc
 install:
   - pip install -U -r requirements.txt
   - pip install -U -r requirements-test.txt
+  - pip install -U codacy-coverage codecov pytest-cov
   - pip list
 script:
   - pyflakes --version && pyflakes *.py
-  - pytest --version && pytest tests/
+  - pytest --version && pytest --cov=./ tests/
   - mandoc -T lint man/man1/htcrystalball.1
+after_success:
+  - codecov
+  - python-codacy-coverage -r coverage.xml

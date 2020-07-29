@@ -24,7 +24,7 @@ def dict_equals(dict_a: dict, dict_b: dict):
     return False
 
 
-def slot_in_node(slot_a: dict, slots: list) -> bool:
+def slot_exists(slot_a: dict, slots: list) -> bool:
     """
     Checks if a slot is already in a dictionary by checking whether
     it is equal to any already present slot.
@@ -106,7 +106,7 @@ def format_slots(slots: list) -> dict:
         node_in_list = nodename_in_list(slot["UtsnameNodename"], formatted["slots"])
 
         if node_in_list != -1:
-            if not slot_in_node(slot_size, formatted["slots"][node_in_list]["slot_size"]):
+            if not slot_exists(slot_size, formatted["slots"][node_in_list]["slot_size"]):
                 formatted["slots"][node_in_list]["slot_size"].append(slot_size)
         else:
             formatted_slot = {"node": slot["UtsnameNodename"],
@@ -141,7 +141,7 @@ def read_slots(filename: str) -> dict:
                     value = line.split('@')[0]
                 slot[key] = value.replace("\"", "")
         else:
-            if not slot_in_node(slot, status["slots"]):
+            if not slot_exists(slot, status["slots"]):
                 status["slots"].append(slot)
             slot = {}
 

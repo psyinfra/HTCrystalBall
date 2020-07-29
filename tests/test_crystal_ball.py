@@ -9,6 +9,7 @@ import pytest
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, FILE_PATH + '/../')
 import htcrystalball as big_balls
+import fetch_condor_slots as sloth
 
 
 def test_storage_validator():
@@ -189,3 +190,62 @@ def test_slot_result():
                     # once we found it we should assume that the number of
                     # similar jobs does NOT exceed the ratio of RAM
                     assert int(previewed["sim_jobs"]) <= int(float(slot["ram"])/ram)
+
+# ------------------ Test slot fetching -------------------------
+
+def test_dict_equals():
+    dict_a = {"a": 1, "b": 2, "c": 3}
+    dict_b = {"a": 1, "b": 2, "c": 3}
+    dict_c = {"a": 2, "b": 1, "c": 3}
+    dict_d = {"a": 1, "b": 1, "c": 3}
+
+    assert sloth.dict_equals(dict_a, dict_b)
+    assert not sloth.dict_equals(dict_a, dict_c)
+    assert not sloth.dict_equals(dict_a, dict_d)
+    assert not sloth.dict_equals(dict_d, dict_c)
+    assert not sloth.dict_equals(dict_b, dict_c)
+    assert not sloth.dict_equals(dict_d, dict_b)
+
+
+def test_slot_in_node():
+    slots = [
+        {"node": "cpu2", "slot_size": [{"cores": 1, "disk": 287.53, "ram": 5.0, "type": "static", "total_slots": 12}]},
+        {"node": "cpu3", "slot_size": [{"cores": 1, "disk": 287.68, "ram": 5.0, "type": "static", "total_slots": 12}]},
+        {"node": "cpu4", "slot_size": [{"cores": 1, "disk": 287.68, "ram": 5.0, "type": "static", "total_slots": 12}]}
+    ]
+    slot_a = {"node": "cpu4", "slot_size": [{"cores": 1, "disk": 287.68,
+                                             "ram": 5.0, "type": "static", "total_slots": 12}]}
+    slot_b = {"node": "cpu5", "slot_size": [{"cores": 1, "disk": 287.68,
+                                             "ram": 5.0, "type": "static", "total_slots": 12}]}
+    slot_c = {"node": "cpu4", "slot_size": [{"cores": 2, "disk": 287.68,
+                                             "ram": 5.0, "type": "static", "total_slots": 12}]}
+    assert sloth.slot_exists(slot_a, slots)
+    assert not sloth.slot_exists(slot_b, slots)
+    assert not sloth.slot_exists(slot_c, slots)
+
+
+def test_nodename_in_list():
+    slots = [
+        {"node": "cpu2", "slot_size": [{"cores": 1, "disk": 287.53, "ram": 5.0, "type": "static", "total_slots": 12}]},
+        {"node": "cpu3", "slot_size": [{"cores": 1, "disk": 287.68, "ram": 5.0, "type": "static", "total_slots": 12}]},
+        {"node": "cpu4", "slot_size": [{"cores": 1, "disk": 287.68, "ram": 5.0, "type": "static", "total_slots": 12}]}
+    ]
+
+    assert sloth.nodename_in_list("cpu2", slots)
+    assert sloth.nodename_in_list("cpu3", slots)
+    assert not sloth.nodename_in_list("cpu5", slots)
+    assert not sloth.nodename_in_list("cpu21", slots)
+    assert not sloth.nodename_in_list("cpU2", slots)
+
+
+def test_conversions():
+    size_mem = 1048576
+    size_disk = 1024
+
+    assert sloth.calc_mem_size(size_mem) == 1.0
+    assert sloth.calc_mem_size(size_mem*2) == 2.0
+    assert sloth.calc_mem_size(size_mem*10) == 10.0
+
+    assert sloth.calc_disk_size(size_disk) == 1.0
+    assert sloth.calc_disk_size(size_disk * 2) == 2.0
+    assert sloth.calc_disk_size(size_disk * 10) == 10.0

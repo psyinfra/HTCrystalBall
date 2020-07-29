@@ -193,6 +193,7 @@ def test_slot_result():
 
 # ------------------ Test slot fetching -------------------------
 
+
 def test_dict_equals():
     dict_a = {"a": 1, "b": 2, "c": 3}
     dict_b = {"a": 1, "b": 2, "c": 3}
@@ -231,16 +232,16 @@ def test_nodename_in_list():
         {"node": "cpu4", "slot_size": [{"cores": 1, "disk": 287.68, "ram": 5.0, "type": "static", "total_slots": 12}]}
     ]
 
-    assert sloth.nodename_in_list("cpu2", slots)
-    assert sloth.nodename_in_list("cpu3", slots)
-    assert not sloth.nodename_in_list("cpu5", slots)
-    assert not sloth.nodename_in_list("cpu21", slots)
-    assert not sloth.nodename_in_list("cpU2", slots)
+    assert sloth.nodename_in_list("cpu2", slots) != -1
+    assert sloth.nodename_in_list("cpu3", slots) != -1
+    assert sloth.nodename_in_list("cpu5", slots) == -1
+    assert sloth.nodename_in_list("cpu21", slots) == -1
+    assert sloth.nodename_in_list("cpU2", slots) == -1
 
 
 def test_conversions():
-    size_mem = 1048576
-    size_disk = 1024
+    size_disk = 1048576
+    size_mem = 1024
 
     assert sloth.calc_mem_size(size_mem) == 1.0
     assert sloth.calc_mem_size(size_mem*2) == 2.0

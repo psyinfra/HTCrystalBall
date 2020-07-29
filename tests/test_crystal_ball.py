@@ -253,4 +253,5 @@ def test_conversions():
 
 
 def test_slot_reader():
-    sloth.read_slots(FILE_PATH+"/htcondor_status_long.txt")
+    slots_in = sloth.read_slots(FILE_PATH+"/htcondor_status_long.txt")
+    sloth.format_slots(slots_in["slots"])

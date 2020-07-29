@@ -132,31 +132,31 @@ Our `crystal ball` will give you a brief summary of the executed slot checking f
 ### Advanced Output
 When using VERBOSE HTCrystalBall will print out your given Input...
 
-|Parameter|Input Value|
-|---|---|
-|CPUS |...|
-|RAM |...|
-|STORAGE|...|
-|GPUS|...|
-|JOBS|...|
-|JOB DURATION|...|
-|MAXIMUM NODES|...|
+|  Parameter   |Input Value|
+| ------------ | --------- |
+|     CPUS     |    ...    |
+|      RAM     |    ...    |
+|    STORAGE   |    ...    |
+|     GPUS     |    ...    |
+|     JOBS     |    ...    |
+| JOB DURATION |    ...    |
+| MAXIMUM NODES|    ...    |
 
 ...the current slot configuration of Juseless...
 
 |Node|Slot Type|Total slots|Cores|GPUs|RAM|DISK|
-|---|---|---|---|---|---|---|
-|Name|gpu|...|...|...|...|...|
-|Name|static|...|...|...|...|...|
-|Name|dynamic|...|...|...|...|...|
+|----| ------- | --------- | --- | ---|---| ---|
+|Name|   gpu   |    ...    | ... | ...|...| ...|
+|Name|  static |    ...    | ... | ...|...| ...|
+|Name| dynamic |    ...    | ... | ...|...| ...|
 
 ...and a more detailed summary of the slot checking:
 
 |Node|Slot Type|Job fits|Slot usage|RAM usage|GPU usage|Amount of similar jobs|Wall Time on Idle|
-|---|---|---|---|---|---|---|---|
-|Name|gpu|YES|... (x %)|... (x %)|... (x %)|...|... min|
-|Name|static|NO|... (x %)|... (x %)|... (x %)|...|... min|
-|Name|dynamic|NO|... (x %)|... (x %)|... (x %)|...|... min|
+|----| ------- | ------ | -------- | ------- | ------- | -------------------- | --------------- |
+|Name|   gpu   |   YES  | ... (x %)|... (x %)|... (x %)|          ...         |     ... min     |
+|Name|  static |    NO  | ... (x %)|... (x %)|... (x %)|          ...         |     ... min     |
+|Name| dynamic |    NO  | ... (x %)|... (x %)|... (x %)|          ...         |     ... min     |
 
 ### Examples:
 ./htcrystalball.py -c 2 -r 10G -g 2

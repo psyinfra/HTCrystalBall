@@ -20,8 +20,8 @@ here is a list of hyperlinks for you to skip searching for a particular section:
 
 ## Description
 This project contains of two main parts
-
 *   fetching an HTCondor slot configuration to create a JSON file with a list of slots
+
 *   looking for suiting slots in a given configuration to execute user-defined
 jobs a.k.a. the `crystal ball`
 
@@ -119,11 +119,11 @@ writing a condor submit file:
 ### Basic Output
 Our `crystal ball` will give you a brief summary of the executed slot checking for your jobs like this:
 
-|Slot Type|Job fits|Amount of similar jobs|Wall Time on Idle|
-|---|---|---|---|
-|gpu|...|...|0 min|
-|static|...|...|0 min|
-|dynamic|...|...|0 min|
+| Slot Type | Job fits | Amount of similar jobs | Wall Time on Idle |
+| --------- | -------- | ---------------------- | ----------------- |
+|    gpu    |   ....   |          ....          |       0 min       |
+|  static   |   ....   |          ....          |       0 min       |
+|  dynamic  |   ....   |          ....          |       0 min       |
 
 *   Job fits: If one job fits into a slot it will be highlighted in green color, if not in red.
 *   Amount of similar jobs: number of jobs similar to the one defined, that fit into a slot the same time.

@@ -629,8 +629,6 @@ def prepare_checking(arg_values, cpu: int, gpu: int, ram: str, disk: str,
     [job_duration, duration_unit] = split_duration_unit(job_duration)
     job_duration = calc_to_min(job_duration, duration_unit)
 
-    if arg_values is not None and verbose:
-        print("verbosity turned on")
     if cpu == 0:
         print("No number of CPU workers given --- ABORTING")
     elif ram == 0.0:

@@ -112,6 +112,8 @@ def test_calc_manager():
                                       jobs=1, job_duration="", maxnodes=2, verbose=True)
     assert big_balls.prepare_checking(None, cpu=2, gpu=0, ram="20GB", disk="",
                                       jobs=32, job_duration="10m", maxnodes=1, verbose=True)
+    assert big_balls.prepare_checking(None, cpu=2, gpu=3, ram="10GB", disk="",
+                                      jobs=32, job_duration="10m", maxnodes=1, verbose=True)
 
 
 def test_slot_config():

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Gives users a preview on how and where they can execute their HTcondor compatible scripts"""
-import os
 
+"""Gives users a preview on how and where they can execute their HTcondor compatible scripts."""
+import os
 import argparse
 import json
 import re
@@ -13,8 +13,7 @@ SLOTS_CONFIGURATION = "config/slots.json"
 
 
 def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")):
-    """
-    Defines and checks for valid storage inputs.
+    """Defines and checks for valid storage inputs.
     :param arg_value:
     :param pat:
     :return:
@@ -26,8 +25,7 @@ def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]
 
 
 def validate_duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS]?))?$")):
-    """
-    Defines and checks for valid time inputs.
+    """Defines and checks for valid time inputs.
     :param arg_value:
     :param pat:
     :return:

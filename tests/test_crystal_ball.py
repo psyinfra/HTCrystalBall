@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-"""
-Module for testing the htcrystalball module
-"""
+
+"""Module for testing the htcrystalball module."""
 import os
 import sys
 import argparse

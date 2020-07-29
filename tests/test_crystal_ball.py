@@ -73,12 +73,16 @@ def test_conversions():
     assert big_balls.calc_to_bin(10.0, "GB") == 10.0
     assert big_balls.calc_to_bin(10, "GiB") == 10.0
     assert big_balls.calc_to_bin(10.0, "MiB") == 0.01
+    assert big_balls.calc_to_bin(10.0, "KiB") == 1e-05
+    assert big_balls.calc_to_bin(1.0, "TiB") == 1000.0
+    assert big_balls.calc_to_bin(1.0, "PiB") == 1000000.0
 
     assert big_balls.calc_to_min(10.0, "h") == 600.0
     assert big_balls.calc_to_min(10.0, "min") == 10
     assert big_balls.calc_to_min(10.0, "min") == 10.0
     assert big_balls.calc_to_min(10, "min") == 10.0
     assert big_balls.calc_to_min(10.0, "s") <= 0.17
+    assert big_balls.calc_to_min(1.0, "d") == 1440.0
 
 
 def test_calc_manager():

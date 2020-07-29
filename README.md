@@ -1,5 +1,6 @@
 # HTCrystalBall
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7463a8d1ce044ad1bd9a44be95839ebc)](https://app.codacy.com/gh/psyinfra/HTCrystalBall?utm_source=github.com&utm_medium=referral&utm_content=psyinfra/HTCrystalBall&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/psyinfra/HTCrystalBall.svg?branch=master)](https://travis-ci.org/psyinfra/HTCrystalBall)
 
 A crystal ball, that lets you peer into the future.

@@ -10,13 +10,13 @@ A crystal ball, that lets you peer into the future.
 First, if you are familiar with this README or just want to skip sections, 
 here is a list of hyperlinks for you to skip searching for a particular section:
 
-*  [Description](#Description)
-*  [Requirements](#Requirements)
-*  [Installation](#Installation-and-Configuration)
-*  [Input](#INPUT)
-*  [Output](#OUTPUT)
-*  [Examples](#Examples)
-*  [Testing](#Testing)
+*   [Description](#Description)
+*   [Requirements](#Requirements)
+*   [Installation](#Installation-and-Configuration)
+*   [Input](#INPUT)
+*   [Output](#OUTPUT)
+*   [Examples](#Examples)
+*   [Testing](#Testing)
 
 ## Description
 This project contains of two main parts
@@ -32,14 +32,14 @@ information about the various slots. In our particular use-case we went for the 
 option that gives us way too much information but at least all the information we need. 
 As each line of the command output follows the pattern `key = value` we chose to parse
 it that way and only store the key-value pairs for
-*  UtsnameNodename
-*  TotalSlots
-*  Name
-*  TotalSlotCpus
-*  TotalSlotDisk
-*  TotalSlotMemory
-*  TotalSlotGPUs
-*  SlotType
+*   UtsnameNodename
+*   TotalSlots
+*   Name
+*   TotalSlotCpus
+*   TotalSlotDisk
+*   TotalSlotMemory
+*   TotalSlotGPUs
+*   SlotType
 
 So if you want to adjust this script to your use-case feel free to add other keys.
 
@@ -72,17 +72,17 @@ To also run our tests, we require `pytest` to be installed.
 ## Installation and Configuration
 To install and configure `HTCrystalBall` please follow these steps:
 
-1. clone this repo to the file system of any machine in your HTCondor cluster
+1.  clone this repo to the file system of any machine in your HTCondor cluster
     
     `git clone git@github.com:psyinfra/HTCrystalBall.git /this/is/your/path`
    
-2. `cd` into the newly created directory and install python modules using the setup.py 
+2.  `cd` into the newly created directory and install python modules using the setup.py
 
     `pip install .`
     
-3. configure the path of the slot configuration file to match your system
+3.  configure the path of the slot configuration file to match your system
 
-4. adjust the keys to be fetched from the command
+4.  adjust the keys to be fetched from the command
 
 ## INPUT
 
@@ -112,8 +112,6 @@ writing a condor submit file:
     
     PLEASE NOTE: HTCondor always uses binary storage sizes, so inputs will
     automatically be treated that way.
-
-
 
 ## OUTPUT
 ### Basic Output

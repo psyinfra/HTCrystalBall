@@ -250,3 +250,7 @@ def test_conversions():
     assert sloth.calc_disk_size(size_disk) == 1.0
     assert sloth.calc_disk_size(size_disk * 2) == 2.0
     assert sloth.calc_disk_size(size_disk * 10) == 10.0
+
+
+def test_slot_reader():
+    sloth.read_slots(FILE_PATH+"/htcondor_status_long.txt")

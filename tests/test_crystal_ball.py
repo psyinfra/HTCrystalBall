@@ -156,3 +156,31 @@ def test_slot_checking():
                                  big_balls.filter_slots(slots, "dynamic"),
                                  big_balls.filter_slots(slots, "gpu"),
                                  0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False) == {}
+
+
+def test_slot_result():
+    """
+    Tests the result slots for correct number of similar jobs based on RAM
+    :return:
+    """
+    slots = big_balls.define_slots()
+    ram = 10.0
+
+    res = big_balls.check_slots(big_balls.filter_slots(slots, "static"),
+                                big_balls.filter_slots(slots, "dynamic"),
+                                big_balls.filter_slots(slots, "gpu"),
+                                1, ram, 0.0, 0, 1, 0.0, 0, verbose=False)
+    slots = res["slots"]
+    preview = res["preview"]
+
+    # Go through each result that says "fits"
+    for previewed in preview:
+        if previewed["fits"] == "YES":
+            node_name = previewed["name"]
+            # Check the slots for the one that the result references
+            # to (same node-name and RAM amount)
+            for slot in slots:
+                if slot["node"] == node_name and "/"+slot["ram"] in previewed["ram_usage"]:
+                    # once we found it we should assume that the number of
+                    # similar jobs does NOT exceed the ratio of RAM
+                    assert int(previewed["sim_jobs"]) <= int(float(slot["ram"])/ram)

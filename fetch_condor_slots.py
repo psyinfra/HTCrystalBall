@@ -119,14 +119,14 @@ def format_slots(slots: list) -> dict:
     return formatted
 
 
-def read_slots(filename: "") -> dict:
+def read_slots(filename: str) -> dict:
     """
     Gets the condor config and creates a dict
     :return:
     """
     status = {"slots": []}
 
-    if filename == "":
+    if filename == " ":
         coll = htcondor.Collector()
         content = coll.query(htcondor.AdTypes.Startd, projection=["SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
                                                                   "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
@@ -173,7 +173,7 @@ def write_slots(content: dict):
 
 
 if __name__ == "__main__":
-    slots_in = read_slots("")
+    slots_in = read_slots(" ")
     slots_out = format_slots(slots_in["slots"])
 
     write_slots(slots_out)

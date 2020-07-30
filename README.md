@@ -380,7 +380,7 @@ Make sure you have the neccessary python modules:
 
 Run the following command to execute your test:
 
-`pytest -q tests/test_me.py`
+`python3 -m pytest -q tests/test_me.py`
 
 ## License
 

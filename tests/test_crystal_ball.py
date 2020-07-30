@@ -239,7 +239,7 @@ def test_nodename_in_list():
     assert sloth.nodename_in_list("cpU2", slots) == -1
 
 
-def test_conversions():
+def test__memory_conversions():
     size_disk = 1048576
     size_mem = 1024
 

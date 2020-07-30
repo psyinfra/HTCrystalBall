@@ -3,8 +3,6 @@
 """Gets a systems condor slot configuration, formats it and writes it to a JSON file."""
 import json
 import os
-import htcondor
-import classad
 
 SLOTS_CONFIGURATION = "config/slots.json"
 
@@ -119,25 +117,33 @@ def format_slots(slots: list) -> dict:
     return formatted
 
 
-def read_slots() -> dict:
+def read_slots(filename: str) -> dict:
     """
-    Gets the condor config and creates a dict
+    Reads the output of condor_status -long line by line and creates a dict
+    :param filename:
     :return:
     """
     status = {"slots": []}
 
-    coll = htcondor.Collector()
-    content = coll.query(htcondor.AdTypes.Startd, projection=["SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
-                                                              "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
-                                                              "TotalSlotGPUs"])
+    with open(filename) as file:
+        content = file.readlines()
 
-    for slot in content:
-        if "Name" in slot:
-            value = slot["Name"].split('@')[0]
-            slot["Name"] = value.replace("\"", "")
-
-        if not slot_exists(slot, status["slots"]):
-            status["slots"].append(slot)
+    slot = {}
+    for line in content:
+        line = line.replace("\n", "")
+        if line != "":
+            pairs = line.split(' = ')
+            key = pairs[0].strip().replace("'", "")
+            value = pairs[1].strip().replace("'", "")
+            if key in ("SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
+                       "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"):
+                if key == "Name":
+                    value = line.split('@')[0]
+                slot[key] = value.replace("\"", "")
+        else:
+            if not slot_exists(slot, status["slots"]):
+                status["slots"].append(slot)
+            slot = {}
 
     return status
 
@@ -162,3 +168,4 @@ if __name__ == "__main__":
     slots_out = format_slots(slots_in["slots"])
 
     write_slots(slots_out)
+

@@ -36,9 +36,7 @@ setuptools.setup(
     python_requires="!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*",
     packages=setuptools.find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     install_requires=[
-        'rich',
-        'htcondor',
-        'classad'
+        'rich'
     ],
     tests_require=[
         'pytest',

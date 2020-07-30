@@ -76,15 +76,21 @@ To install and configure `HTCrystalBall` please follow these steps:
 
 1.  clone this repo to the file system of any machine in your HTCondor cluster
     
-    `git clone git@github.com:psyinfra/HTCrystalBall.git /this/is/your/path`
+    `git clone git@github.com:psyinfra/HTCrystalBall.git`
 
 2.  `cd` into the newly created directory and install python modules using the setup.py
 
+    `cd HTCrystalBall`
+
     `pip install .`
 
-3.  configure the path of the slot configuration file to match your system
+3.  if neccessary configure the path of the slot configuration file to match your system
+
+    `SLOTS_CONFIGURATION = "config/slots.json"`
 
 4.  adjust the keys to be fetched from the command
+
+    `if key in ("SlotType", "UtsnameNodename", "Name", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"):`
 
 ## INPUT
 

@@ -2,9 +2,7 @@
 
 """Gets a systems condor slot configuration, formats it and writes it to a JSON file."""
 import json
-import os
 import htcondor
-import classad
 
 SLOTS_CONFIGURATION = "config/slots.json"
 

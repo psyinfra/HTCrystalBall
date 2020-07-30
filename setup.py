@@ -37,8 +37,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     install_requires=[
         'rich',
-        'htcondor',
-        'classad'
+        'htcondor'
     ],
     tests_require=[
         'pytest',

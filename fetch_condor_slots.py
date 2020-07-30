@@ -173,7 +173,7 @@ def write_slots(content: dict):
 
 
 if __name__ == "__main__":
-    slots_in = read_slots()
+    slots_in = read_slots("")
     slots_out = format_slots(slots_in["slots"])
 
     write_slots(slots_out)

@@ -257,7 +257,7 @@ def pretty_print_slots(result: dict):
                           "[dark_blue]" + str(slot['cores']) + "[/dark_blue]",
                           "[dark_blue]------[/dark_blue]",
                           "[dark_blue]" + str(slot['ram']) + " GiB[/dark_blue]",
-                          "[dark_blue]" + str(slot['disk']) + " GiB[[/dark_blue]")
+                          "[dark_blue]" + str(slot['disk']) + " GiB[/dark_blue]")
         elif slot['type'] == "gpu":
             table.add_row("[purple4]" + slot['node'] + "[/purple4]",
                           "[purple4]" + slot['type'] + "[/purple4]",

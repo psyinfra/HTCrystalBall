@@ -91,13 +91,13 @@ def calc_to_bin(number: float, unit: str) -> float:
     """
     unit_indicator = unit.lower()
     if unit_indicator in ("kb", "k", "kib"):
-        number = number / (10 ** 6)
+        return number / (10 ** 6)
     elif unit_indicator in ("mb", "m", "mib"):
-        number = number / (10 ** 3)
+        return number / (10 ** 3)
     elif unit_indicator in ("tb", "t", "tib"):
-        number = number * (10 ** 3)
+        return number * (10 ** 3)
     elif unit_indicator in ("pb", "p", "pib"):
-        number = number * (10 ** 6)
+        return number * (10 ** 6)
     return number
 
 
@@ -110,11 +110,11 @@ def calc_to_min(number: float, unit: str) -> float:
     """
     unit_indicator = unit.lower()
     if unit_indicator in ("d", "dd"):
-        number = number * 24 * 60
+        return number * 24 * 60
     elif unit_indicator in ("h", "hh"):
-        number = number * 60
+        return number * 60
     elif unit_indicator in ("s", "ss"):
-        number = number / 60
+        return number / 60
     return number
 
 

@@ -91,7 +91,7 @@ def format_slots(slots: list) -> dict:
                      "ram": calc_mem_size(slot["TotalSlotMemory"])}
 
         if slot["SlotType"] == "Partitionable" or slot["SlotType"] == "Dynamic":
-            if "gpu" in slot["UtsnameNodename"] and slot["TotalSlotGPUs"] != 0:
+            if "gpu" in slot["UtsnameNodename"] and int(slot["TotalSlotGPUs"]) != 0:
                 slot_size["type"] = "gpu"
                 slot_size["total_slots"] = int(int(slot["TotalSlots"]))
                 slot_size["gpus"] = int(float(slot["TotalSlotGPUs"]))

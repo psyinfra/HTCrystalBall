@@ -68,7 +68,6 @@ the execution time per job, a total `wall time` can also be calculated per `slot
 ## Requirements
 `HTCrystalBall` uses the `rich` module for printing out nicely formatted tables. 
 The module requires Python 3.6+ to run.
-For using the HTCondor API the modules `htcondor` and `classad` have to be installed.
 
 To also run our tests, we require `pytest` to be installed.
 
@@ -83,7 +82,7 @@ To install and configure `HTCrystalBall` please follow these steps:
 
     `cd HTCrystalBall`
 
-    `pip3 install .`
+    `pip install .`
 
 3.  if neccessary configure the path of the slot configuration file to match your system
 
@@ -376,7 +375,7 @@ When using VERBOSE HTCrystalBall will print out your given Input...
 ## Testing
 Make sure you have the neccessary python modules:
 
-`pip3 install pytest`
+`pip install pytest`
 
 Run the following command to execute your test:
 

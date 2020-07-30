@@ -119,25 +119,45 @@ def format_slots(slots: list) -> dict:
     return formatted
 
 
-def read_slots() -> dict:
+def read_slots(filename: "") -> dict:
     """
     Gets the condor config and creates a dict
     :return:
     """
     status = {"slots": []}
 
-    coll = htcondor.Collector()
-    content = coll.query(htcondor.AdTypes.Startd, projection=["SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
-                                                              "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
-                                                              "TotalSlotGPUs"])
+    if filename == "":
+        coll = htcondor.Collector()
+        content = coll.query(htcondor.AdTypes.Startd, projection=["SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
+                                                                  "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
+                                                                  "TotalSlotGPUs"])
+        for slot in content:
+            if "Name" in slot:
+                value = slot["Name"].split('@')[0]
+                slot["Name"] = value.replace("\"", "")
 
-    for slot in content:
-        if "Name" in slot:
-            value = slot["Name"].split('@')[0]
-            slot["Name"] = value.replace("\"", "")
+            if not slot_exists(slot, status["slots"]):
+                status["slots"].append(slot)
+    else:
+        with open(filename) as file:
+            content = file.readlines()
 
-        if not slot_exists(slot, status["slots"]):
-            status["slots"].append(slot)
+        slot = {}
+        for line in content:
+            line = line.replace("\n", "")
+            if line != "":
+                pairs = line.split(' = ')
+                key = pairs[0].strip().replace("'", "")
+                value = pairs[1].strip().replace("'", "")
+                if key in ("SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
+                           "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"):
+                    if key == "Name":
+                        value = line.split('@')[0]
+                    slot[key] = value.replace("\"", "")
+            else:
+                if not slot_exists(slot, status["slots"]):
+                    status["slots"].append(slot)
+                slot = {}
 
     return status
 
@@ -153,12 +173,7 @@ def write_slots(content: dict):
 
 
 if __name__ == "__main__":
-    IN_FILE = "htcondor_status_long.txt"
-
-    CONDOR_STATUS = 'condor_status -long > '+IN_FILE
-    os.system(CONDOR_STATUS)
-
-    slots_in = read_slots("./"+IN_FILE)
+    slots_in = read_slots()
     slots_out = format_slots(slots_in["slots"])
 
     write_slots(slots_out)

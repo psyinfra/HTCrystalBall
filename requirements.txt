@@ -1,2 +1,4 @@
 pytest
 rich
+htcondor
+classad

@@ -135,8 +135,9 @@ def test_slot_config():
     assert "SlotType" in big_balls.filter_slots(slots, "dynamic")[0]
     assert big_balls.filter_slots(slots, "dynamic")[0]["SlotType"] == "dynamic"
 
-    assert "SlotType" in big_balls.filter_slots(slots, "gpu")[0]
-    assert big_balls.filter_slots(slots, "gpu")[0]["SlotType"] == "gpu"
+    if len(big_balls.filter_slots(slots, "gpu")) >= 0:
+        assert "SlotType" in big_balls.filter_slots(slots, "gpu")[0]
+        assert big_balls.filter_slots(slots, "gpu")[0]["SlotType"] == "gpu"
 
 
 def test_slot_checking():

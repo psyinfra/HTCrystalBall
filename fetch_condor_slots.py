@@ -96,6 +96,7 @@ def format_slots(slots: list) -> dict:
                 slot_size["TotalSlotGPUs"] = int(float(slot["TotalSlotGPUs"]))
             else:
                 slot_size["SlotType"] = "dynamic"
+                slot_size["TotalSlotGPUs"] = 0
 
         elif slot["SlotType"] == "Static":
             slot_size["SlotType"] = "static"

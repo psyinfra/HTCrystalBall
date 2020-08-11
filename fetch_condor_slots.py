@@ -126,8 +126,13 @@ def read_slots(filename: str) -> dict:
 
     if filename == " ":
         coll = htcondor.Collector()
-        content = coll.query(htcondor.AdTypes.Startd, projection=["SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
-                                                                  "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
+        content = coll.query(htcondor.AdTypes.Startd, projection=["SlotType",
+                                                                  "UtsnameNodename",
+                                                                  "Name",
+                                                                  "TotalSlotCpus",
+                                                                  "TotalSlotDisk",
+                                                                  "TotalSlotMemory",
+                                                                  "TotalSlots",
                                                                   "TotalSlotGPUs"])
         for slot in content:
             if "Name" in slot:
@@ -171,7 +176,7 @@ def write_slots(content: dict):
 
 
 if __name__ == "__main__":
-    slots_in = read_slots(" ")
-    slots_out = format_slots(slots_in["slots"])
+    SLOTS_IN = read_slots(" ")
+    SLOTS_OUT = format_slots(SLOTS_IN["slots"])
 
-    write_slots(slots_out)
+    write_slots(SLOTS_OUT)

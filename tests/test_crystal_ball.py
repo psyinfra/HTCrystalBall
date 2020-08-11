@@ -196,6 +196,10 @@ def test_slot_result():
 
 
 def test_dict_equals():
+    """
+    Test the dict_equals method of slot fetching
+    :return:
+    """
     dict_a = {"a": 1, "b": 2, "c": 3}
     dict_b = {"a": 1, "b": 2, "c": 3}
     dict_c = {"a": 2, "b": 1, "c": 3}
@@ -210,27 +214,68 @@ def test_dict_equals():
 
 
 def test_slot_in_node():
+    """
+    test the slot in node function of the slot fetching
+    :return:
+    """
     slots = [
-        {"UtsnameNodename": "cpu2", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.53, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]},
-        {"UtsnameNodename": "cpu3", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]},
-        {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
+        {"UtsnameNodename": "cpu2", "slot_size": [{"TotalSlotCpus": 1,
+                                                   "TotalSlotDisk": 287.53,
+                                                   "TotalSlotMemory": 5.0,
+                                                   "SlotType": "static",
+                                                   "TotalSlots": 12}]},
+        {"UtsnameNodename": "cpu3", "slot_size": [{"TotalSlotCpus": 1,
+                                                   "TotalSlotDisk": 287.68,
+                                                   "TotalSlotMemory": 5.0,
+                                                   "SlotType": "static",
+                                                   "TotalSlots": 12}]},
+        {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 1,
+                                                   "TotalSlotDisk": 287.68,
+                                                   "TotalSlotMemory": 5.0,
+                                                   "SlotType": "static",
+                                                   "TotalSlots": 12}]}
     ]
-    slot_a = {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68,
-                                             "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
-    slot_b = {"UtsnameNodename": "cpu5", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68,
-                                             "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
-    slot_c = {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 2, "TotalSlotDisk": 287.68,
-                                             "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
+    slot_a = {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 1,
+                                                        "TotalSlotDisk": 287.68,
+                                                        "TotalSlotMemory": 5.0,
+                                                        "SlotType": "static",
+                                                        "TotalSlots": 12}]}
+    slot_b = {"UtsnameNodename": "cpu5", "slot_size": [{"TotalSlotCpus": 1,
+                                                        "TotalSlotDisk": 287.68,
+                                                        "TotalSlotMemory": 5.0,
+                                                        "SlotType": "static",
+                                                        "TotalSlots": 12}]}
+    slot_c = {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 2,
+                                                        "TotalSlotDisk": 287.68,
+                                                        "TotalSlotMemory": 5.0,
+                                                        "SlotType": "static",
+                                                        "TotalSlots": 12}]}
     assert sloth.slot_exists(slot_a, slots)
     assert not sloth.slot_exists(slot_b, slots)
     assert not sloth.slot_exists(slot_c, slots)
 
 
 def test_nodename_in_list():
+    """
+    test the nodename in list function of the slot fetching
+    :return:
+    """
     slots = [
-        {"UtsnameNodename": "cpu2", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.53, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]},
-        {"UtsnameNodename": "cpu3", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]},
-        {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
+        {"UtsnameNodename": "cpu2", "slot_size": [{"TotalSlotCpus": 1,
+                                                   "TotalSlotDisk": 287.53,
+                                                   "TotalSlotMemory": 5.0,
+                                                   "SlotType": "static",
+                                                   "TotalSlots": 12}]},
+        {"UtsnameNodename": "cpu3", "slot_size": [{"TotalSlotCpus": 1,
+                                                   "TotalSlotDisk": 287.68,
+                                                   "TotalSlotMemory": 5.0,
+                                                   "SlotType": "static",
+                                                   "TotalSlots": 12}]},
+        {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 1,
+                                                   "TotalSlotDisk": 287.68,
+                                                   "TotalSlotMemory": 5.0,
+                                                   "SlotType": "static",
+                                                   "TotalSlots": 12}]}
     ]
 
     assert sloth.nodename_in_list("cpu2", slots) != -1
@@ -241,6 +286,10 @@ def test_nodename_in_list():
 
 
 def test__memory_conversions():
+    """
+    test the memory conversion of the slot fetching
+    :return:
+    """
     size_disk = 1048576
     size_mem = 1024
 
@@ -254,5 +303,9 @@ def test__memory_conversions():
 
 
 def test_slot_reader():
+    """
+    Testing the slot fetching with an exctract of a condor_status command output
+    :return:
+    """
     slots_in = sloth.read_slots(FILE_PATH+"/htcondor_status_long.txt")
     sloth.format_slots(slots_in["slots"])

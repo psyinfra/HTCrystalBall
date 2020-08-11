@@ -92,11 +92,11 @@ def calc_to_bin(number: float, unit: str) -> float:
     unit_indicator = unit.lower()
     if unit_indicator in ("kb", "k", "kib"):
         return number / (10 ** 6)
-    elif unit_indicator in ("mb", "m", "mib"):
+    if unit_indicator in ("mb", "m", "mib"):
         return number / (10 ** 3)
-    elif unit_indicator in ("tb", "t", "tib"):
+    if unit_indicator in ("tb", "t", "tib"):
         return number * (10 ** 3)
-    elif unit_indicator in ("pb", "p", "pib"):
+    if unit_indicator in ("pb", "p", "pib"):
         return number * (10 ** 6)
     return number
 
@@ -111,9 +111,9 @@ def calc_to_min(number: float, unit: str) -> float:
     unit_indicator = unit.lower()
     if unit_indicator in ("d", "dd"):
         return number * 24 * 60
-    elif unit_indicator in ("h", "hh"):
+    if unit_indicator in ("h", "hh"):
         return number * 60
-    elif unit_indicator in ("s", "ss"):
+    if unit_indicator in ("s", "ss"):
         return number / 60
     return number
 
@@ -441,10 +441,11 @@ def check_dynamic_slots(slot: dict, num_cpu: int, amount_ram: float,
         preview_node['sim_jobs'] = 0
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
             slot["TotalSlotMemory"]) + " GiB (" \
-                                    + str(int(round((amount_ram / slot["TotalSlotMemory"]) * 100))) + "%)"
+            + str(int(round((amount_ram / slot["TotalSlotMemory"]) * 100))) + "%)"
         preview_node['fits'] = 'NO'
 
-    if num_cpu <= slot["TotalSlotCpus"] and amount_ram <= slot["TotalSlotMemory"] and job_duration != 0:
+    if num_cpu <= slot["TotalSlotCpus"] and amount_ram <= slot["TotalSlotMemory"] \
+            and job_duration != 0:
         cpu_fits = int(slot["TotalSlotCpus"] / num_cpu)
         jobs_parallel = cpu_fits \
             if amount_ram == 0 \
@@ -662,8 +663,8 @@ if __name__ == "__main__":
         MATLAB_NODES = 0
 
     # fetch current slot configuration
-    fetch_slots = './fetch_condor_slots.py'
-    os.system(fetch_slots)
+    FETCH_SLOTS = './fetch_condor_slots.py'
+    os.system(FETCH_SLOTS)
 
     prepare_checking(CPU_WORKERS, GPU_WORKERS, RAM_AMOUNT, DISK_SPACE,
                      JOB_AMOUNT, JOB_DURATION, MATLAB_NODES, CMD_ARGS.verbose)

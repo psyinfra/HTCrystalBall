@@ -404,16 +404,16 @@ def check_dynamic_slots(slot: dict, num_cpu: int, amount_ram: float,
     :param num_jobs:
     :return:
     """
-    available_cores = slot["cores"]
-    node_dict = {'node': slot["node"],
-                 'type': slot["type"],
-                 'total_slots': str(slot["total_slots"]),
-                 'cores': str(slot["cores"]),
-                 'disk': str(slot["disk"]),
-                 'ram': str(slot["ram"])}
+    available_cores = slot["TotalSlotCpus"]
+    node_dict = {'node': slot["UtsnameNodename"],
+                 'type': slot["SlotType"],
+                 'total_slots': str(slot["TotalSlots"]),
+                 'cores': str(slot["TotalSlotCpus"]),
+                 'disk': str(slot["TotalSlotDisk"]),
+                 'ram': str(slot["TotalSlotMemory"])}
 
     # if the job fits, calculate and return the usage
-    preview_node = {'name': slot["node"],
+    preview_node = {'name': slot["UtsnameNodename"],
                     'type': "dynamic",
                     'fits': 'NO',
                     'core_usage': '------',
@@ -421,34 +421,34 @@ def check_dynamic_slots(slot: dict, num_cpu: int, amount_ram: float,
                     'ram_usage': '------',
                     'sim_jobs': '------',
                     'wall_time_on_idle': 0}
-    if num_cpu <= available_cores and amount_ram <= slot["ram"]:
+    if num_cpu <= available_cores and amount_ram <= slot["TotalSlotMemory"]:
         preview_node['core_usage'] = str(num_cpu) + "/" + \
-                                     str(slot["cores"]) + " (" + \
-                                     str(int(round((num_cpu / slot["cores"]) * 100))) \
+                                     str(slot["TotalSlotCpus"]) + " (" + \
+                                     str(int(round((num_cpu / slot["TotalSlotCpus"]) * 100))) \
                                      + "%)"
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + \
-                                    str(slot["ram"]) + " GiB (" + \
-                                    str(int(round((amount_ram / slot["ram"]) * 100))) \
+                                    str(slot["TotalSlotMemory"]) + " GiB (" + \
+                                    str(int(round((amount_ram / slot["TotalSlotMemory"]) * 100))) \
                                     + "%)"
         preview_node['fits'] = 'YES'
         preview_node['sim_jobs'] = min(int(available_cores / num_cpu),
-                                       int(slot["ram"] / amount_ram))
+                                       int(slot["TotalSlotMemory"] / amount_ram))
     else:
         preview_node['core_usage'] = str(num_cpu) + "/" + \
-                                     str(slot["cores"]) + " (" + str(
-                                         int(round((num_cpu / slot["cores"])
+                                     str(slot["TotalSlotCpus"]) + " (" + str(
+                                         int(round((num_cpu / slot["TotalSlotCpus"])
                                                    * 100))) + "%)"
         preview_node['sim_jobs'] = 0
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
-            slot["ram"]) + " GiB (" \
-                                    + str(int(round((amount_ram / slot["ram"]) * 100))) + "%)"
+            slot["TotalSlotMemory"]) + " GiB (" \
+                                    + str(int(round((amount_ram / slot["TotalSlotMemory"]) * 100))) + "%)"
         preview_node['fits'] = 'NO'
 
-    if num_cpu <= slot["cores"] and amount_ram <= slot["ram"] and job_duration != 0:
-        cpu_fits = int(slot["cores"] / num_cpu)
+    if num_cpu <= slot["TotalSlotCpus"] and amount_ram <= slot["TotalSlotMemory"] and job_duration != 0:
+        cpu_fits = int(slot["TotalSlotCpus"] / num_cpu)
         jobs_parallel = cpu_fits \
             if amount_ram == 0 \
-            else min(cpu_fits, int(slot["ram"] / amount_ram))
+            else min(cpu_fits, int(slot["TotalSlotMemory"] / amount_ram))
         preview_node['wall_time_on_idle'] = str(math.ceil(num_jobs /
                                                           jobs_parallel) * job_duration)
     return [node_dict, preview_node]
@@ -466,16 +466,16 @@ def check_static_slots(slot: dict, slot_type: str, num_cores: int, amount_ram: f
     :param num_jobs:
     :return:
     """
-    available_slots = slot["cores"]
-    node_dict = {'node': slot["node"],
-                 'type': slot["type"],
-                 'total_slots': str(slot["total_slots"]),
-                 'cores': str(slot["cores"]),
-                 'disk': str(slot["disk"]),
-                 'ram': str(slot["ram"])}
+    available_slots = slot["TotalSlotCpus"]
+    node_dict = {'node': slot["UtsnameNodename"],
+                 'type': slot["SlotType"],
+                 'total_slots': str(slot["TotalSlots"]),
+                 'cores': str(slot["TotalSlotCpus"]),
+                 'disk': str(slot["TotalSlotDisk"]),
+                 'ram': str(slot["TotalSlotMemory"])}
 
     # if the job fits, calculate and return the usage
-    preview_node = {'name': slot["node"],
+    preview_node = {'name': slot["UtsnameNodename"],
                     'type': slot_type,
                     'fits': 'NO',
                     'core_usage': '------',
@@ -483,33 +483,33 @@ def check_static_slots(slot: dict, slot_type: str, num_cores: int, amount_ram: f
                     'ram_usage': '------',
                     'sim_jobs': '------',
                     'wall_time_on_idle': 0}
-    if num_cores <= slot["cores"] and amount_ram <= slot["ram"]:
+    if num_cores <= slot["TotalSlotCpus"] and amount_ram <= slot["TotalSlotMemory"]:
         preview_node['core_usage'] = str(num_cores) + "/" + \
-                                     str(slot["cores"]) + " (" + str(
-                                         int(round((num_cores / slot["cores"])
+                                     str(slot["TotalSlotCpus"]) + " (" + str(
+                                         int(round((num_cores / slot["TotalSlotCpus"])
                                                    * 100))) + "%)"
         preview_node['sim_jobs'] = available_slots
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
-            slot["ram"]) + " GiB (" \
-            + str(int(round((amount_ram / slot["ram"]) * 100))) + "%)"
+            slot["TotalSlotMemory"]) + " GiB (" \
+            + str(int(round((amount_ram / slot["TotalSlotMemory"]) * 100))) + "%)"
         preview_node['fits'] = 'YES'
         if job_duration != 0:
-            cpu_fits = int(slot["cores"] / num_cores)
+            cpu_fits = int(slot["TotalSlotCpus"] / num_cores)
             jobs_on_idle_slot = cpu_fits \
                 if amount_ram == 0 \
-                else min(cpu_fits, int(slot["ram"] / amount_ram))
+                else min(cpu_fits, int(slot["TotalSlotMemory"] / amount_ram))
             preview_node['wall_time_on_idle'] = str(
-                math.ceil(num_jobs / jobs_on_idle_slot / slot["total_slots"]) *
+                math.ceil(num_jobs / jobs_on_idle_slot / slot["TotalSlots"]) *
                 job_duration)
     else:
         preview_node['core_usage'] = str(num_cores) + "/" + \
-                                     str(slot["cores"]) + " (" + str(
-                                         int(round((num_cores / slot["cores"])
+                                     str(slot["TotalSlotCpus"]) + " (" + str(
+                                         int(round((num_cores / slot["TotalSlotCpus"])
                                                    * 100))) + "%)"
         preview_node['sim_jobs'] = 0
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
-            slot["ram"]) + " GiB (" \
-            + str(int(round((amount_ram / slot["ram"]) * 100))) + "%)"
+            slot["TotalSlotMemory"]) + " GiB (" \
+            + str(int(round((amount_ram / slot["TotalSlotMemory"]) * 100))) + "%)"
         preview_node['fits'] = 'NO'
     return [node_dict, preview_node]
 
@@ -527,17 +527,17 @@ def check_gpu_slots(slot: dict, slot_type: str, num_cores: int, num_gpu: int, am
     :param num_jobs:
     :return:
     """
-    available_slots = slot["cores"]
-    node_dict = {'node': slot["node"],
-                 'type': slot["type"],
-                 'total_slots': str(slot["total_slots"]),
-                 'cores': str(slot["cores"]),
-                 'gpus': str(slot["gpus"]),
-                 'disk': str(slot["disk"]),
-                 'ram': str(slot["ram"])}
+    available_slots = slot["TotalSlotCpus"]
+    node_dict = {'node': slot["UtsnameNodename"],
+                 'type': slot["SlotType"],
+                 'total_slots': str(slot["TotalSlots"]),
+                 'cores': str(slot["TotalSlotCpus"]),
+                 'gpus': str(slot["TotalSlotGPUs"]),
+                 'disk': str(slot["TotalSlotDisk"]),
+                 'ram': str(slot["TotalSlotMemory"])}
 
     # if the job fits, calculate and return the usage
-    preview_node = {'name': slot["node"],
+    preview_node = {'name': slot["UtsnameNodename"],
                     'type': slot_type,
                     'fits': 'NO',
                     'gpu_usage': '------',
@@ -545,48 +545,48 @@ def check_gpu_slots(slot: dict, slot_type: str, num_cores: int, num_gpu: int, am
                     'ram_usage': '------',
                     'sim_jobs': '------',
                     'wall_time_on_idle': 0}
-    if num_cores <= slot["cores"] and amount_ram <= slot["ram"] \
-            and num_gpu <= slot["gpus"]:
+    if num_cores <= slot["TotalSlotCpus"] and amount_ram <= slot["TotalSlotMemory"] \
+            and num_gpu <= slot["TotalSlotGPUs"]:
         preview_node['core_usage'] = str(num_cores) + "/" + \
-                                     str(slot["cores"]) + " (" + str(
-                                         int(round((num_cores / slot["cores"])
+                                     str(slot["TotalSlotCpus"]) + " (" + str(
+                                         int(round((num_cores / slot["TotalSlotCpus"])
                                                    * 100))) + "%)"
         preview_node['gpu_usage'] = str(num_gpu) + "/" + \
-            str(slot["gpus"]) + " (" + str(
-                int(round((num_gpu / slot["gpus"])
+            str(slot["TotalSlotGPUs"]) + " (" + str(
+                int(round((num_gpu / slot["TotalSlotGPUs"])
                           * 100))) + "%)"
-        preview_node['sim_jobs'] = min(int(slot["gpus"] / num_gpu),
+        preview_node['sim_jobs'] = min(int(slot["TotalSlotGPUs"] / num_gpu),
                                        int(available_slots / num_cores),
-                                       int(slot["ram"] / amount_ram))
+                                       int(slot["TotalSlotMemory"] / amount_ram))
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
-            slot["ram"]) + " GiB (" \
-            + str(int(round((amount_ram / slot["ram"]) * 100))) + "%)"
+            slot["TotalSlotMemory"]) + " GiB (" \
+            + str(int(round((amount_ram / slot["TotalSlotMemory"]) * 100))) + "%)"
         preview_node['fits'] = 'YES'
         if job_duration != 0:
-            cpu_fits = int(slot["cores"] / num_cores)
-            gpu_fits = int(slot["gpus"] / num_gpu)
+            cpu_fits = int(slot["TotalSlotCpus"] / num_cores)
+            gpu_fits = int(slot["TotalSlotGPUs"] / num_gpu)
             jobs_on_idle_slot = min(cpu_fits, gpu_fits) \
                 if amount_ram == 0 \
-                else min(min(cpu_fits, gpu_fits), int(slot["ram"] / amount_ram))
+                else min(min(cpu_fits, gpu_fits), int(slot["TotalSlotMemory"] / amount_ram))
             preview_node['wall_time_on_idle'] = str(
-                math.ceil(num_jobs / jobs_on_idle_slot / slot["gpus"]) *
+                math.ceil(num_jobs / jobs_on_idle_slot / slot["TotalSlotGPUs"]) *
                 job_duration)
     else:
         preview_node['core_usage'] = str(num_cores) + "/" + \
-                                     str(slot["cores"]) + " (" + str(
-                                         int(round((num_cores / slot["cores"])
+                                     str(slot["TotalSlotCpus"]) + " (" + str(
+                                         int(round((num_cores / slot["TotalSlotCpus"])
                                                    * 100))) + "%)"
-        if slot["gpus"] == 0:
+        if slot["TotalSlotGPUs"] == 0:
             preview_node['gpu_usage'] = "No GPU ressource!"
         else:
             preview_node['gpu_usage'] = str(num_gpu) + "/" + \
-                str(slot["gpus"]) + " (" + str(
-                    int(round((num_gpu / slot["gpus"])
+                str(slot["TotalSlotGPUs"]) + " (" + str(
+                    int(round((num_gpu / slot["TotalSlotGPUs"])
                               * 100))) + "%)"
         preview_node['sim_jobs'] = 0
         preview_node['ram_usage'] = "{0:.2f}".format(amount_ram) + "/" + str(
-            slot["ram"]) + " GiB (" \
-            + str(int(round((amount_ram / slot["ram"]) * 100))) + "%)"
+            slot["TotalSlotMemory"]) + " GiB (" \
+            + str(int(round((amount_ram / slot["TotalSlotMemory"]) * 100))) + "%)"
         preview_node['fits'] = 'NO'
     return [node_dict, preview_node]
 
@@ -600,12 +600,11 @@ def order_node_preview(node_preview: list) -> list:
     return sorted(node_preview, key=lambda nodes: (nodes["sim_jobs"]), reverse=True)
 
 
-def prepare_checking(arg_values, cpu: int, gpu: int, ram: str, disk: str,
+def prepare_checking(cpu: int, gpu: int, ram: str, disk: str,
                      jobs: int, job_duration: str, maxnodes: int, verbose: bool) -> bool:
     """
     Loads the Slot configuration, handles storage and time inputs,
     and invokes the checking for given job request if the request is valid.
-    :param arg_values:
     :param cpu:
     :param gpu:
     :param ram:
@@ -666,5 +665,5 @@ if __name__ == "__main__":
     fetch_slots = './fetch_condor_slots.py'
     os.system(fetch_slots)
 
-    prepare_checking(CMD_ARGS, CPU_WORKERS, GPU_WORKERS, RAM_AMOUNT, DISK_SPACE,
+    prepare_checking(CPU_WORKERS, GPU_WORKERS, RAM_AMOUNT, DISK_SPACE,
                      JOB_AMOUNT, JOB_DURATION, MATLAB_NODES, CMD_ARGS.verbose)

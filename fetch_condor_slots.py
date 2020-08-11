@@ -49,7 +49,7 @@ def nodename_in_list(name: str, slots: list) -> int:
     """
     count = 0
     while count < len(slots):
-        if name == slots[count]["node"]:
+        if name == slots[count]["UtsnameNodename"]:
             return count
         count += 1
     return -1
@@ -86,22 +86,21 @@ def format_slots(slots: list) -> dict:
     while count < len(slots):
         slot = slots[count]
 
-        slot_size = {"cores": int(float(slot["TotalSlotCpus"])),
-                     "disk": calc_disk_size(slot["TotalSlotDisk"]),
-                     "ram": calc_mem_size(slot["TotalSlotMemory"])}
+        slot_size = {"TotalSlotCpus": int(float(slot["TotalSlotCpus"])),
+                     "TotalSlotDisk": calc_disk_size(slot["TotalSlotDisk"]),
+                     "TotalSlotMemory": calc_mem_size(slot["TotalSlotMemory"])}
 
         if slot["SlotType"] == "Partitionable" or slot["SlotType"] == "Dynamic":
             if "gpu" in slot["UtsnameNodename"] and int(slot["TotalSlotGPUs"]) != 0:
-                slot_size["type"] = "gpu"
-                slot_size["total_slots"] = int(int(slot["TotalSlots"]))
-                slot_size["gpus"] = int(float(slot["TotalSlotGPUs"]))
+                slot_size["SlotType"] = "gpu"
+                slot_size["TotalSlotGPUs"] = int(float(slot["TotalSlotGPUs"]))
             else:
-                slot_size["type"] = "dynamic"
-                slot_size["total_slots"] = int(float(slot["TotalSlots"]))
+                slot_size["SlotType"] = "dynamic"
 
         elif slot["SlotType"] == "Static":
-            slot_size["type"] = "static"
-            slot_size["total_slots"] = int(float(slot["TotalSlots"]))
+            slot_size["SlotType"] = "static"
+
+        slot_size["TotalSlots"] = int(float(slot["TotalSlots"]))
 
         node_in_list = nodename_in_list(slot["UtsnameNodename"], formatted["slots"])
 
@@ -109,7 +108,7 @@ def format_slots(slots: list) -> dict:
             if not slot_exists(slot_size, formatted["slots"][node_in_list]["slot_size"]):
                 formatted["slots"][node_in_list]["slot_size"].append(slot_size)
         else:
-            formatted_slot = {"node": slot["UtsnameNodename"],
+            formatted_slot = {"UtsnameNodename": slot["UtsnameNodename"],
                               "slot_size": [slot_size]}
             formatted["slots"].append(formatted_slot)
 

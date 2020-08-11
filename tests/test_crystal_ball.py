@@ -130,13 +130,13 @@ def test_slot_config():
     assert "SlotType" in slots[0]["slot_size"][0]
 
     assert "SlotType" in big_balls.filter_slots(slots, "static")[0]
-    assert big_balls.filter_slots(slots, "static")[0]["type"] == "static"
+    assert big_balls.filter_slots(slots, "static")[0]["SlotType"] == "static"
 
     assert "SlotType" in big_balls.filter_slots(slots, "dynamic")[0]
-    assert big_balls.filter_slots(slots, "dynamic")[0]["type"] == "dynamic"
+    assert big_balls.filter_slots(slots, "dynamic")[0]["SlotType"] == "dynamic"
 
     assert "SlotType" in big_balls.filter_slots(slots, "gpu")[0]
-    assert big_balls.filter_slots(slots, "gpu")[0]["type"] == "gpu"
+    assert big_balls.filter_slots(slots, "gpu")[0]["SlotType"] == "gpu"
 
 
 def test_slot_checking():

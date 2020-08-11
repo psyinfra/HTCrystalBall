@@ -91,33 +91,33 @@ def test_calc_manager():
     Tests the method for preparing the slot checking.
     :return:
     """
-    assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="0", jobs=1,
+    assert big_balls.prepare_checking(cpu=1, gpu=0, ram="10GB", disk="0", jobs=1,
                                       job_duration="10m", maxnodes=0, verbose=True)
-    assert not big_balls.prepare_checking(None, cpu=0, gpu=1, ram="10GB", disk="0", jobs=1,
+    assert not big_balls.prepare_checking(cpu=0, gpu=1, ram="10GB", disk="0", jobs=1,
                                           job_duration="10m", maxnodes=0, verbose=True)
-    assert not big_balls.prepare_checking(None, cpu=1, gpu=0, ram="0", disk="", jobs=1,
+    assert not big_balls.prepare_checking(cpu=1, gpu=0, ram="0", disk="", jobs=1,
                                           job_duration="", maxnodes=0, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=1, gpu=1, ram="20GB", disk="", jobs=1,
+    assert big_balls.prepare_checking(cpu=1, gpu=1, ram="20GB", disk="", jobs=1,
                                       job_duration="10m", maxnodes=0, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="10GB",
+    assert big_balls.prepare_checking(cpu=1, gpu=0, ram="10GB", disk="10GB",
                                       jobs=1, job_duration="10m", maxnodes=0, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="10GB",
+    assert big_balls.prepare_checking(cpu=1, gpu=0, ram="10GB", disk="10GB",
                                       jobs=128, job_duration="15m", maxnodes=0, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="10GB", disk="",
+    assert big_balls.prepare_checking(cpu=1, gpu=0, ram="10GB", disk="",
                                       jobs=1, job_duration="10m", maxnodes=1, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=8, gpu=0, ram="10GB", disk="",
+    assert big_balls.prepare_checking(cpu=8, gpu=0, ram="10GB", disk="",
                                       jobs=1, job_duration="10m", maxnodes=0, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=8, gpu=0, ram="80GB", disk="",
+    assert big_balls.prepare_checking(cpu=8, gpu=0, ram="80GB", disk="",
                                       jobs=4, job_duration="1h", maxnodes=0, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=2, gpu=0, ram="10GB", disk="",
+    assert big_balls.prepare_checking(cpu=2, gpu=0, ram="10GB", disk="",
                                       jobs=1, job_duration="10m", maxnodes=3, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=1, gpu=0, ram="20GB", disk="",
+    assert big_balls.prepare_checking(cpu=1, gpu=0, ram="20GB", disk="",
                                       jobs=1, job_duration="10m", maxnodes=2, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=2, gpu=0, ram="20GB", disk="",
+    assert big_balls.prepare_checking(cpu=2, gpu=0, ram="20GB", disk="",
                                       jobs=1, job_duration="", maxnodes=2, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=2, gpu=0, ram="20GB", disk="",
+    assert big_balls.prepare_checking(cpu=2, gpu=0, ram="20GB", disk="",
                                       jobs=32, job_duration="10m", maxnodes=1, verbose=True)
-    assert big_balls.prepare_checking(None, cpu=2, gpu=5, ram="10GB", disk="",
+    assert big_balls.prepare_checking(cpu=2, gpu=5, ram="10GB", disk="",
                                       jobs=32, job_duration="10m", maxnodes=1, verbose=True)
 
 
@@ -127,15 +127,15 @@ def test_slot_config():
     :return:
     """
     slots = big_balls.define_slots()
-    assert "type" in slots[0]["slot_size"][0]
+    assert "SlotType" in slots[0]["slot_size"][0]
 
-    assert "type" in big_balls.filter_slots(slots, "static")[0]
+    assert "SlotType" in big_balls.filter_slots(slots, "static")[0]
     assert big_balls.filter_slots(slots, "static")[0]["type"] == "static"
 
-    assert "type" in big_balls.filter_slots(slots, "dynamic")[0]
+    assert "SlotType" in big_balls.filter_slots(slots, "dynamic")[0]
     assert big_balls.filter_slots(slots, "dynamic")[0]["type"] == "dynamic"
 
-    assert "type" in big_balls.filter_slots(slots, "gpu")[0]
+    assert "SlotType" in big_balls.filter_slots(slots, "gpu")[0]
     assert big_balls.filter_slots(slots, "gpu")[0]["type"] == "gpu"
 
 
@@ -210,16 +210,16 @@ def test_dict_equals():
 
 def test_slot_in_node():
     slots = [
-        {"node": "cpu2", "slot_size": [{"cores": 1, "disk": 287.53, "ram": 5.0, "type": "static", "total_slots": 12}]},
-        {"node": "cpu3", "slot_size": [{"cores": 1, "disk": 287.68, "ram": 5.0, "type": "static", "total_slots": 12}]},
-        {"node": "cpu4", "slot_size": [{"cores": 1, "disk": 287.68, "ram": 5.0, "type": "static", "total_slots": 12}]}
+        {"UtsnameNodename": "cpu2", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.53, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]},
+        {"UtsnameNodename": "cpu3", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]},
+        {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
     ]
-    slot_a = {"node": "cpu4", "slot_size": [{"cores": 1, "disk": 287.68,
-                                             "ram": 5.0, "type": "static", "total_slots": 12}]}
-    slot_b = {"node": "cpu5", "slot_size": [{"cores": 1, "disk": 287.68,
-                                             "ram": 5.0, "type": "static", "total_slots": 12}]}
-    slot_c = {"node": "cpu4", "slot_size": [{"cores": 2, "disk": 287.68,
-                                             "ram": 5.0, "type": "static", "total_slots": 12}]}
+    slot_a = {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68,
+                                             "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
+    slot_b = {"UtsnameNodename": "cpu5", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68,
+                                             "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
+    slot_c = {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 2, "TotalSlotDisk": 287.68,
+                                             "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
     assert sloth.slot_exists(slot_a, slots)
     assert not sloth.slot_exists(slot_b, slots)
     assert not sloth.slot_exists(slot_c, slots)
@@ -227,9 +227,9 @@ def test_slot_in_node():
 
 def test_nodename_in_list():
     slots = [
-        {"node": "cpu2", "slot_size": [{"cores": 1, "disk": 287.53, "ram": 5.0, "type": "static", "total_slots": 12}]},
-        {"node": "cpu3", "slot_size": [{"cores": 1, "disk": 287.68, "ram": 5.0, "type": "static", "total_slots": 12}]},
-        {"node": "cpu4", "slot_size": [{"cores": 1, "disk": 287.68, "ram": 5.0, "type": "static", "total_slots": 12}]}
+        {"UtsnameNodename": "cpu2", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.53, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]},
+        {"UtsnameNodename": "cpu3", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]},
+        {"UtsnameNodename": "cpu4", "slot_size": [{"TotalSlotCpus": 1, "TotalSlotDisk": 287.68, "TotalSlotMemory": 5.0, "SlotType": "static", "TotalSlots": 12}]}
     ]
 
     assert sloth.nodename_in_list("cpu2", slots) != -1

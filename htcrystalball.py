@@ -175,8 +175,8 @@ def filter_slots(slots: dict, slot_type: str) -> list:
     res = []
     for node in slots:
         for slot in node["slot_size"]:
-            if slot["type"] == slot_type:
-                slot["node"] = node["node"]
+            if slot["SlotType"] == slot_type:
+                slot["UtsnameNodename"] = node["UtsnameNodename"]
                 res.append(slot)
     return res
 

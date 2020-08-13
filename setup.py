@@ -43,6 +43,6 @@ setuptools.setup(
         'pytest',
     ],
     data_files=[
-            ('share/man/man1', ['man/man1/htcrystalball.1'])
+            ('share/man/man1', ['man/man1/htcrystalball.1', 'man/man1/fetch_condor_slots.1'])
       ],
 )

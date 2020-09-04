@@ -7,23 +7,6 @@ import htcondor
 SLOTS_CONFIGURATION = "config/slots.json"
 
 
-def dict_equals(dict_a: dict, dict_b: dict):
-    """
-
-    Compares keys and values of two dictionarys.
-    If the number of shared items equals the length of
-    both dictionarys, they are considered as equal.
-    :param dict_a:
-    :param dict_b:
-    :return:
-    """
-    shared_items = {k: dict_a[k] for k in dict_a if k in dict_b and dict_a[k] == dict_b[k]}
-    if len(shared_items) == len(dict_a) and len(shared_items) == len(dict_b):
-        return True
-
-    return False
-
-
 def slot_exists(slot_a: dict, slots: list) -> bool:
     """
     Checks if a slot is already in a dictionary by checking whether
@@ -34,7 +17,7 @@ def slot_exists(slot_a: dict, slots: list) -> bool:
     """
     count = 0
     while count < len(slots):
-        if dict_equals(slot_a, slots[count]):
+        if slot_a == slots[count]:
             return True
         count += 1
     return False

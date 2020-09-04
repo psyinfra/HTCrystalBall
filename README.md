@@ -25,10 +25,10 @@ This project contains of two main parts
 *   looking for suiting slots in a given configuration to execute user-defined
 jobs a.k.a. the `crystal ball`
 
-and is intended for HTCondor (server) systems which describe ressources as slots 
+and is intended for HTCondor (server) systems which describe resources as slots
 rather than nodes. 
 
-Fetching the slots uses the `condor_status` command to get neccessary 
+Fetching the slots uses the `condor_status` command to get necessary
 information about the various slots. In our particular use-case we went for the `-long` 
 option that gives us way too much information but at least all the information we need. 
 As each line of the command output follows the pattern `key = value` we chose to parse
@@ -77,7 +77,7 @@ To install and configure `HTCrystalBall` please follow these steps:
 
 1.  clone this repo to the file system of any machine in your HTCondor cluster
     
-    `git clone git@github.com:psyinfra/HTCrystalBall.git`
+    `git clone https://github.com/psyinfra/HTCrystalBall.git`
 
 2.  `cd` into the newly created directory and install python modules using the setup.py
 
@@ -85,7 +85,7 @@ To install and configure `HTCrystalBall` please follow these steps:
 
     `pip3 install .`
 
-3.  if neccessary configure the path of the slot configuration file to match your system
+3.  if necessary configure the path of the slot configuration file to match your system
 
     `SLOTS_CONFIGURATION = "config/slots.json"`
 
@@ -374,7 +374,7 @@ When using VERBOSE HTCrystalBall will print out your given Input...
     └──────────────┴───────────┴──────────┴──────────────────┴───────────────────────┴───────────┴────────────────────────┴───────────────────┘
 
 ## Testing
-Make sure you have the neccessary python modules:
+Make sure you have the necessary python modules:
 
 `pip3 install pytest`
 

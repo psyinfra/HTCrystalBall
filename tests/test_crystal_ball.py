@@ -272,8 +272,8 @@ def test__memory_conversions():
     test the memory conversion of the slot fetching
     :return:
     """
-    size_disk = "1048576"
-    size_mem = "1024"
+    size_disk = 1048576
+    size_mem = 1024
 
     assert sloth.calc_mem_size(size_mem) == 1.0
     assert sloth.calc_mem_size(size_mem*2) == 2.0

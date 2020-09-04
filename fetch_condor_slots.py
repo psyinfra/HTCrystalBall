@@ -22,22 +22,22 @@ def nodename_in_list(name: str, slots: list) -> int:
     return -1
 
 
-def calc_disk_size(size: str) -> float:
+def calc_disk_size(size: float) -> float:
     """
     Calculates the disk space in GiB (condor_status returns it in KiB not in GiB)
     :param size:
     :return:
     """
-    return float("{0:.2f}".format(float(size) / 2 ** 20))
+    return round(size / 2 ** 20, 2)
 
 
-def calc_mem_size(size: str) -> float:
+def calc_mem_size(size: float) -> float:
     """
     Calculates the memory in GiB (condor_status returns it in MiB not in GiB)
     :param size:
     :return:
     """
-    return float("{0:.2f}".format(float(size) / 2 ** 10))
+    return round(size / 2 ** 10, 2)
 
 
 def format_slots(slots: list) -> dict:
@@ -48,14 +48,12 @@ def format_slots(slots: list) -> dict:
     :return:
     """
     formatted = {"slots": []}
-    count = 0
 
-    while count < len(slots):
-        slot = slots[count]
+    for slot in slots:
 
         slot_size = {"TotalSlotCpus": int(float(slot["TotalSlotCpus"])),
-                     "TotalSlotDisk": calc_disk_size(slot["TotalSlotDisk"]),
-                     "TotalSlotMemory": calc_mem_size(slot["TotalSlotMemory"])}
+                     "TotalSlotDisk": calc_disk_size(float(slot["TotalSlotDisk"])),
+                     "TotalSlotMemory": calc_mem_size(float(slot["TotalSlotMemory"]))}
 
         if slot["SlotType"] == "Partitionable" or slot["SlotType"] == "Dynamic":
             if "gpu" in slot["UtsnameNodename"] and int(slot["TotalSlotGPUs"]) != 0:
@@ -80,7 +78,6 @@ def format_slots(slots: list) -> dict:
                               "slot_size": [slot_size]}
             formatted["slots"].append(formatted_slot)
 
-        count += 1
     return formatted
 
 

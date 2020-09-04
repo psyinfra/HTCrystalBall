@@ -12,7 +12,7 @@ from rich.table import Table
 SLOTS_CONFIGURATION = "config/slots.json"
 
 
-def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")):
+def validate_storage_size(arg_value: str) -> str:
     """
 
     Defines and checks for valid storage inputs.
@@ -20,13 +20,16 @@ def validate_storage_size(arg_value, pat=re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]
     :param pat:
     :return:
     """
+
+    pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
+
     if not pat.match(arg_value):
         print("ERROR: Invalid storage value given: '"+arg_value+"'\n")
         raise argparse.ArgumentTypeError
     return arg_value
 
 
-def validate_duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS]?))?$")):
+def validate_duration(arg_value: str):
     """
 
     Defines and checks for valid time inputs.
@@ -34,6 +37,8 @@ def validate_duration(arg_value, pat=re.compile(r"^([0-9]+([dDhHmMsS]?))?$")):
     :param pat:
     :return:
     """
+    pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
+
     if not pat.match(arg_value):
         print("ERROR: Invalid time value given: '"+arg_value+"'\n")
         raise argparse.ArgumentTypeError

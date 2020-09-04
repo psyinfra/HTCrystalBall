@@ -4,7 +4,7 @@
 import json
 import htcondor
 
-SLOTS_CONFIGURATION = "../config/slots.json"
+SLOTS_CONFIGURATION = "config/slots.json"
 
 
 def nodename_in_list(name: str, slots: list) -> int:

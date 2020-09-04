@@ -288,7 +288,7 @@ if __name__ == "__main__":
         MATLAB_NODES = 0
 
     # fetch current slot configuration
-    FETCH_SLOTS = './fetch_condor_slots.py'
+    FETCH_SLOTS = './modules/fetch_condor_slots.py'
     os.system(FETCH_SLOTS)
 
     prepare_checking(CPU_WORKERS, GPU_WORKERS, RAM_AMOUNT, DISK_SPACE,

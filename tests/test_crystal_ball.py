@@ -195,24 +195,6 @@ def test_slot_result():
 # ------------------ Test slot fetching -------------------------
 
 
-def test_dict_equals():
-    """
-    Test the dict_equals method of slot fetching
-    :return:
-    """
-    dict_a = {"a": 1, "b": 2, "c": 3}
-    dict_b = {"a": 1, "b": 2, "c": 3}
-    dict_c = {"a": 2, "b": 1, "c": 3}
-    dict_d = {"a": 1, "b": 1, "c": 3}
-
-    assert sloth.dict_equals(dict_a, dict_b)
-    assert not sloth.dict_equals(dict_a, dict_c)
-    assert not sloth.dict_equals(dict_a, dict_d)
-    assert not sloth.dict_equals(dict_d, dict_c)
-    assert not sloth.dict_equals(dict_b, dict_c)
-    assert not sloth.dict_equals(dict_d, dict_b)
-
-
 def test_slot_in_node():
     """
     test the slot in node function of the slot fetching
@@ -250,9 +232,9 @@ def test_slot_in_node():
                                                         "TotalSlotMemory": 5.0,
                                                         "SlotType": "static",
                                                         "TotalSlots": 12}]}
-    assert sloth.slot_exists(slot_a, slots)
-    assert not sloth.slot_exists(slot_b, slots)
-    assert not sloth.slot_exists(slot_c, slots)
+    assert slot_a in slots
+    assert slot_b not in slots
+    assert slot_c not in slots
 
 
 def test_nodename_in_list():
@@ -290,8 +272,8 @@ def test__memory_conversions():
     test the memory conversion of the slot fetching
     :return:
     """
-    size_disk = 1048576
-    size_mem = 1024
+    size_disk = "1048576"
+    size_mem = "1024"
 
     assert sloth.calc_mem_size(size_mem) == 1.0
     assert sloth.calc_mem_size(size_mem*2) == 2.0

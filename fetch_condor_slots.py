@@ -7,22 +7,6 @@ import htcondor
 SLOTS_CONFIGURATION = "config/slots.json"
 
 
-def slot_exists(slot_a: dict, slots: list) -> bool:
-    """
-    Checks if a slot is already in a dictionary by checking whether
-    it is equal to any already present slot.
-    :param slot_a:
-    :param slots:
-    :return:
-    """
-    count = 0
-    while count < len(slots):
-        if slot_a == slots[count]:
-            return True
-        count += 1
-    return False
-
-
 def nodename_in_list(name: str, slots: list) -> int:
     """
     Check if a nodename is already in a list
@@ -89,7 +73,7 @@ def format_slots(slots: list) -> dict:
         node_in_list = nodename_in_list(slot["UtsnameNodename"], formatted["slots"])
 
         if node_in_list != -1:
-            if not slot_exists(slot_size, formatted["slots"][node_in_list]["slot_size"]):
+            if slot_size not in formatted["slots"][node_in_list]["slot_size"]:
                 formatted["slots"][node_in_list]["slot_size"].append(slot_size)
         else:
             formatted_slot = {"UtsnameNodename": slot["UtsnameNodename"],
@@ -122,7 +106,7 @@ def read_slots(filename: str) -> dict:
                 value = slot["Name"].split('@')[0]
                 slot["Name"] = value.replace("\"", "")
 
-            if not slot_exists(slot, status["slots"]):
+            if slot not in status["slots"]:
                 status["slots"].append(slot)
     else:
         with open(filename) as file:
@@ -141,7 +125,7 @@ def read_slots(filename: str) -> dict:
                         value = line.split('@')[0]
                     slot[key] = value.replace("\"", "")
             else:
-                if not slot_exists(slot, status["slots"]):
+                if slot not in status["slots"]:
                     status["slots"].append(slot)
                 slot = {}
 

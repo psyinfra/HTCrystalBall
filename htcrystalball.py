@@ -14,11 +14,13 @@ SLOTS_CONFIGURATION = "config/slots.json"
 
 def validate_storage_size(arg_value: str) -> str:
     """
+    Defines and checks valid storage inputs.
 
-    Defines and checks for valid storage inputs.
-    :param arg_value:
-    :param pat:
-    :return:
+    Args:
+        arg_value: The given storage input string
+
+    Returns:
+        The valid storage string or raises an exception if it doesn't match the regex.
     """
 
     pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
@@ -29,13 +31,15 @@ def validate_storage_size(arg_value: str) -> str:
     return arg_value
 
 
-def validate_duration(arg_value: str):
+def validate_duration(arg_value: str) -> str:
     """
+    Defines and checks valid time inputs.
 
-    Defines and checks for valid time inputs.
-    :param arg_value:
-    :param pat:
-    :return:
+    Args:
+        arg_value: The given duration input string
+
+    Returns:
+        The valid duration string or raises an exception if it doesn't match the regex.
     """
     pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
 
@@ -47,11 +51,14 @@ def validate_duration(arg_value: str):
 
 def split_number_unit(user_input: str) -> [float, str]:
     """
-
     Splits the user input for storage sizes into number and storage unit.
     If no value or unit is given, the unit is set to GiB.
-    :param user_input:
-    :return:
+
+    Args:
+        user_input: The given number string
+
+    Returns:
+        The amount and unit string separated in a list.
     """
     if user_input == "" or user_input is None:
         return [0.0, "GiB"]
@@ -68,11 +75,14 @@ def split_number_unit(user_input: str) -> [float, str]:
 
 def split_duration_unit(user_input: str) -> [float, str]:
     """
-
     Splits the user input for time into number and time unit.
     If no value or unit is given, the unit is set to minutes.
-    :param user_input:
-    :return:
+
+    Args:
+        user_input: The given duration string
+
+    Returns:
+        The duration and unit string separated in a list.
     """
     if user_input == "" or user_input is None:
         return [0.0, "min"]
@@ -90,9 +100,13 @@ def split_duration_unit(user_input: str) -> [float, str]:
 def calc_to_bin(number: float, unit: str) -> float:
     """
     Converts a storage value to GiB and accounts for base2 and base10 units.
-    :param number:
-    :param unit:
-    :return:
+
+    Args:
+        number: The storage size number
+        unit: The storage unit string
+
+    Returns:
+        The storage size number converted to GiB
     """
     unit_indicator = unit.lower()
     if unit_indicator in ("kb", "k", "kib"):
@@ -109,9 +123,13 @@ def calc_to_bin(number: float, unit: str) -> float:
 def calc_to_min(number: float, unit: str) -> float:
     """
     Converts a time value to minutes, according to the given unit.
-    :param number:
-    :param unit:
-    :return:
+
+    Args:
+        number: The duration number
+        unit: The duration unit string
+
+    Returns:
+        The duration number converted to minutes
     """
     unit_indicator = unit.lower()
     if unit_indicator in ("d", "dd"):
@@ -123,11 +141,12 @@ def calc_to_min(number: float, unit: str) -> float:
     return number
 
 
-# fixed help output non-optional without brackets and usage not showing -h
 def define_environment():
     """
     Defines the command line arguments and required formats.
-    :return:
+
+    Returns:
+
     """
     parser = argparse.ArgumentParser(
         description="To get a preview for any job you are trying to execute using "
@@ -163,7 +182,9 @@ def define_environment():
 def define_slots() -> dict:
     """
     Loads the slot configuration.
-    :return:
+
+    Returns:
+
     """
     with open(SLOTS_CONFIGURATION) as config_file:
         data = json.load(config_file)
@@ -172,10 +193,14 @@ def define_slots() -> dict:
 
 def filter_slots(slots: dict, slot_type: str) -> list:
     """
-    Filter the slots stored in a dictionary according to their type
-    :param slots:
-    :param slot_type:
-    :return:
+    Filters the slots stored in a dictionary according to their type.
+
+    Args:
+        slots: Dictionary of slots
+        slot_type: requested Slot Type for filtering
+
+    Returns:
+        A filtered dictionary of slots
     """
     res = []
     for node in slots:
@@ -191,14 +216,18 @@ def pretty_print_input(num_cpu: int, amount_ram: float, amount_disk: float, num_
                        num_jobs: int, num_duration: float, max_nodes: int):
     """
     Prints out the already converted user input to the console using rich tables.
-    :param num_cpu:
-    :param amount_ram:
-    :param amount_disk:
-    :param num_gpu:
-    :param num_jobs:
-    :param num_duration:
-    :param max_nodes:
-    :return:
+
+    Args:
+        num_cpu: The requested number CPU cores
+        amount_ram: The requested amount of RAM
+        amount_disk: The requested amount of disk space
+        num_gpu: The requested number of GPU units
+        num_jobs: The user-defined amount of similar jobs
+        num_duration: The user-defined estimated duration per job
+        max_nodes: The user-defined maximum number of simultaneous occupied nodes
+
+    Returns:
+
     """
     console = Console()
 
@@ -239,9 +268,13 @@ def pretty_print_input(num_cpu: int, amount_ram: float, amount_disk: float, num_
 
 def pretty_print_slots(result: dict):
     """
-    Prints out the nodes to the console using rich tables.
-    :param result:
-    :return:
+    Prints out the slots to the console using rich tables.
+
+    Args:
+        result: A dictionary of slot configurations.
+
+    Returns:
+
     """
     console = Console()
 
@@ -287,9 +320,14 @@ def pretty_print_slots(result: dict):
 def pretty_print_result(result: dict, verbose: bool):
     """
     Prints out the preview result to the console using rich tables.
-    :param result:
-    :param verbose:
-    :return:
+
+    Args:
+        result: A dictionary of slot configurations including occupancy values for
+        the requested job size.
+        verbose: A value to extend the generated output.
+
+    Returns:
+
     """
     console = Console()
 
@@ -347,18 +385,21 @@ def check_slots(static: list, dynamic: list, gpu: list, num_cpu: int,
     """
     Handles the checking for all node/slot types and invokes the output methods.
 
-    :param static:
-    :param dynamic:
-    :param gpu:
-    :param num_cpu:
-    :param amount_ram:
-    :param amount_disk:
-    :param num_gpu:
-    :param num_jobs:
-    :param job_duration:
-    :param maxnodes:
-    :param verbose:
-    :return:
+    Args:
+        static: A list of static slot configurations
+        dynamic: A list of dynamic slot configurations
+        gpu: A list of gpu slot configurations
+        num_cpu: The requested number of CPU cores
+        amount_ram: The requested amount of RAM
+        amount_disk: The requested amount of disk space
+        num_gpu: The requested number of GPUs
+        num_jobs: The amount of similar jobs to execute
+        job_duration: The duration for each job to execute
+        maxnodes: The maximum number of nodes to execute the jobs
+        verbose: Flag to extend the output.
+
+    Returns:
+
     """
     if verbose:
         pretty_print_input(num_cpu, amount_ram, amount_disk, num_gpu,
@@ -374,13 +415,13 @@ def check_slots(static: list, dynamic: list, gpu: list, num_cpu: int,
             preview_res['preview'].append(preview_node)
 
         for node in static:
-            [node_dict, preview_node] = check_static_slots(node, "static", num_cpu,
+            [node_dict, preview_node] = check_static_slots(node, num_cpu,
                                                            amount_ram, job_duration, num_jobs)
             preview_res['slots'].append(node_dict)
             preview_res['preview'].append(preview_node)
     elif num_cpu != 0 and num_gpu != 0:
         for node in gpu:
-            [node_dict, preview_node] = check_gpu_slots(node, "gpu", num_cpu, num_gpu,
+            [node_dict, preview_node] = check_gpu_slots(node, num_cpu, num_gpu,
                                                         amount_ram, job_duration, num_jobs)
             preview_res['slots'].append(node_dict)
             preview_res['preview'].append(preview_node)
@@ -402,12 +443,16 @@ def check_dynamic_slots(slot: dict, num_cpu: int, amount_ram: float,
                         job_duration: float, num_jobs: int) -> [dict, dict]:
     """
     Checks all dynamic slots if they fit the job.
-    :param slot:
-    :param num_cpu:
-    :param amount_ram:
-    :param job_duration:
-    :param num_jobs:
-    :return:
+
+    Args:
+        slot: The slot to be checked for running the specified job.
+        num_cpu: The number of CPU cores for a single job
+        amount_ram: The amount of RAM for a single job
+        job_duration: The duration for a single job to execute
+        num_jobs: The number of similar jobs to be executed
+
+    Returns:
+        A dictionary of the checked slot and a dictionary with the occupancy details of the slot.
     """
     available_cores = slot["TotalSlotCpus"]
     node_dict = {'node': slot["UtsnameNodename"],
@@ -460,17 +505,20 @@ def check_dynamic_slots(slot: dict, num_cpu: int, amount_ram: float,
     return [node_dict, preview_node]
 
 
-def check_static_slots(slot: dict, slot_type: str, num_cores: int, amount_ram: float,
+def check_static_slots(slot: dict, num_cores: int, amount_ram: float,
                        job_duration: float, num_jobs: int) -> [dict, dict]:
     """
-    Checks all static slots (gpu is also static) if the job fits
-    :param slot:
-    :param slot_type:
-    :param num_cores:
-    :param amount_ram:
-    :param job_duration:
-    :param num_jobs:
-    :return:
+    Checks all static slots if they fit the job.
+
+    Args:
+        slot: The slot to be checked for running the specified job.
+        num_cores: The number of CPU cores for a single job
+        amount_ram: The amount of RAM for a single job
+        job_duration: The duration for a single job to execute
+        num_jobs: The number of similar jobs to be executed
+
+    Returns:
+        A dictionary of the checked slot and a dictionary with the occupancy details of the slot.
     """
     available_slots = slot["TotalSlotCpus"]
     node_dict = {'node': slot["UtsnameNodename"],
@@ -482,7 +530,7 @@ def check_static_slots(slot: dict, slot_type: str, num_cores: int, amount_ram: f
 
     # if the job fits, calculate and return the usage
     preview_node = {'name': slot["UtsnameNodename"],
-                    'type': slot_type,
+                    'type': 'static',
                     'fits': 'NO',
                     'core_usage': '------',
                     'gpu_usage': '------',
@@ -520,18 +568,21 @@ def check_static_slots(slot: dict, slot_type: str, num_cores: int, amount_ram: f
     return [node_dict, preview_node]
 
 
-def check_gpu_slots(slot: dict, slot_type: str, num_cores: int, num_gpu: int, amount_ram: float,
+def check_gpu_slots(slot: dict, num_cores: int, num_gpu: int, amount_ram: float,
                     job_duration: float, num_jobs: int) -> [dict, dict]:
     """
-    Checks all gpu slots (is also static) if the job fits
-    :param num_gpu:
-    :param slot:
-    :param slot_type:
-    :param num_cores:
-    :param amount_ram:
-    :param job_duration:
-    :param num_jobs:
-    :return:
+    Checks all gpu slots if they fit the job.
+
+    Args:
+        slot: The slot to be checked for running the specified job.
+        num_cores: The number of CPU cores for a single job
+        num_gpu: The number of GPU units for a single job
+        amount_ram: The amount of RAM for a single job
+        job_duration: The duration for a single job to execute
+        num_jobs: The number of similar jobs to be executed
+
+    Returns:
+        A dictionary of the checked slot and a dictionary with the occupancy details of the slot.
     """
     available_slots = slot["TotalSlotCpus"]
     node_dict = {'node': slot["UtsnameNodename"],
@@ -544,7 +595,7 @@ def check_gpu_slots(slot: dict, slot_type: str, num_cores: int, num_gpu: int, am
 
     # if the job fits, calculate and return the usage
     preview_node = {'name': slot["UtsnameNodename"],
-                    'type': slot_type,
+                    'type': 'gpu',
                     'fits': 'NO',
                     'gpu_usage': '------',
                     'core_usage': '------',
@@ -600,8 +651,12 @@ def check_gpu_slots(slot: dict, slot_type: str, num_cores: int, num_gpu: int, am
 def order_node_preview(node_preview: list) -> list:
     """
     Order the list of checked nodes by fits/fits not and number of similar jobs descending.
-    :param node_preview:
-    :return:
+
+    Args:
+        node_preview: the list of checked nodes
+
+    Returns:
+        A list of checked nodes sorted by number of similar executable jobs.
     """
     return sorted(node_preview, key=lambda nodes: (nodes["sim_jobs"]), reverse=True)
 
@@ -611,16 +666,21 @@ def prepare_checking(cpu: int, gpu: int, ram: str, disk: str,
     """
     Loads the Slot configuration, handles storage and time inputs,
     and invokes the checking for given job request if the request is valid.
-    :param cpu:
-    :param gpu:
-    :param ram:
-    :param disk:
-    :param jobs:
-    :param job_duration:
-    :param maxnodes:
-    :param verbose:
-    :return:
+
+    Args:
+        cpu: User input of CPU cores
+        gpu: User input of GPU units
+        ram: User input of the amount of RAM
+        disk: User input of the amount of disk space
+        jobs: User input of the number of similar jobs
+        job_duration: User input of the duration time for a single job
+        maxnodes:
+        verbose:
+
+    Returns:
+        If all needed parameters were given
     """
+
     slot_config = define_slots()
     static_slts = filter_slots(slot_config, "static")
     dynamic_slts = filter_slots(slot_config, "dynamic")

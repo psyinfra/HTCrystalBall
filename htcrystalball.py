@@ -8,6 +8,14 @@ import re
 import math
 from rich.console import Console
 from rich.table import Table
+import logging
+
+# External (root level) logging level
+logging.basicConfig(level=logging.ERROR)
+
+# Internal logging level
+logger = logging.getLogger('scrape_energy')
+logger.setLevel(level=logging.DEBUG)
 
 SLOTS_CONFIGURATION = "config/slots.json"
 
@@ -26,7 +34,7 @@ def validate_storage_size(arg_value: str) -> str:
     pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
 
     if not pat.match(arg_value):
-        print("ERROR: Invalid storage value given: '"+arg_value+"'\n")
+        logging.error("Invalid storage value given: '"+arg_value+"'\n")
         raise argparse.ArgumentTypeError
     return arg_value
 
@@ -44,7 +52,7 @@ def validate_duration(arg_value: str) -> str:
     pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
 
     if not pat.match(arg_value):
-        print("ERROR: Invalid time value given: '"+arg_value+"'\n")
+        logging.error("Invalid time value given: '"+arg_value+"'\n")
         raise argparse.ArgumentTypeError
     return arg_value
 
@@ -66,7 +74,11 @@ def split_number_unit(user_input: str) -> [float, str]:
     splitted = re.split(r'(\d*\.?\d+)', user_input.replace(' ', ''))
 
     amount = float(splitted[1])
-    unit = "GiB" if splitted[2] == "" else splitted[2]
+    if splitted[2] == "":
+        unit = "GiB"
+        logging.info("No storage unit given, using GiB as default.")
+    else:
+        unit = splitted[2]
 
     return [amount, unit]
 
@@ -88,7 +100,11 @@ def split_duration_unit(user_input: str) -> [float, str]:
     splitted = re.split(r'(\d*\.?\d+)', user_input.replace(' ', ''))
 
     amount = float(splitted[1])
-    unit = "min" if splitted[2] == "" else splitted[2]
+    if splitted[2] == "":
+        unit = "min"
+        logging.info("No duration unit given, using MIN as default.")
+    else:
+        unit = splitted[2]
 
     return [amount, unit]
 
@@ -691,9 +707,9 @@ def prepare_checking(cpu: int, gpu: int, ram: str, disk: str,
     job_duration = calc_to_min(job_duration, duration_unit)
 
     if cpu == 0:
-        print("No number of CPU workers given --- ABORTING")
+        logging.warning("No number of CPU workers given --- ABORTING")
     elif ram == 0.0:
-        print("No RAM amount given --- ABORTING")
+        logging.warning("No RAM amount given --- ABORTING")
     else:
         check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram, disk, gpu,
                     jobs, job_duration, maxnodes, verbose)

@@ -6,9 +6,9 @@ import argparse
 import json
 import re
 import math
+import logging
 from rich.console import Console
 from rich.table import Table
-import logging
 
 # External (root level) logging level
 logging.basicConfig(level=logging.ERROR)
@@ -34,7 +34,7 @@ def validate_storage_size(arg_value: str) -> str:
     pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
 
     if not pat.match(arg_value):
-        logging.error("Invalid storage value given: '"+arg_value+"'\n")
+        logging.error("Invalid storage value given: %s'" % arg_value)
         raise argparse.ArgumentTypeError
     return arg_value
 
@@ -52,7 +52,7 @@ def validate_duration(arg_value: str) -> str:
     pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
 
     if not pat.match(arg_value):
-        logging.error("Invalid time value given: '"+arg_value+"'\n")
+        logging.error("Invalid time value given: %s'" % arg_value)
         raise argparse.ArgumentTypeError
     return arg_value
 

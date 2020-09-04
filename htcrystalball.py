@@ -301,29 +301,32 @@ def pretty_print_slots(result: dict):
 
     for slot in result['slots']:
         if slot['type'] == "static":
-            table.add_row("[dark_blue]" + slot['node'] + "[/dark_blue]",
-                          "[dark_blue]" + slot['type'] + "[/dark_blue]",
-                          "[dark_blue]" + str(slot['total_slots']) + "[/dark_blue]",
-                          "[dark_blue]" + str(slot['cores']) + "[/dark_blue]",
-                          "[dark_blue]------[/dark_blue]",
-                          "[dark_blue]" + str(slot['ram']) + " GiB[/dark_blue]",
-                          "[dark_blue]" + str(slot['disk']) + " GiB[/dark_blue]")
+            color_val = 'dark_blue'
+            table.add_row(f"[{color_val}]{slot['node']}[/{color_val}]",
+                          f"[{color_val}]{slot['type']}[/{color_val}]",
+                          f"[{color_val}]{slot['total_slots']}[/{color_val}]",
+                          f"[{color_val}]{slot['cores']}[/{color_val}]",
+                          f"[{color_val}]------[/{color_val}]",
+                          f"[{color_val}]{slot['ram']} GiB[/{color_val}]",
+                          f"[{color_val}]{slot['disk']} GiB[/{color_val}]")
         elif slot['type'] == "gpu":
-            table.add_row("[purple4]" + slot['node'] + "[/purple4]",
-                          "[purple4]" + slot['type'] + "[/purple4]",
-                          "[purple4]" + str(slot['total_slots']) + "[/purple4]",
-                          "[purple4]" + str(slot['cores']) + "[/purple4]",
-                          "[purple4]" + str(slot['gpus']) + "[/purple4]",
-                          "[purple4]" + str(slot['ram']) + " GiB[/purple4]",
-                          "[purple4]" + str(slot['disk']) + " GiB[/purple4]")
+            color_val = 'purple4'
+            table.add_row(f"[{color_val}]{slot['node']}[/{color_val}]",
+                          f"[{color_val}]{slot['type']}[/{color_val}]",
+                          f"[{color_val}]{slot['total_slots']}[/{color_val}]",
+                          f"[{color_val}]{slot['cores']}[/{color_val}]",
+                          f"[{color_val}]{slot['gpus']}[/{color_val}]",
+                          f"[{color_val}]{slot['ram']} GiB[/{color_val}]",
+                          f"[{color_val}]{slot['disk']} GiB[/{color_val}]")
         else:
-            table.add_row("[dark_red]" + slot['node'] + "[/dark_red]",
-                          "[dark_red]" + slot['type'] + "[/dark_red]",
-                          "[dark_red]" + str(slot['total_slots']) + "[/dark_red]",
-                          "[dark_red]" + str(slot['cores']) + "[/dark_red]",
-                          "[dark_red]------[/dark_red]",
-                          "[dark_red]" + str(slot['ram']) + " GiB[/dark_red]",
-                          "[dark_red]" + str(slot['disk']) + " GiB[/dark_red]")
+            color_val = 'dark_red'
+            table.add_row(f"[{color_val}]{slot['node']}[/{color_val}]",
+                          f"[{color_val}]{slot['type']}[/{color_val}]",
+                          f"[{color_val}]{slot['total_slots']}[/{color_val}]",
+                          f"[{color_val}]{slot['cores']}[/{color_val}]",
+                          f"[{color_val}]------[/{color_val}]",
+                          f"[{color_val}]{slot['ram']} GiB[/{color_val}]",
+                          f"[{color_val}]{slot['disk']} GiB[/{color_val}]")
 
     console.print("---------------------- NODES ----------------------")
     console.print(table)
@@ -357,35 +360,37 @@ def pretty_print_result(result: dict, verbose: bool):
 
     for slot in result['preview']:
         if slot['fits'] == "YES":
+            color_val = 'green'
             if verbose:
-                table.add_row("[green]" + slot['name'] + "[/green]",
-                              "[green]" + slot['type'] + "[/green]",
-                              "[green]" + slot['fits'] + "[/green]",
-                              "[green]" + slot['core_usage'] + " Cores[/green]",
-                              "[green]" + slot['ram_usage'] + "[/green]",
-                              "[green]" + slot['gpu_usage'] + "[/green]",
-                              "[green]" + str(slot['sim_jobs']) + "[/green]",
-                              "[green]" + str(slot['wall_time_on_idle']) + " min[/green]")
+                table.add_row(f"[{color_val}]{slot['name']}[/{color_val}]",
+                              f"[{color_val}]{slot['type']}[/{color_val}]",
+                              f"[{color_val}]{slot['fits']}[/{color_val}]",
+                              f"[{color_val}]{slot['core_usage']} Cores[/{color_val}]",
+                              f"[{color_val}]{slot['ram_usage']}[/{color_val}]",
+                              f"[{color_val}]{slot['gpu_usage']}[/{color_val}]",
+                              f"[{color_val}]{slot['sim_jobs']}[/{color_val}]",
+                              f"[{color_val}]{slot['wall_time_on_idle']} min[/{color_val}]")
             else:
-                table.add_row("[green]" + slot['type'] + "[/green]",
-                              "[green]" + slot['fits'] + "[/green]",
-                              "[green]" + str(slot['sim_jobs']) + "[/green]",
-                              "[green]" + str(slot['wall_time_on_idle']) + " min[/green]")
+                table.add_row(f"[{color_val}]{slot['type']}[/{color_val}]",
+                              f"[{color_val}]{slot['fits']}[/{color_val}]",
+                              f"[{color_val}]{slot['sim_jobs']}[/{color_val}]",
+                              f"[{color_val}]{slot['wall_time_on_idle']} min[/{color_val}]")
         else:
+            color_val = 'red'
             if verbose:
-                table.add_row("[red]" + slot['name'] + "[/red]",
-                              "[red]" + slot['type'] + "[/red]",
-                              "[red]" + slot['fits'] + "[/red]",
-                              "[red]" + slot['core_usage'] + " Cores[/red]",
-                              "[red]" + slot['ram_usage'] + "[/red]",
-                              "[red]" + slot['gpu_usage'] + "[/red]",
-                              "[red]" + str(slot['sim_jobs']) + "[/red]",
-                              "[red]" + str(slot['wall_time_on_idle']) + " min[/red]")
+                table.add_row(f"[{color_val}]{slot['name']}[/{color_val}]",
+                              f"[{color_val}]{slot['type']}[/{color_val}]",
+                              f"[{color_val}]{slot['fits']}[/{color_val}]",
+                              f"[{color_val}]{slot['core_usage']} Cores[/{color_val}]",
+                              f"[{color_val}]{slot['ram_usage']}[/{color_val}]",
+                              f"[{color_val}]{slot['gpu_usage']}[/{color_val}]",
+                              f"[{color_val}]{slot['sim_jobs']}[/{color_val}]",
+                              f"[{color_val}]{slot['wall_time_on_idle']} min[/{color_val}]")
             else:
-                table.add_row("[red]" + slot['type'] + "[/red]",
-                              "[red]" + slot['fits'] + "[/red]",
-                              "[red]" + str(slot['sim_jobs']) + "[/red]",
-                              "[red]" + str(slot['wall_time_on_idle']) + " min[/red]")
+                table.add_row(f"[{color_val}]{slot['type']}[/{color_val}]",
+                              f"[{color_val}]{slot['fits']}[/{color_val}]",
+                              f"[{color_val}]{slot['sim_jobs']}[/{color_val}]",
+                              f"[{color_val}]{slot['wall_time_on_idle']} min[/{color_val}]")
 
     console.print("---------------------- PREVIEW ----------------------")
     console.print(table)

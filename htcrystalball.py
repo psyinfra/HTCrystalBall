@@ -60,15 +60,13 @@ def split_number_unit(user_input: str) -> [float, str]:
     Returns:
         The amount and unit string separated in a list.
     """
-    if user_input == "" or user_input is None:
+    if not user_input:
         return [0.0, "GiB"]
 
-    string_index = 0
-    while user_input[:string_index + 1].isnumeric() and string_index < len(user_input):
-        string_index += 1
+    splitted = re.split(r'(\d*\.?\d+)', user_input.replace(' ', ''))
 
-    amount = float(user_input[:string_index])
-    unit = "GiB" if user_input[string_index:] == "" else user_input[string_index:]
+    amount = float(splitted[1])
+    unit = "GiB" if splitted[2] == "" else splitted[2]
 
     return [amount, unit]
 
@@ -87,12 +85,10 @@ def split_duration_unit(user_input: str) -> [float, str]:
     if user_input == "" or user_input is None:
         return [0.0, "min"]
 
-    string_index = 0
-    while user_input[:string_index + 1].isnumeric() and string_index < len(user_input):
-        string_index += 1
+    splitted = re.split(r'(\d*\.?\d+)', user_input.replace(' ', ''))
 
-    amount = float(user_input[:string_index])
-    unit = "min" if user_input[string_index:] == "" else user_input[string_index:]
+    amount = float(splitted[1])
+    unit = "min" if splitted[2] == "" else splitted[2]
 
     return [amount, unit]
 

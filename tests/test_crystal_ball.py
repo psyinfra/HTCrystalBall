@@ -5,11 +5,12 @@ import os
 import sys
 import argparse
 import pytest
+import modules.fetch_condor_slots as sloth
+import modules.check_condor_slots as checker
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, FILE_PATH + '/../')
 import htcrystalball as big_balls
-import fetch_condor_slots as sloth
 
 
 def test_storage_validator():
@@ -147,22 +148,22 @@ def test_slot_checking():
     """
     slots = big_balls.define_slots()
 
-    assert "preview" in big_balls.check_slots(big_balls.filter_slots(slots, "static"),
-                                              big_balls.filter_slots(slots, "dynamic"),
-                                              big_balls.filter_slots(slots, "gpu"),
-                                              1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False)
-    assert "slots" in big_balls.check_slots(big_balls.filter_slots(slots, "static"),
+    assert "preview" in checker.check_slots(big_balls.filter_slots(slots, "static"),
                                             big_balls.filter_slots(slots, "dynamic"),
                                             big_balls.filter_slots(slots, "gpu"),
                                             1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False)
-    assert big_balls.check_slots(big_balls.filter_slots(slots, "static"),
-                                 big_balls.filter_slots(slots, "dynamic"),
-                                 big_balls.filter_slots(slots, "gpu"),
-                                 0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False) == {}
-    assert big_balls.check_slots(big_balls.filter_slots(slots, "static"),
-                                 big_balls.filter_slots(slots, "dynamic"),
-                                 big_balls.filter_slots(slots, "gpu"),
-                                 0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False) == {}
+    assert "slots" in checker.check_slots(big_balls.filter_slots(slots, "static"),
+                                          big_balls.filter_slots(slots, "dynamic"),
+                                          big_balls.filter_slots(slots, "gpu"),
+                                          1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False)
+    assert checker.check_slots(big_balls.filter_slots(slots, "static"),
+                               big_balls.filter_slots(slots, "dynamic"),
+                               big_balls.filter_slots(slots, "gpu"),
+                               0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False) == {}
+    assert checker.check_slots(big_balls.filter_slots(slots, "static"),
+                               big_balls.filter_slots(slots, "dynamic"),
+                               big_balls.filter_slots(slots, "gpu"),
+                               0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False) == {}
 
 
 def test_slot_result():
@@ -173,10 +174,10 @@ def test_slot_result():
     slots = big_balls.define_slots()
     ram = 10.0
 
-    res = big_balls.check_slots(big_balls.filter_slots(slots, "static"),
-                                big_balls.filter_slots(slots, "dynamic"),
-                                big_balls.filter_slots(slots, "gpu"),
-                                1, ram, 0.0, 0, 1, 0.0, 0, verbose=False)
+    res = checker.check_slots(big_balls.filter_slots(slots, "static"),
+                              big_balls.filter_slots(slots, "dynamic"),
+                              big_balls.filter_slots(slots, "gpu"),
+                              1, ram, 0.0, 0, 1, 0.0, 0, verbose=False)
     slots = res["slots"]
     preview = res["preview"]
 
@@ -187,10 +188,11 @@ def test_slot_result():
             # Check the slots for the one that the result references
             # to (same node-name and RAM amount)
             for slot in slots:
-                if slot["node"] == node_name and "/"+slot["ram"] in previewed["ram_usage"]:
+                if slot["node"] == node_name and "/" + slot["ram"] in previewed["ram_usage"]:
                     # once we found it we should assume that the number of
                     # similar jobs does NOT exceed the ratio of RAM
-                    assert int(previewed["sim_jobs"]) <= int(float(slot["ram"])/ram)
+                    assert int(previewed["sim_jobs"]) <= int(float(slot["ram"]) / ram)
+
 
 # ------------------ Test slot fetching -------------------------
 
@@ -276,8 +278,8 @@ def test__memory_conversions():
     size_mem = 1024
 
     assert sloth.calc_mem_size(size_mem) == 1.0
-    assert sloth.calc_mem_size(size_mem*2) == 2.0
-    assert sloth.calc_mem_size(size_mem*10) == 10.0
+    assert sloth.calc_mem_size(size_mem * 2) == 2.0
+    assert sloth.calc_mem_size(size_mem * 10) == 10.0
 
     assert sloth.calc_disk_size(size_disk) == 1.0
     assert sloth.calc_disk_size(size_disk * 2) == 2.0
@@ -289,5 +291,5 @@ def test_slot_reader():
     Testing the slot fetching with an exctract of a condor_status command output
     :return:
     """
-    slots_in = sloth.read_slots(FILE_PATH+"/htcondor_status_long.txt")
+    slots_in = sloth.read_slots(FILE_PATH + "/htcondor_status_long.txt")
     sloth.format_slots(slots_in["slots"])

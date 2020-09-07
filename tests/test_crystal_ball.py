@@ -5,12 +5,12 @@ import os
 import sys
 import argparse
 import pytest
-import my_modules.fetch_condor_slots as sloth
-import my_modules.check_condor_slots as checker
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, FILE_PATH + '/../')
 import htcrystalball as big_balls
+import my_modules.fetch_condor_slots as sloth
+import my_modules.check_condor_slots as checker
 
 
 def test_storage_validator():

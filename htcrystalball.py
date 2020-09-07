@@ -2,10 +2,13 @@
 
 """Gives users a preview on how and where they can execute their HTcondor compatible scripts."""
 import os
+import sys
 import argparse
 import json
 import re
 import logging
+FILE_PATH = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, FILE_PATH + '/../')
 import my_modules.check_condor_slots as slot_checker
 
 # External (root level) logging level

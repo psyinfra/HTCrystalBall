@@ -3,23 +3,22 @@
 """Gets a systems condor slot configuration, formats it and writes it to a JSON file."""
 import json
 import htcondor
+from typing import Union
 
 SLOTS_CONFIGURATION = "config/slots.json"
 
 
-def nodename_in_list(name: str, slots: list) -> int:
+def nodename_in_list(name: str, slots: list) -> Union[int, None]:
     """
     Check if a nodename is already in a list
     :param name:
     :param slots:
     :return:
     """
-    count = 0
-    while count < len(slots):
-        if name == slots[count]["UtsnameNodename"]:
-            return count
-        count += 1
-    return -1
+    try:
+        [slot['UtsnameNodename'] for slot in slots].index(name)
+    except ValueError as e:
+        return None
 
 
 def calc_disk_size(size: float) -> float:
@@ -70,7 +69,7 @@ def format_slots(slots: list) -> dict:
 
         node_in_list = nodename_in_list(slot["UtsnameNodename"], formatted["slots"])
 
-        if node_in_list != -1:
+        if node_in_list is not None:
             if slot_size not in formatted["slots"][node_in_list]["slot_size"]:
                 formatted["slots"][node_in_list]["slot_size"].append(slot_size)
         else:
@@ -139,8 +138,12 @@ def write_slots(content: dict):
         json.dump(content, json_file)
 
 
-if __name__ == "__main__":
-    SLOTS_IN = read_slots(" ")
-    SLOTS_OUT = format_slots(SLOTS_IN["slots"])
+def run():
+    slots_in = read_slots(" ")
+    slots_out = format_slots(slots_in["slots"])
 
-    write_slots(SLOTS_OUT)
+    write_slots(slots_out)
+
+
+if __name__ == "__main__":
+    run()

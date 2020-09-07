@@ -1,14 +1,10 @@
 """Module for testing the htcrystalball module."""
 import os
-import sys
 import argparse
 import pytest
-
-FILE_PATH = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, FILE_PATH + '/../')
 import htcrystalball as big_balls
-import fetch_condor_slots as sloth
-import my_modules.check_condor_slots as checker
+import fetch_slots as sloth
+import my_modules.check_slots as checker
 
 
 def test_storage_validator():
@@ -289,5 +285,5 @@ def test_slot_reader():
     Testing the slot fetching with an exctract of a condor_status command output
     :return:
     """
-    slots_in = sloth.read_slots(FILE_PATH + "/htcondor_status_long.txt")
+    slots_in = sloth.read_slots(os.path.dirname(os.path.abspath(__file__)) + "/htcondor_status_long.txt")
     sloth.format_slots(slots_in["slots"])

@@ -1,21 +1,18 @@
 #!/usr/bin/env python3
 
 """Gives users a preview on how and where they can execute their HTcondor compatible scripts."""
-import os
-import sys
 import argparse
 import json
 import re
 import logging
-FILE_PATH = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, FILE_PATH + '/../')
-import my_modules.check_condor_slots as slot_checker
+import my_modules.check_slots as slot_checker
+import fetch_slots as sloth
 
 # External (root level) logging level
 logging.basicConfig(level=logging.ERROR)
 
 # Internal logging level
-logger = logging.getLogger('scrape_energy')
+logger = logging.getLogger('crystal_balls')
 logger.setLevel(level=logging.DEBUG)
 
 SLOTS_CONFIGURATION = "config/slots.json"
@@ -35,7 +32,7 @@ def validate_storage_size(arg_value: str) -> str:
     pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
 
     if not pat.match(arg_value):
-        logging.error('Invalid storage value given: %s' % arg_value)
+        logger.error(f'Invalid storage value given: {arg_value}')
         raise argparse.ArgumentTypeError
     return arg_value
 
@@ -53,7 +50,7 @@ def validate_duration(arg_value: str) -> str:
     pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
 
     if not pat.match(arg_value):
-        logging.error('Invalid time value given: %s' % arg_value)
+        logger.error(f'Invalid time value given: {arg_value}')
         raise argparse.ArgumentTypeError
     return arg_value
 
@@ -77,7 +74,7 @@ def split_number_unit(user_input: str) -> [float, str]:
     amount = float(splitted[1])
     if splitted[2] == "":
         unit = "GiB"
-        logging.info("No storage unit given, using GiB as default.")
+        logger.info("No storage unit given, using GiB as default.")
     else:
         unit = splitted[2]
 
@@ -103,7 +100,7 @@ def split_duration_unit(user_input: str) -> [float, str]:
     amount = float(splitted[1])
     if splitted[2] == "":
         unit = "min"
-        logging.info("No duration unit given, using MIN as default.")
+        logger.info("No duration unit given, using MIN as default.")
     else:
         unit = splitted[2]
 
@@ -170,7 +167,8 @@ def define_environment():
                     "use d, h, m or s", prog='htcrystalball.py',
         usage='%(prog)s -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-d DURATION] [-v]',
         epilog="PLEASE NOTE: HTCondor always uses binary storage "
-               "sizes, so inputs will automatically be treated that way.")
+               "sizes (1 GiB = 1024 MiB, 1 GB = 1000 MB), so inputs "
+               "will automatically be treated that way.")
     parser.add_argument("-v", "--verbose", help="Print extended log to stdout",
                         action='store_true')
     parser.add_argument("-c", "--cpu", help="Set number of requested CPU Cores",
@@ -258,9 +256,9 @@ def prepare_checking(cpu: int, gpu: int, ram: str, disk: str,
     job_duration = calc_to_min(job_duration, duration_unit)
 
     if cpu == 0:
-        logging.warning("No number of CPU workers given --- ABORTING")
+        logger.warning("No number of CPU workers given --- ABORTING")
     elif ram == 0.0:
-        logging.warning("No RAM amount given --- ABORTING")
+        logger.warning("No RAM amount given --- ABORTING")
     else:
         slot_checker.check_slots(static_slts, dynamic_slts, gpu_slts, cpu, ram, disk, gpu,
                                  jobs, job_duration, maxnodes, verbose)
@@ -271,28 +269,27 @@ def prepare_checking(cpu: int, gpu: int, ram: str, disk: str,
 
 if __name__ == "__main__":
     CMD_ARGS = define_environment()
-    CPU_WORKERS = CMD_ARGS.cpu
-    if CPU_WORKERS is None:
-        CPU_WORKERS = 0
-    GPU_WORKERS = CMD_ARGS.gpu
-    if GPU_WORKERS is None:
-        GPU_WORKERS = 0
+    cpu_workers = CMD_ARGS.cpu
+    if cpu_workers is None:
+        cpu_workers = 0
+    gpu_workers = CMD_ARGS.gpu
+    if gpu_workers is None:
+        gpu_workers = 0
 
-    RAM_AMOUNT = CMD_ARGS.ram
-    DISK_SPACE = CMD_ARGS.disk
+    ram_amount = CMD_ARGS.ram
+    disk_space = CMD_ARGS.disk
 
-    JOB_AMOUNT = CMD_ARGS.jobs
-    if JOB_AMOUNT is None:
-        JOB_AMOUNT = 1
-    JOB_DURATION = CMD_ARGS.time
+    job_amount = CMD_ARGS.jobs
+    if job_amount is None:
+        job_amount = 1
+    job_duration = CMD_ARGS.time
 
-    MATLAB_NODES = CMD_ARGS.maxnodes
-    if MATLAB_NODES is None:
-        MATLAB_NODES = 0
+    matlab_nodes = CMD_ARGS.maxnodes
+    if matlab_nodes is None:
+        matlab_nodes = 0
 
     # fetch current slot configuration
-    FETCH_SLOTS = './fetch_condor_slots.py'
-    os.system(FETCH_SLOTS)
+    sloth.run()
 
-    prepare_checking(CPU_WORKERS, GPU_WORKERS, RAM_AMOUNT, DISK_SPACE,
-                     JOB_AMOUNT, JOB_DURATION, MATLAB_NODES, CMD_ARGS.verbose)
+    prepare_checking(cpu_workers, gpu_workers, ram_amount, disk_space,
+                     job_amount, job_duration, matlab_nodes, CMD_ARGS.verbose)

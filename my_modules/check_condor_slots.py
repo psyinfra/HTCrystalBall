@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Gets a user input for job and a condor slot configuration, and checks how the job fits into each slot."""
 import math
 from rich.console import Console

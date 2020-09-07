@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Module for testing the htcrystalball module."""
 import os
 import sys
@@ -9,7 +7,7 @@ import pytest
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, FILE_PATH + '/../')
 import htcrystalball as big_balls
-import my_modules.fetch_condor_slots as sloth
+import fetch_condor_slots as sloth
 import my_modules.check_condor_slots as checker
 
 

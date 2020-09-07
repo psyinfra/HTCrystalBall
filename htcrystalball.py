@@ -268,23 +268,23 @@ def prepare_checking(cpu: int, gpu: int, ram: str, disk: str,
 
 
 if __name__ == "__main__":
-    CMD_ARGS = define_environment()
-    cpu_workers = CMD_ARGS.cpu
+    cmd_args = define_environment()
+    cpu_workers = cmd_args.cpu
     if cpu_workers is None:
         cpu_workers = 0
-    gpu_workers = CMD_ARGS.gpu
+    gpu_workers = cmd_args.gpu
     if gpu_workers is None:
         gpu_workers = 0
 
-    ram_amount = CMD_ARGS.ram
-    disk_space = CMD_ARGS.disk
+    ram_amount = cmd_args.ram
+    disk_space = cmd_args.disk
 
-    job_amount = CMD_ARGS.jobs
+    job_amount = cmd_args.jobs
     if job_amount is None:
         job_amount = 1
-    job_duration = CMD_ARGS.time
+    job_duration = cmd_args.time
 
-    matlab_nodes = CMD_ARGS.maxnodes
+    matlab_nodes = cmd_args.maxnodes
     if matlab_nodes is None:
         matlab_nodes = 0
 
@@ -292,4 +292,4 @@ if __name__ == "__main__":
     sloth.run()
 
     prepare_checking(cpu_workers, gpu_workers, ram_amount, disk_space,
-                     job_amount, job_duration, matlab_nodes, CMD_ARGS.verbose)
+                     job_amount, job_duration, matlab_nodes, cmd_args.verbose)

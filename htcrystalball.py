@@ -6,7 +6,7 @@ import argparse
 import json
 import re
 import logging
-import modules.check_condor_slots as slot_checker
+import my_modules.check_condor_slots as slot_checker
 
 # External (root level) logging level
 logging.basicConfig(level=logging.ERROR)

@@ -5,8 +5,8 @@ import os
 import sys
 import argparse
 import pytest
-import modules.fetch_condor_slots as sloth
-import modules.check_condor_slots as checker
+import my_modules.fetch_condor_slots as sloth
+import my_modules.check_condor_slots as checker
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, FILE_PATH + '/../')

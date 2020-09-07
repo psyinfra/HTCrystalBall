@@ -16,7 +16,7 @@ def nodename_in_list(name: str, slots: list) -> Union[int, None]:
     :return:
     """
     try:
-        [slot['UtsnameNodename'] for slot in slots].index(name)
+        return [slot['UtsnameNodename'] for slot in slots].index(name)
     except ValueError as e:
         return None
 

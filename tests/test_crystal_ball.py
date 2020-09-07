@@ -256,11 +256,11 @@ def test_nodename_in_list():
                                                    "TotalSlots": 12}]}
     ]
 
-    assert sloth.nodename_in_list("cpu2", slots) != -1
-    assert sloth.nodename_in_list("cpu3", slots) != -1
-    assert sloth.nodename_in_list("cpu5", slots) == -1
-    assert sloth.nodename_in_list("cpu21", slots) == -1
-    assert sloth.nodename_in_list("cpU2", slots) == -1
+    assert sloth.nodename_in_list("cpu2", slots) is not None
+    assert sloth.nodename_in_list("cpu3", slots) is not None
+    assert sloth.nodename_in_list("cpu5", slots) is None
+    assert sloth.nodename_in_list("cpu21", slots) is None
+    assert sloth.nodename_in_list("cpU2", slots) is None
 
 
 def test__memory_conversions():

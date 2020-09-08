@@ -49,7 +49,7 @@ setuptools.setup(
     data_files=[
         ('share/man/man1', ['man/man1/htcrystalball.1', 'man/man1/fetch_condor_slots.1']),
         ('my_modules', ['my_modules/__init__.py', 'my_modules/check_slots.py',
-                        'my_modules/print_tables.py', 'my_modules/fetch_slots.py'])
+                        'my_modules/print_tables.py', 'my_modules/fetch_slots.py']),
         ('config', ['config/slots.json'])
       ],
 )

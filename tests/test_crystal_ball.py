@@ -3,7 +3,7 @@ import os
 import argparse
 import pytest
 import htcrystalball as big_balls
-import fetch_slots as sloth
+from my_modules import fetch_slots as sloth
 import my_modules.check_slots as checker
 
 

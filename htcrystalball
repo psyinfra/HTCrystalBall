@@ -6,7 +6,7 @@ import json
 import re
 import logging
 import my_modules.check_slots as slot_checker
-import fetch_slots as sloth
+from my_modules import fetch_slots as sloth
 
 # External (root level) logging level
 logging.basicConfig(level=logging.ERROR)

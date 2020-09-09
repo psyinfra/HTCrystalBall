@@ -1,7 +1,8 @@
 from ._version import __version__
 import logging
+from os.path import expanduser, join as opj
 
-SLOTS_CONFIGURATION = "config/slots.json"
+SLOTS_CONFIGURATION = opj(expanduser('~'), '.htcrystalball')
 
 # External (root level) logging level
 logging.basicConfig(level=logging.ERROR)

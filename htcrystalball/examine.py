@@ -167,15 +167,19 @@ def default_preview(slot_name: str, slot_type: str) -> dict:
 
 
 def rename_slot_keys(slot: dict) -> dict:
-    return {
+    renamed = {
         'node': slot["UtsnameNodename"],
         'type': slot["SlotType"],
         'total_slots': slot["TotalSlots"],
         'cores': slot["TotalSlotCpus"],
-        'gpus': slot["TotalSlotGPUs"],
         'disk': slot["TotalSlotDisk"],
         'ram': slot["TotalSlotMemory"]
     }
+
+    if slot.get('TotalSlotGPUs', None):
+        renamed['gpus'] = slot['TotalSlotGPUs']
+
+    return renamed
 
 
 def check_slot_by_type(slot: dict, n_cpu: int, ram: float,

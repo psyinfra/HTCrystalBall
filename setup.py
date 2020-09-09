@@ -64,5 +64,11 @@ setup(
     ],
     tests_require=[
         'pytest>=6.0.1',
-    ]
+    ],
+    extras_require={
+        'devel-docs': [
+            # for converting README.md -> .rst for long description
+            'pypandoc',
+        ],
+    },
 )

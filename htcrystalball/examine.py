@@ -1,7 +1,5 @@
-"""
-Gets a user input for job and a condor slot configuration, and checks how the
-job fits into each slot.
-"""
+"""Examines user input on the HTCondor slot configuration."""
+
 from . import display, SLOTS_CONFIGURATION, logger
 from .utils import split_num_str, to_minutes, to_binary_gigabyte
 import math
@@ -9,7 +7,7 @@ import json
 
 
 def filter_slots(slots: dict, slot_type: str) -> list:
-    """Filters the slots stored in a dictionary according to the given type"""
+    """Filters the slots stored in a dictionary according to the given type."""
     res = []
     for node in slots:
         for slot in node["slot_size"]:
@@ -22,8 +20,11 @@ def filter_slots(slots: dict, slot_type: str) -> list:
 
 def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
             job_duration: str, maxnodes: int, verbose: bool) -> None:
-    """Loads the Slot configuration, handles storage and time inputs, and
-    invokes the checking for given job request if the request is valid.
+    """
+    Prepares for the examination of job requests.
+
+    Loads the slot configuration, handles user input, and invokes checks for a
+    given job request provided the request is valid.
 
     Args:
         cpu: User input of CPU cores
@@ -71,8 +72,9 @@ def check_slots(static: list, dynamic: list, gpu: list, n_cpus: int,
                 ram: float, disk_space: float, n_gpus: int,
                 n_jobs: int, job_duration: float, max_nodes: int,
                 verbose: bool) -> dict:
-    """Handles the checking for all node/slot types and invokes the output
-    methods
+    """
+    Handles the checking for all node/slot types and invokes the output
+    methods.
 
     Args:
         static: A list of static slot configurations
@@ -273,7 +275,8 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
 
 
 def order_node_preview(node_preview: list) -> list:
-    """Order the list of checked nodes by fits/fits not and number of similar
+    """
+    Order the list of checked nodes by fits/fits not and number of similar
     jobs descending.
 
     Args:

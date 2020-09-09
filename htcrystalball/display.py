@@ -1,3 +1,5 @@
+"""Display styling functions for console output."""
+
 from rich.console import Console
 from rich.table import Table
 
@@ -5,8 +7,7 @@ from rich.table import Table
 def inputs(num_cpu: int, amount_ram: float, amount_disk: float, num_gpu: int,
            num_jobs: int, num_duration: float, max_nodes: int) -> None:
     """
-    Prints out the already converted user input to the console using rich
-    tables.
+    Prints converted user input to console using rich tables.
 
     Args:
         num_cpu: The requested number CPU cores

@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
-"""
-Gets a systems condor slot configuration, formats it and writes it to a JSON
-file
-"""
+"""Retrieve, format, and store a system's condor slot configuration."""
+
 from . import SLOTS_CONFIGURATION
 from .utils import kib_to_gib, mib_to_gib
 from typing import Union
@@ -11,7 +8,7 @@ import htcondor
 
 
 def node_name_in_list(name: str, slots: list) -> Union[int, None]:
-    """Check if a node name is already in a list of slots"""
+    """Check if a node name is already in a list of slots."""
     try:
         return [slot['UtsnameNodename'] for slot in slots].index(name)
     except ValueError:
@@ -19,8 +16,12 @@ def node_name_in_list(name: str, slots: list) -> Union[int, None]:
 
 
 def format_slots(slots: list) -> dict:
-    """Formats the dictionary of slots into one similar to the already used
-    key->value pairs in htcrystalball"""
+    """
+    Reassigns slot values to new keys for compatibility.
+
+    The dictionary of slots is formatted into a new dictionary similar to the
+    already used key:value pairs in HTCrystalball.
+    """
     formatted = {"slots": []}
 
     for slot in slots:
@@ -70,10 +71,7 @@ def format_slots(slots: list) -> dict:
 
 
 def collect_slots(filename: Union[str, None] = None) -> dict:
-    """
-    Gets the condor config and creates a dict
-    :return:
-    """
+    """Gets the condor config and creates a dict."""
     status = {"slots": []}
     projection = [
         "SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
@@ -119,6 +117,6 @@ def collect_slots(filename: Union[str, None] = None) -> dict:
 
 
 def write_slots(content: dict):
-    """Writes the output dict into a config file"""
+    """Writes the output dict into a config file."""
     with open(SLOTS_CONFIGURATION, 'w+') as json_file:
         json.dump(content, json_file)

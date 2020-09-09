@@ -1,10 +1,12 @@
+"""Various non-specific utilities."""
+
 from . import logger
 from argparse import ArgumentTypeError
 import re
 
 
 def validate_storage_size(storage: str) -> str:
-    """Validates whether disk and ram input is formatted correctly"""
+    """Validates whether disk and ram input is formatted correctly."""
     pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
 
     if not pat.match(storage):
@@ -15,7 +17,7 @@ def validate_storage_size(storage: str) -> str:
 
 
 def validate_duration(duration: str) -> str:
-    """Validates time input for job duration"""
+    """Validates time input for job duration."""
     pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
 
     if not pat.match(duration):
@@ -27,9 +29,14 @@ def validate_duration(duration: str) -> str:
 
 def split_num_str(value: str, default_num: float,
                   default_str: str) -> [float, str]:
-    """Splits a string starting with numeric and ending on alphabetic
-    characters into a number, unit pair"""
+    """
+    Splits a string containing numeric and alphabetic characters.
 
+    Input value, expected to be a string starting with numeric and ending on
+    alphabetic characters. These are then split into a [number, unit] pair.
+    The default_num and default_str are used if the numeric, alphabetic, or
+    both are missing.
+    """
     if not value:
         return [default_num, default_str]
 
@@ -41,8 +48,9 @@ def split_num_str(value: str, default_num: float,
 
 
 def to_binary_gigabyte(number: float, unit: str) -> float:
-    """Converts number from its unit to GiB account for base2 and base10
-    units"""
+    """
+    Converts number from its unit to GiB account for base2 and base10 units.
+    """
     unit = unit.lower()
 
     if unit in ("kb", "k", "kib"):
@@ -58,17 +66,17 @@ def to_binary_gigabyte(number: float, unit: str) -> float:
 
 
 def kib_to_gib(size: float) -> float:
-    """Convert disk space unit from KiB to GiB"""
+    """Convert disk space unit from KiB to GiB."""
     return round(size / 2 ** 20, 2)
 
 
 def mib_to_gib(size: float) -> float:
-    """Convert memory unit from MiB to GiB"""
+    """Convert memory unit from MiB to GiB."""
     return round(size / 2 ** 10, 2)
 
 
 def to_minutes(number: float, unit: str) -> float:
-    """Converts a number from its unit to minutes"""
+    """Converts a number from its unit to minutes."""
     unit = unit.lower()
     if unit in ("d", "dd"):
         return number * 24 * 60

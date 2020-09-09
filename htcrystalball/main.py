@@ -1,9 +1,5 @@
-#!/usr/bin/env python3
+"""Entry point for HTCrystalBall examination and collection."""
 
-"""
-Gives users a preview on how and where they can execute their HTCondor
-compatible scripts.
-"""
 from . import __version__, collect, examine
 from .utils import validate_storage_size, validate_duration
 import argparse
@@ -123,7 +119,7 @@ def main():
 
 
 def peek(params, parsers):
-    """Peek into the crystal ball to see the future"""
+    """Peek into the crystal ball to see the future."""
     # fetch current slot configuration
     slots_in = collect.collect_slots()
     slots_out = collect.format_slots(slots_in['slots'])

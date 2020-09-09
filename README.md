@@ -97,7 +97,7 @@ To install and configure `HTCrystalBall` please follow these steps:
 
 To use our `crystal ball` your input has to provide at least CPU and RAM requirements 
 while also giving you the ability to pass values familiar parameter you already know from
-writing a condor submit file:
+writing a [condor submit](https://htcondor.readthedocs.io/en/latest/users-manual/submitting-a-job.html#) file:
 
     htcrystalball -h
     

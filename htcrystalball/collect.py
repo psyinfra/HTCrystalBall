@@ -26,11 +26,11 @@ def format_slots(slots: list) -> dict:
     for slot in slots:
         # TODO: Check if float conversion is necessary
         name = slot['UtsnameNodename']
-        n_cpus = int(slot['TotalSlotCpus'])
-        n_gpus = int(slot['TotalSlotGPUs'])
-        n_slots = int(slot['TotalSlots'])
-        disk = float(slot['TotalSlotDisk'])
-        ram = float(slot['TotalSlotMemory'])
+        n_cpus = int(slot.get('TotalSlotCpus', 0))
+        n_gpus = int(slot.get('TotalSlotGPUs', 0))
+        n_slots = int(slot.get('TotalSlots', 0))
+        disk = float(slot.get('TotalSlotDisk', 0.0))
+        ram = float(slot.get('TotalSlotMemory', 0.0))
         slot_type = slot['SlotType']
 
         slot_size = {

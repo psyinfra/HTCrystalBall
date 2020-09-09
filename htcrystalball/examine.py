@@ -205,8 +205,8 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
     total_ram = slot['TotalSlotMemory']
     total_slots = slot['TotalSlots'] if slot_type == 'static' else 1
     total_gpus = slot['TotalSlotGPUs'] if slot_type == 'gpu' else 0
-    pct_cpus = int(round((n_cpu / total_cpus) * 100))
-    pct_ram = int(round((ram / total_ram) * 100))
+    pct_cpus = int(round((n_cpu / total_cpus) * 100, 0))
+    pct_ram = int(round((ram / total_ram) * 100, 0))
     preview = default_preview(slot['UtsnameNodename'], slot_type)
     fits_job = n_cpu <= total_cpus and ram <= total_ram
 

@@ -90,6 +90,7 @@ def test_calc_manager(root_dir):
     :return:
     """
 
+    root_dir = path.dirname(path.abspath(__file__))
     config_file = path.join(root_dir, 'example_config.json')
 
     assert examine.prepare(
@@ -150,7 +151,7 @@ def test_calc_manager(root_dir):
     )
 
 
-def test_slot_config():
+def test_slot_config(root_dir):
     """
     Tests the slot loading method.
     :return:
@@ -173,7 +174,7 @@ def test_slot_config():
         assert examine.filter_slots(slots, "gpu")[0]["SlotType"] == "gpu"
 
 
-def test_slot_checking():
+def test_slot_checking(root_dir):
     """
     Tests the slot checking method.
     :return:
@@ -209,7 +210,7 @@ def test_slot_checking():
     ) == {}
 
 
-def test_slot_result():
+def test_slot_result(root_dir):
     """
     Tests the result slots for correct number of similar jobs based on RAM
     :return:
@@ -381,15 +382,11 @@ def test__memory_conversions():
     assert utils.kib_to_gib(size_disk * 10) == 10.0
 
 
-def test_slot_reader():
+def test_slot_reader(root_dir):
     """
     Testing the slot fetching with an extract of a condor_status command output
     :return:
     """
-    fname = path.join(
-        path.dirname(path.abspath(__file__)),
-        'htcondor_status_long.txt'
-    )
-
-    slots_in = collect.collect_slots(fname)
+    condor_status = path.join(root_dir, 'htcondor_status_long.txt')
+    slots_in = collect.collect_slots(condor_status)
     collect.format_slots(slots_in["slots"])

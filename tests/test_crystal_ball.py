@@ -221,28 +221,33 @@ def test_slot_result(root_dir):
         slots = json.load(f)['slots']
 
     ram = 10.0
-    res = examine.check_slots(
+    result = examine.check_slots(
         examine.filter_slots(slots, "static"),
         examine.filter_slots(slots, "dynamic"),
         examine.filter_slots(slots, "gpu"),
         1, ram, 0.0, 0, 1, 0.0, 0, verbose=False
     )
-    slots = res["slots"]
-    preview = res["preview"]
+    slots = result["slots"]
+    previews = result["preview"]
 
-    # Go through each result that says "fits"
-    for previewed in preview:
-        if previewed["fits"] == "YES":
-            node_name = previewed["name"]
-            # Check the slots for the one that the result references
-            # to (same node-name and RAM amount)
-            for slot in slots:
-                if slot["node"] == node_name and \
-                        f"/{slot['ram']}" in previewed["ram_usage"]:
-                    # once we found it we should assume that the number of
-                    # similar jobs does NOT exceed the ratio of RAM
-                    assert int(previewed["sim_jobs"]) <= int(
-                        float(slot["ram"]) / ram)
+    for preview in previews:
+        if preview['fits'] != 'YES':
+            # Ignore results that do not fit
+            continue
+
+        preview_name = preview["name"]
+        preview_ram = preview['ram_usage']
+
+        # Find the slot referenced in results (same node-name and RAM)
+        for slot in slots:
+            slot_name = slot['node']
+            slot_ram = f'/{slot["ram"]}'
+
+            if slot_name == preview_name and slot_ram in preview_ram:
+                ram_ratio = int(float(slot['ram']) / ram)
+
+                # Assume that number of similar jobs does not exceed RAM ratio
+                assert preview['sim_jobs'] <= ram_ratio
 
 
 # ------------------ Test slot fetching -------------------------

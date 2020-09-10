@@ -8,14 +8,14 @@ import json
 
 def filter_slots(slots: dict, slot_type: str) -> list:
     """Filters the slots stored in a dictionary according to the given type."""
-    res = []
+    result = []
     for node in slots:
         for slot in node["slot_size"]:
             if slot["SlotType"] == slot_type:
                 slot["UtsnameNodename"] = node["UtsnameNodename"]
-                res.append(slot)
+                result.append(slot)
 
-    return res
+    return result
 
 
 def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
@@ -103,11 +103,11 @@ def check_slots(static: list, dynamic: list, gpu: list, n_cpus: int,
             max_nodes
         )
 
-    preview = {'slots': [], 'preview': []}
+    results = {'slots': [], 'preview': []}
 
     if n_cpus != 0 and n_gpus == 0:
         for node in dynamic:
-            [node_dict, preview_node] = check_slot_by_type(
+            node_dict, preview_node = check_slot_by_type(
                 slot=node,
                 n_cpu=n_cpus,
                 ram=ram,
@@ -116,11 +116,11 @@ def check_slots(static: list, dynamic: list, gpu: list, n_cpus: int,
                 slot_type='dynamic'
             )
 
-            preview['slots'].append(node_dict)
-            preview['preview'].append(preview_node)
+            results['slots'].append(node_dict)
+            results['preview'].append(preview_node)
 
         for node in static:
-            [node_dict, preview_node] = check_slot_by_type(
+            node_dict, preview_node = check_slot_by_type(
                 slot=node,
                 n_cpu=n_cpus,
                 ram=ram,
@@ -128,12 +128,12 @@ def check_slots(static: list, dynamic: list, gpu: list, n_cpus: int,
                 n_jobs=n_jobs,
                 slot_type='static'
             )
-            preview['slots'].append(node_dict)
-            preview['preview'].append(preview_node)
+            results['slots'].append(node_dict)
+            results['preview'].append(preview_node)
 
     elif n_cpus != 0 and n_gpus != 0:
         for node in gpu:
-            [node_dict, preview_node] = check_slot_by_type(
+            node_dict, preview_node = check_slot_by_type(
                 slot=node,
                 n_cpu=n_cpus,
                 n_gpu=n_gpus,
@@ -142,22 +142,22 @@ def check_slots(static: list, dynamic: list, gpu: list, n_cpus: int,
                 n_jobs=n_jobs,
                 slot_type='gpu'
             )
-            preview['slots'].append(node_dict)
-            preview['preview'].append(preview_node)
+            results['slots'].append(node_dict)
+            results['preview'].append(preview_node)
     else:
         return {}
 
-    preview['preview'] = order_node_preview(preview['preview'])
+    results['preview'] = order_node_preview(results['preview'])
 
-    if max_nodes != 0 and len(preview['preview']) > max_nodes:
-        preview['preview'] = preview['preview'][:max_nodes]
+    if max_nodes != 0 and len(results['preview']) > max_nodes:
+        results['preview'] = results['preview'][:max_nodes]
 
     if verbose:
-        display.slots(preview)
+        display.slots(results)
 
-    display.results(preview, verbose)
+    display.results(results, verbose)
 
-    return preview
+    return results
 
 
 def default_preview(slot_name: str, slot_type: str) -> dict:
@@ -191,7 +191,7 @@ def rename_slot_keys(slot: dict) -> dict:
 
 def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
                        job_duration: float, n_jobs: int, slot_type: str,
-                       n_gpu: int = 0) -> [dict, dict]:
+                       n_gpu: int = 0) -> (dict, dict):
     """
     Checks all dynamic slots if they fit the job.
 
@@ -212,13 +212,14 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
         raise ValueError(f'slot_type must be static, dynamic, or gpu, '
                          f'not {slot_type}')
 
+    preview = default_preview(slot['UtsnameNodename'], slot_type)
+
     total_cpus = slot['TotalSlotCpus']
     total_ram = slot['TotalSlotMemory']
     total_slots = slot['TotalSlots'] if slot_type == 'static' else 1
     total_gpus = slot['TotalSlotGPUs'] if slot_type == 'gpu' else 0
     pct_cpus = int(round((n_cpu / total_cpus) * 100, 0))
     pct_ram = int(round((ram / total_ram) * 100, 0))
-    preview = default_preview(slot['UtsnameNodename'], slot_type)
     fits_job = n_cpu <= total_cpus and ram <= total_ram
 
     if slot_type == 'gpu':
@@ -266,7 +267,7 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
                     (n_jobs / jobs / total_cpus) * job_duration
                 )
 
-            else:
+            elif slot_type in ['static', 'dynamic']:
                 jobs = cpu_fit if ram == 0 else min(cpu_fit, ram_fit)
                 preview['wall_time_on_idle'] = math.ceil(
                     (n_jobs / jobs / total_slots) * job_duration

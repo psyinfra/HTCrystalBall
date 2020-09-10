@@ -60,7 +60,7 @@ setup(
     },
     install_requires=[
         'rich>=6.1.1',
-        'htcondor>=8.9.8',
+        'htcondor>=8.8.6',
     ],
     tests_require=[
         'pytest>=6.0.1',

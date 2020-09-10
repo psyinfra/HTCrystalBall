@@ -4,14 +4,6 @@
       "UtsnameNodename": "cpu10",
       "slot_size": [
         {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 65
-        },
-        {
           "TotalSlotCpus": 64,
           "TotalSlotDisk": 3414.34,
           "TotalSlotMemory": 500,
@@ -48,14 +40,6 @@
     {
       "UtsnameNodename": "cpu8",
       "slot_size": [
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 4
-        },
         {
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3414.46,
@@ -94,14 +78,6 @@
       "UtsnameNodename": "cpu9",
       "slot_size": [
         {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 65
-        },
-        {
           "TotalSlotCpus": 64,
           "TotalSlotDisk": 3414.4,
           "TotalSlotMemory": 500,
@@ -127,14 +103,6 @@
       "UtsnameNodename": "cpu13",
       "slot_size": [
         {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.45,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 7
-        },
-        {
           "TotalSlotCpus": 2,
           "TotalSlotDisk": 828.68,
           "TotalSlotMemory": 30,
@@ -147,14 +115,6 @@
     {
       "UtsnameNodename": "cpu2",
       "slot_size": [
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.6,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 3
-        },
         {
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3416.16,
@@ -169,14 +129,6 @@
       "UtsnameNodename": "cpu15",
       "slot_size": [
         {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 25
-        },
-        {
           "TotalSlotCpus": 24,
           "TotalSlotDisk": 3414.52,
           "TotalSlotMemory": 210,
@@ -190,14 +142,6 @@
       "UtsnameNodename": "cpu14",
       "slot_size": [
         {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 25
-        },
-        {
           "TotalSlotCpus": 24,
           "TotalSlotDisk": 3414.33,
           "TotalSlotMemory": 210,
@@ -210,14 +154,6 @@
     {
       "UtsnameNodename": "cpu22",
       "slot_size": [
-        {
-          "TotalSlotCpus": 32,
-          "TotalSlotDisk": 3500.73,
-          "TotalSlotMemory": 500,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 4
-        },
         {
           "TotalSlotCpus": 1,
           "TotalSlotDisk": 3.68,
@@ -238,28 +174,12 @@
           "SlotType": "dynamic",
           "TotalSlotGPUs": 0,
           "TotalSlots": 3
-        },
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 3
         }
       ]
     },
     {
       "UtsnameNodename": "cpu16",
       "slot_size": [
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 5
-        },
         {
           "TotalSlotCpus": 20,
           "TotalSlotDisk": 3413.98,
@@ -273,14 +193,6 @@
     {
       "UtsnameNodename": "cpu18",
       "slot_size": [
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 6
-        },
         {
           "TotalSlotCpus": 20,
           "TotalSlotDisk": 3414.26,
@@ -301,28 +213,12 @@
           "SlotType": "dynamic",
           "TotalSlotGPUs": 0,
           "TotalSlots": 4
-        },
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.6,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 4
         }
       ]
     },
     {
       "UtsnameNodename": "cpu5",
       "slot_size": [
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.6,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 4
-        },
         {
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3416.15,
@@ -337,14 +233,6 @@
       "UtsnameNodename": "cpu17",
       "slot_size": [
         {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 2
-        },
-        {
           "TotalSlotCpus": 20,
           "TotalSlotDisk": 3414.22,
           "TotalSlotMemory": 120,
@@ -357,14 +245,6 @@
     {
       "UtsnameNodename": "cpu21",
       "slot_size": [
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.69,
-          "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 4
-        },
         {
           "TotalSlotCpus": 32,
           "TotalSlotDisk": 3500.83,
@@ -382,14 +262,6 @@
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3416.2,
           "TotalSlotMemory": 65,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 4
-        },
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.6,
-          "TotalSlotMemory": 5.88,
           "SlotType": "dynamic",
           "TotalSlotGPUs": 0,
           "TotalSlots": 4
@@ -429,14 +301,6 @@
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3414.49,
           "TotalSlotMemory": 65,
-          "SlotType": "dynamic",
-          "TotalSlotGPUs": 0,
-          "TotalSlots": 2
-        },
-        {
-          "TotalSlotCpus": 1,
-          "TotalSlotDisk": 3.59,
-          "TotalSlotMemory": 5.88,
           "SlotType": "dynamic",
           "TotalSlotGPUs": 0,
           "TotalSlots": 2

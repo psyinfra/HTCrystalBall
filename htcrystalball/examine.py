@@ -19,7 +19,8 @@ def filter_slots(slots: dict, slot_type: str) -> list:
 
 
 def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
-            job_duration: str, maxnodes: int, verbose: bool) -> None:
+            job_duration: str, maxnodes: int, verbose: bool,
+            config_file: str = SLOTS_CONFIGURATION) -> bool:
     """
     Prepares for the examination of job requests.
 
@@ -35,13 +36,14 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
         job_duration: User input of the duration time for a single job
         maxnodes:
         verbose:
+        config_file: optional, alternative file path for slots configuration
 
     Returns:
         If all needed parameters were given
     """
 
-    with open(SLOTS_CONFIGURATION) as config_file:
-        config = json.load(config_file)['slots']
+    with open(config_file) as f:
+        config = json.load(f)['slots']
 
     slots_static = filter_slots(config, 'static')
     slots_dynamic = filter_slots(config, 'dynamic')
@@ -57,15 +59,18 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
 
     if cpu == 0:
         logger.warning("No number of CPU workers given --- ABORTING")
+        return False
 
     elif ram == 0.0:
         logger.warning("No RAM amount given --- ABORTING")
+        return False
 
     else:
         check_slots(
             slots_static, slots_dynamic, slots_gpu, cpu, ram, disk, gpu, jobs,
             job_duration, maxnodes, verbose
         )
+        return True
 
 
 def check_slots(static: list, dynamic: list, gpu: list, n_cpus: int,

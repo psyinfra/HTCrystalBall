@@ -6,6 +6,11 @@ import argparse
 import json
 
 
+@fixture
+def root_dir():
+    return path.dirname(path.abspath(__file__))
+
+
 def test_storage_validator():
     """
     Tests the storage input validator.
@@ -79,66 +84,69 @@ def test_conversions():
     assert utils.to_minutes(1.0, "d") == 1440.0
 
 
-def test_calc_manager():
+def test_calc_manager(root_dir):
     """
     Tests the method for preparing the slot checking.
     :return:
     """
+
+    config_file = path.join(root_dir, 'example_config.json')
+
     assert examine.prepare(
         cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True
+        maxnodes=0, verbose=True, config_file=config_file
     )
     assert not examine.prepare(
         cpu=0, gpu=1, ram="10GB", disk="0", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True
+        maxnodes=0, verbose=True, config_file=config_file
     )
     assert not examine.prepare(
         cpu=1, gpu=0, ram="0", disk="", jobs=1, job_duration="", maxnodes=0,
-        verbose=True
+        verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=1, gpu=1, ram="20GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True
+        maxnodes=0, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True
+        maxnodes=0, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=128, job_duration="15m",
-        maxnodes=0, verbose=True
+        maxnodes=0, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=1, gpu=0, ram="10GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=1, verbose=True
+        maxnodes=1, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=8, gpu=0, ram="10GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True
+        maxnodes=0, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=8, gpu=0, ram="80GB", disk="", jobs=4, job_duration="1h",
-        maxnodes=0, verbose=True
+        maxnodes=0, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=2, gpu=0, ram="10GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=3, verbose=True
+        maxnodes=3, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=1, gpu=0, ram="20GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=2, verbose=True
+        maxnodes=2, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=2, gpu=0, ram="20GB", disk="", jobs=1, job_duration="",
-        maxnodes=2, verbose=True
+        maxnodes=2, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=2, gpu=0, ram="20GB", disk="", jobs=32, job_duration="10m",
-        maxnodes=1, verbose=True
+        maxnodes=1, verbose=True, config_file=config_file
     )
     assert examine.prepare(
         cpu=2, gpu=5, ram="10GB", disk="", jobs=32, job_duration="10m",
-        maxnodes=1, verbose=True
+        maxnodes=1, verbose=True, config_file=config_file
     )
 
 
@@ -147,7 +155,9 @@ def test_slot_config():
     Tests the slot loading method.
     :return:
     """
-    with open('example_config.json') as f:
+    config_file = path.join(root_dir, 'example_config.json')
+
+    with open(config_file) as f:
         slots = json.load(f)['slots']
 
     assert "SlotType" in slots[0]["slot_size"][0]
@@ -168,7 +178,9 @@ def test_slot_checking():
     Tests the slot checking method.
     :return:
     """
-    with open('example_config.json') as f:
+    config_file = path.join(root_dir, 'example_config.json')
+
+    with open(config_file) as f:
         slots = json.load(f)['slots']
 
     assert "preview" in examine.check_slots(
@@ -202,7 +214,9 @@ def test_slot_result():
     Tests the result slots for correct number of similar jobs based on RAM
     :return:
     """
-    with open('example_config.json') as f:
+    config_file = path.join(root_dir, 'example_config.json')
+
+    with open(config_file) as f:
         slots = json.load(f)['slots']
 
     ram = 10.0

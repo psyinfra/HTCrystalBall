@@ -28,7 +28,7 @@ def validate_duration(duration: str) -> str:
 
 
 def split_num_str(value: str, default_num: float,
-                  default_str: str) -> [float, str]:
+                  default_str: str) -> (float, str):
     """
     Splits a string containing numeric and alphabetic characters.
 
@@ -38,7 +38,7 @@ def split_num_str(value: str, default_num: float,
     both are missing.
     """
     if not value:
-        return [default_num, default_str]
+        return default_num, default_str
 
     split = re.split(r'(\d*\.?\d+)', value.replace(' ', ''))
     number = float(split[1])

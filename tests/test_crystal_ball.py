@@ -40,11 +40,9 @@ def test_split_storage():
     number = 10
     unit = "GB"
 
-    assert utils.split_num_str(str(number), 0.0, 'GiB') == [number, "GiB"]
-    assert utils.split_num_str(
-        str(number) + "GiB", 0.0, 'GiB') == [number, "GiB"]
-    assert utils.split_num_str("0" + unit, 0.0, 'GiB') == [0.0, "GB"]
-    assert utils.split_num_str(str(number), 0.0, 'GiB') == [number, "GiB"]
+    assert utils.split_num_str(str(number), 0.0, 'GiB') == (number, "GiB")
+    assert utils.split_num_str(f'{number}GiB', 0.0, 'GiB') == (number, "GiB")
+    assert utils.split_num_str(f'0{unit}', 0.0, 'GiB') == (0.0, "GB")
 
 
 def test_split_time():
@@ -54,11 +52,9 @@ def test_split_time():
     """
     number = 10
     unit = "min"
-    assert utils.split_num_str(str(number), 0.0, 'min') == [number, "min"]
-    assert utils.split_num_str(
-        str(number) + "min", 0.0, 'min') == [number, "min"]
-    assert utils.split_num_str("0" + unit, 0.0, 'min') == [0, unit]
-    assert utils.split_num_str(str(number), 0.0, 'min') == [number, "min"]
+    assert utils.split_num_str(str(number), 0.0, 'min') == (number, "min")
+    assert utils.split_num_str(f'{number}min', 0.0, 'min') == (number, "min")
+    assert utils.split_num_str("0" + unit, 0.0, 'min') == (0, unit)
 
 
 def test_conversions():

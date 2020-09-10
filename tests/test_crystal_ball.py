@@ -1,8 +1,8 @@
 """Module for testing the htcrystalball module."""
 from htcrystalball import examine, collect, utils
 from os import path
+from pytest import fixture, raises as praises
 import argparse
-import pytest
 import json
 
 
@@ -12,7 +12,7 @@ def test_storage_validator():
     :return:
     """
     assert utils.validate_storage_size("20GB") == "20GB"
-    with pytest.raises(argparse.ArgumentTypeError):
+    with praises(argparse.ArgumentTypeError):
         assert utils.validate_storage_size("20")
         assert utils.validate_storage_size("20iGB")
         assert utils.validate_storage_size("20GBt")
@@ -25,7 +25,7 @@ def test_time_validator():
     :return:
     """
     assert utils.validate_duration("20") == "20"
-    with pytest.raises(argparse.ArgumentTypeError):
+    with praises(argparse.ArgumentTypeError):
         assert utils.validate_duration("20min")
         assert utils.validate_duration("20imn")
         assert utils.validate_duration("20mint")

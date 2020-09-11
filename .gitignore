@@ -39,9 +39,6 @@ MANIFEST
 .cache
 .pytest_cache/
 
-# Sphinx documentation
-docs/_build/
-
 # Environments
 .env
 .venv

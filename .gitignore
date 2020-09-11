@@ -38,12 +38,3 @@ MANIFEST
 .coverage.*
 .cache
 .pytest_cache/
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/

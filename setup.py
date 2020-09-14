@@ -1,22 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import setuptools
+from setuptools import setup, find_packages
+from os.path import join as opj, dirname
+import re
 
-#
-# Grab some info from supporting files
-#
-with open('README.md', 'r') as fh:
-    long_description = fh.read()
+version_file = 'htcrystalball/_version.py'
+readme = opj(dirname(__file__), 'README.md')
+mo = re.search(
+    r"^__version__ = ['\"]([^'\"]*)['\"]",
+    open(version_file, "rt").read(),
+    re.M
+)
 
-__version__ = '.'.join(map(str, (0, 1, 0)))
+if mo:
+    version = mo.group(1)
+else:
+    raise RuntimeError('Unable to find version string in %s.' % version_file)
 
-#
-# Provide a little info about who we are
-#
-setuptools.setup(
+try:
+    import pypandoc
+    long_description = pypandoc.convert(readme, 'rst')
+
+except (ImportError, OSError) as exc:
+    print('WARNING: pypandoc failed to import or threw an error while '
+          'converting README.md to RST: %s .md version will be used as is'
+          % exc)
+    long_description = open(readme).read()
+
+setup(
     name='HTCrystalBall',
-    version=__version__,
+    version=version,
     author='Jona Fischer and many others',
     author_email='j.fischer@fz-juelich.de',
     description='HTCondor preview script',
@@ -33,16 +47,28 @@ setuptools.setup(
         'Programming Language :: Python :: 3.8',
         'Operating System :: OS Independent',
     ],
-    python_requires="!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*",
-    packages=setuptools.find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    python_requires='>=3.6.0',
+    packages=find_packages(
+        exclude=["*.tests", "*.tests.*", "tests.*", "tests"]
+    ),
+    include_package_data=True,
+    entry_points={
+        'console_scripts': [
+            'htcb=htcrystalball.main:main',
+            'htcrystalball=htcrystalball.main:main'
+        ],
+    },
     install_requires=[
-        'rich',
-        'htcondor'
+        'rich>=6.1.1',
+        'htcondor>=8.8.6',
     ],
     tests_require=[
-        'pytest',
+        'pytest>=6.0.1',
     ],
-    data_files=[
-            ('share/man/man1', ['man/man1/htcrystalball.1', 'man/man1/fetch_condor_slots.1'])
-      ],
+    extras_require={
+        'devel-docs': [
+            # for converting README.md -> .rst for long description
+            'pypandoc',
+        ],
+    },
 )

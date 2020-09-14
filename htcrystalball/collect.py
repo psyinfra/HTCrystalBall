@@ -40,16 +40,18 @@ def format_slots(slots: list) -> dict:
             "TotalSlotMemory": mib_to_gib(ram)
         }
 
-        if slot_type == "Partitionable" or slot_type == "Dynamic":
+        if slot_type == "Partitionable":
             if "gpu" in name and n_gpus != 0:
                 slot_size["SlotType"] = "gpu"
                 slot_size["TotalSlotGPUs"] = n_gpus
             else:
-                slot_size["SlotType"] = "dynamic"
+                slot_size["SlotType"] = "partitionable"
                 slot_size["TotalSlotGPUs"] = 0
 
         elif slot_type == "Static":
             slot_size["SlotType"] = "static"
+        else:
+            continue
 
         slot_size["TotalSlots"] = n_slots
         node_in_list = node_name_in_list(

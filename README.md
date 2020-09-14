@@ -55,8 +55,8 @@ has various `slot` sizes as children objects. Here you can see an example for a 
     {
         "node": "cpuXX", 
         "slot_size": [
-            {"cores": 2, "disk": 51.53, "ram": 30.0, "type": "dynamic", "total_slots": 11},
-            {"cores": 1, "disk": 3.46, "ram": 5.88, "type": "dynamic", "total_slots": 11}
+            {"cores": 2, "disk": 51.53, "ram": 30.0, "type": "partitionable", "total_slots": 11},
+            {"cores": 1, "disk": 3.46, "ram": 5.88, "type": "static", "total_slots": 11}
         ]
     }
 
@@ -130,7 +130,7 @@ Our `crystal ball` will give you a brief summary of the executed slot checking f
 | --------- | -------- | ---------------------- | ----------------- |
 |    gpu    |   ....   |          ....          |       0 min       |
 |  static   |   ....   |          ....          |       0 min       |
-|  dynamic  |   ....   |          ....          |       0 min       |
+|  partitionable  |   ....   |          ....          |       0 min       |
 
 *   Job fits: If one job fits into a slot it will be highlighted in green color, if not in red.
 *   Amount of similar jobs: number of jobs similar to the one defined, that fit into a slot the same time.
@@ -155,7 +155,7 @@ When using VERBOSE HTCrystalBall will print out your given Input...
 |----| ------- | --------- | --- | ---|---| ---|
 |Name|   gpu   |    ...    | ... | ...|...| ...|
 |Name|  static |    ...    | ... | ...|...| ...|
-|Name| dynamic |    ...    | ... | ...|...| ...|
+|Name| partitionable |    ...    | ... | ...|...| ...|
 
 ...and a more detailed summary of the slot checking:
 
@@ -163,7 +163,7 @@ When using VERBOSE HTCrystalBall will print out your given Input...
 |----| ------- | ------ | -------- | ------- | ------- | -------------------- | --------------- |
 |Name|   gpu   |   YES  | ... (x %)|... (x %)|... (x %)|          ...         |     ... min     |
 |Name|  static |    NO  | ... (x %)|... (x %)|... (x %)|          ...         |     ... min     |
-|Name| dynamic |    NO  | ... (x %)|... (x %)|... (x %)|          ...         |     ... min     |
+|Name| partitionable |    NO  | ... (x %)|... (x %)|... (x %)|          ...         |     ... min     |
 
 ### Examples
 ./htcrystalball.py -c 2 -r 10G -g 2
@@ -208,42 +208,42 @@ When using VERBOSE HTCrystalBall will print out your given Input...
     ┏━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┓
     ┃ Slot Type ┃ Job fits ┃ Amount of similar jobs ┃ Wall Time on IDLE ┃
     ┡━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━┩
-    │ dynamic   │      YES │                     12 │             0 min │
-    │ dynamic   │      YES │                     12 │             0 min │
-    │ dynamic   │      YES │                      6 │             0 min │
-    │ dynamic   │      YES │                      6 │             0 min │
-    │ dynamic   │      YES │                      4 │             0 min │
-    │ dynamic   │      YES │                      4 │             0 min │
-    │ dynamic   │      YES │                      4 │             0 min │
-    │ dynamic   │      YES │                      4 │             0 min │
-    │ dynamic   │      YES │                      4 │             0 min │
-    │ dynamic   │      YES │                      2 │             0 min │
-    │ dynamic   │      YES │                      2 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
-    │ dynamic   │       NO │                      0 │             0 min │
+    │ partitionable   │      YES │                     12 │             0 min │
+    │ partitionable   │      YES │                     12 │             0 min │
+    │ partitionable   │      YES │                      6 │             0 min │
+    │ partitionable   │      YES │                      6 │             0 min │
+    │ partitionable   │      YES │                      4 │             0 min │
+    │ partitionable   │      YES │                      4 │             0 min │
+    │ partitionable   │      YES │                      4 │             0 min │
+    │ partitionable   │      YES │                      4 │             0 min │
+    │ partitionable   │      YES │                      4 │             0 min │
+    │ partitionable   │      YES │                      2 │             0 min │
+    │ partitionable   │      YES │                      2 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
+    │ partitionable   │       NO │                      0 │             0 min │
     │ static    │       NO │                      0 │             0 min │
     │ static    │       NO │                      0 │             0 min │
     │ static    │       NO │                      0 │             0 min │
@@ -274,42 +274,42 @@ When using VERBOSE HTCrystalBall will print out your given Input...
     ┏━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓
     ┃ Node         ┃ Slot Type ┃ Total Slots ┃ Cores ┃   GPUs ┃       RAM ┃                   DISK ┃
     ┡━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩
-    │ cpu7         │ dynamic   │           7 │    12 │ ------ │  65.0 GiB │            3416.16 GiB │
-    │ cpu7         │ dynamic   │           7 │     1 │ ------ │  20.0 GiB │             212.16 GiB │
-    │ cpu7         │ dynamic   │           7 │     4 │ ------ │   4.0 GiB │                3.6 GiB │
-    │ cpu7         │ dynamic   │           7 │     1 │ ------ │  5.88 GiB │                3.6 GiB │
-    │ cpu8         │ dynamic   │           7 │    12 │ ------ │  65.0 GiB │            3416.17 GiB │
-    │ cpu8         │ dynamic   │           7 │     1 │ ------ │  20.0 GiB │             212.16 GiB │
-    │ cpu8         │ dynamic   │           7 │     1 │ ------ │  5.88 GiB │                3.6 GiB │
-    │ cpu9         │ dynamic   │          52 │    64 │ ------ │ 500.0 GiB │             3416.2 GiB │
-    │ cpu9         │ dynamic   │          52 │     1 │ ------ │   5.0 GiB │                3.6 GiB │
-    │ cpu9         │ dynamic   │          52 │     1 │ ------ │  20.0 GiB │             212.16 GiB │
-    │ cpu9         │ dynamic   │          52 │     1 │ ------ │  5.88 GiB │                3.6 GiB │
-    │ cpu10        │ dynamic   │          61 │    64 │ ------ │ 500.0 GiB │             3416.2 GiB │
-    │ cpu10        │ dynamic   │          61 │     1 │ ------ │   5.0 GiB │                3.6 GiB │
-    │ cpu10        │ dynamic   │          61 │     1 │ ------ │  20.0 GiB │             212.16 GiB │
-    │ cpu10        │ dynamic   │          61 │     1 │ ------ │  5.88 GiB │                3.6 GiB │
-    │ cpu13        │ dynamic   │          11 │     2 │ ------ │  30.0 GiB │              51.53 GiB │
-    │ cpu13        │ dynamic   │          11 │     1 │ ------ │  5.88 GiB │               3.46 GiB │
-    │ cpu14        │ dynamic   │          11 │    24 │ ------ │ 210.0 GiB │            3414.33 GiB │
-    │ cpu14        │ dynamic   │          11 │     1 │ ------ │  20.0 GiB │             212.05 GiB │
-    │ cpu15        │ dynamic   │          11 │    24 │ ------ │ 210.0 GiB │            3414.52 GiB │
-    │ cpu15        │ dynamic   │          11 │     1 │ ------ │  20.0 GiB │             212.06 GiB │
-    │ cpu16        │ dynamic   │           7 │    20 │ ------ │ 120.0 GiB │            3413.92 GiB │
-    │ cpu16        │ dynamic   │           7 │     1 │ ------ │  20.0 GiB │             212.02 GiB │
-    │ cpu17        │ dynamic   │           7 │    20 │ ------ │ 120.0 GiB │            3413.83 GiB │
-    │ cpu17        │ dynamic   │           7 │     1 │ ------ │  20.0 GiB │             212.02 GiB │
-    │ cpu17        │ dynamic   │           7 │     2 │ ------ │  12.0 GiB │               3.59 GiB │
-    │ cpu18        │ dynamic   │           7 │    20 │ ------ │ 120.0 GiB │            3413.84 GiB │
-    │ cpu18        │ dynamic   │           7 │     1 │ ------ │  20.0 GiB │             212.02 GiB │
-    │ cpu21        │ dynamic   │          25 │    32 │ ------ │ 500.0 GiB │            3504.55 GiB │
-    │ cpu21        │ dynamic   │          25 │     1 │ ------ │  20.0 GiB │             213.96 GiB │
-    │ cpu21        │ dynamic   │          25 │     1 │ ------ │  5.88 GiB │               3.69 GiB │
-    │ cpu22        │ dynamic   │          23 │    32 │ ------ │ 500.0 GiB │            3504.55 GiB │
-    │ cpu22        │ dynamic   │          23 │     1 │ ------ │  20.0 GiB │             213.96 GiB │
-    │ cpu22        │ dynamic   │          23 │     1 │ ------ │  5.88 GiB │               3.69 GiB │
-    │ gpu1         │ dynamic   │          17 │     1 │ ------ │  20.0 GiB │             212.05 GiB │
-    │ gpu1         │ dynamic   │          17 │     2 │ ------ │  12.0 GiB │               3.59 GiB │
+    │ cpu7         │ partitionable   │           7 │    12 │ ------ │  65.0 GiB │            3416.16 GiB │
+    │ cpu7         │ partitionable   │           7 │     1 │ ------ │  20.0 GiB │             212.16 GiB │
+    │ cpu7         │ partitionable   │           7 │     4 │ ------ │   4.0 GiB │                3.6 GiB │
+    │ cpu7         │ partitionable   │           7 │     1 │ ------ │  5.88 GiB │                3.6 GiB │
+    │ cpu8         │ partitionable   │           7 │    12 │ ------ │  65.0 GiB │            3416.17 GiB │
+    │ cpu8         │ partitionable   │           7 │     1 │ ------ │  20.0 GiB │             212.16 GiB │
+    │ cpu8         │ partitionable   │           7 │     1 │ ------ │  5.88 GiB │                3.6 GiB │
+    │ cpu9         │ partitionable   │          52 │    64 │ ------ │ 500.0 GiB │             3416.2 GiB │
+    │ cpu9         │ partitionable   │          52 │     1 │ ------ │   5.0 GiB │                3.6 GiB │
+    │ cpu9         │ partitionable   │          52 │     1 │ ------ │  20.0 GiB │             212.16 GiB │
+    │ cpu9         │ partitionable   │          52 │     1 │ ------ │  5.88 GiB │                3.6 GiB │
+    │ cpu10        │ partitionable   │          61 │    64 │ ------ │ 500.0 GiB │             3416.2 GiB │
+    │ cpu10        │ partitionable   │          61 │     1 │ ------ │   5.0 GiB │                3.6 GiB │
+    │ cpu10        │ partitionable   │          61 │     1 │ ------ │  20.0 GiB │             212.16 GiB │
+    │ cpu10        │ partitionable   │          61 │     1 │ ------ │  5.88 GiB │                3.6 GiB │
+    │ cpu13        │ partitionable   │          11 │     2 │ ------ │  30.0 GiB │              51.53 GiB │
+    │ cpu13        │ partitionable   │          11 │     1 │ ------ │  5.88 GiB │               3.46 GiB │
+    │ cpu14        │ partitionable   │          11 │    24 │ ------ │ 210.0 GiB │            3414.33 GiB │
+    │ cpu14        │ partitionable   │          11 │     1 │ ------ │  20.0 GiB │             212.05 GiB │
+    │ cpu15        │ partitionable   │          11 │    24 │ ------ │ 210.0 GiB │            3414.52 GiB │
+    │ cpu15        │ partitionable   │          11 │     1 │ ------ │  20.0 GiB │             212.06 GiB │
+    │ cpu16        │ partitionable   │           7 │    20 │ ------ │ 120.0 GiB │            3413.92 GiB │
+    │ cpu16        │ partitionable   │           7 │     1 │ ------ │  20.0 GiB │             212.02 GiB │
+    │ cpu17        │ partitionable   │           7 │    20 │ ------ │ 120.0 GiB │            3413.83 GiB │
+    │ cpu17        │ partitionable   │           7 │     1 │ ------ │  20.0 GiB │             212.02 GiB │
+    │ cpu17        │ partitionable   │           7 │     2 │ ------ │  12.0 GiB │               3.59 GiB │
+    │ cpu18        │ partitionable   │           7 │    20 │ ------ │ 120.0 GiB │            3413.84 GiB │
+    │ cpu18        │ partitionable   │           7 │     1 │ ------ │  20.0 GiB │             212.02 GiB │
+    │ cpu21        │ partitionable   │          25 │    32 │ ------ │ 500.0 GiB │            3504.55 GiB │
+    │ cpu21        │ partitionable   │          25 │     1 │ ------ │  20.0 GiB │             213.96 GiB │
+    │ cpu21        │ partitionable   │          25 │     1 │ ------ │  5.88 GiB │               3.69 GiB │
+    │ cpu22        │ partitionable   │          23 │    32 │ ------ │ 500.0 GiB │            3504.55 GiB │
+    │ cpu22        │ partitionable   │          23 │     1 │ ------ │  20.0 GiB │             213.96 GiB │
+    │ cpu22        │ partitionable   │          23 │     1 │ ------ │  5.88 GiB │               3.69 GiB │
+    │ gpu1         │ partitionable   │          17 │     1 │ ------ │  20.0 GiB │             212.05 GiB │
+    │ gpu1         │ partitionable   │          17 │     2 │ ------ │  12.0 GiB │               3.59 GiB │
     │ cpu2         │ static    │          12 │     1 │ ------ │   5.0 GiB │ 287.53 GiB[/dark_blue] │
     │ cpu3         │ static    │          12 │     1 │ ------ │   5.0 GiB │ 287.68 GiB[/dark_blue] │
     │ cpu4         │ static    │          12 │     1 │ ------ │   5.0 GiB │ 287.68 GiB[/dark_blue] │
@@ -325,42 +325,42 @@ When using VERBOSE HTCrystalBall will print out your given Input...
     ┏━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┓
     ┃ Node         ┃ Slot Type ┃ Job fits ┃       Slot usage ┃       RAM usage       ┃ GPU usage ┃ Amount of similar jobs ┃ Wall Time on IDLE ┃
     ┡━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━┩
-    │ cpu9         │ dynamic   │      YES │  5/64 (8%) Cores │ 10.00/500.0 GiB (2%)  │  ------   │                     12 │             0 min │
-    │ cpu10        │ dynamic   │      YES │  5/64 (8%) Cores │ 10.00/500.0 GiB (2%)  │  ------   │                     12 │             0 min │
-    │ cpu21        │ dynamic   │      YES │ 5/32 (16%) Cores │ 10.00/500.0 GiB (2%)  │  ------   │                      6 │             0 min │
-    │ cpu22        │ dynamic   │      YES │ 5/32 (16%) Cores │ 10.00/500.0 GiB (2%)  │  ------   │                      6 │             0 min │
-    │ cpu14        │ dynamic   │      YES │ 5/24 (21%) Cores │ 10.00/210.0 GiB (5%)  │  ------   │                      4 │             0 min │
-    │ cpu15        │ dynamic   │      YES │ 5/24 (21%) Cores │ 10.00/210.0 GiB (5%)  │  ------   │                      4 │             0 min │
-    │ cpu16        │ dynamic   │      YES │ 5/20 (25%) Cores │ 10.00/120.0 GiB (8%)  │  ------   │                      4 │             0 min │
-    │ cpu17        │ dynamic   │      YES │ 5/20 (25%) Cores │ 10.00/120.0 GiB (8%)  │  ------   │                      4 │             0 min │
-    │ cpu18        │ dynamic   │      YES │ 5/20 (25%) Cores │ 10.00/120.0 GiB (8%)  │  ------   │                      4 │             0 min │
-    │ cpu7         │ dynamic   │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%)  │  ------   │                      2 │             0 min │
-    │ cpu8         │ dynamic   │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%)  │  ------   │                      2 │             0 min │
-    │ cpu7         │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu7         │ dynamic   │       NO │ 5/4 (125%) Cores │ 10.00/4.0 GiB (250%)  │  ------   │                      0 │             0 min │
-    │ cpu7         │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
-    │ cpu8         │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu8         │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
-    │ cpu9         │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/5.0 GiB (200%)  │  ------   │                      0 │             0 min │
-    │ cpu9         │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu9         │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
-    │ cpu10        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/5.0 GiB (200%)  │  ------   │                      0 │             0 min │
-    │ cpu10        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu10        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
-    │ cpu13        │ dynamic   │       NO │ 5/2 (250%) Cores │ 10.00/30.0 GiB (33%)  │  ------   │                      0 │             0 min │
-    │ cpu13        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
-    │ cpu14        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu15        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu16        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu17        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu17        │ dynamic   │       NO │ 5/2 (250%) Cores │ 10.00/12.0 GiB (83%)  │  ------   │                      0 │             0 min │
-    │ cpu18        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu21        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu21        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
-    │ cpu22        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ cpu22        │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
-    │ gpu1         │ dynamic   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
-    │ gpu1         │ dynamic   │       NO │ 5/2 (250%) Cores │ 10.00/12.0 GiB (83%)  │  ------   │                      0 │             0 min │
+    │ cpu9         │ partitionable   │      YES │  5/64 (8%) Cores │ 10.00/500.0 GiB (2%)  │  ------   │                     12 │             0 min │
+    │ cpu10        │ partitionable   │      YES │  5/64 (8%) Cores │ 10.00/500.0 GiB (2%)  │  ------   │                     12 │             0 min │
+    │ cpu21        │ partitionable   │      YES │ 5/32 (16%) Cores │ 10.00/500.0 GiB (2%)  │  ------   │                      6 │             0 min │
+    │ cpu22        │ partitionable   │      YES │ 5/32 (16%) Cores │ 10.00/500.0 GiB (2%)  │  ------   │                      6 │             0 min │
+    │ cpu14        │ partitionable   │      YES │ 5/24 (21%) Cores │ 10.00/210.0 GiB (5%)  │  ------   │                      4 │             0 min │
+    │ cpu15        │ partitionable   │      YES │ 5/24 (21%) Cores │ 10.00/210.0 GiB (5%)  │  ------   │                      4 │             0 min │
+    │ cpu16        │ partitionable   │      YES │ 5/20 (25%) Cores │ 10.00/120.0 GiB (8%)  │  ------   │                      4 │             0 min │
+    │ cpu17        │ partitionable   │      YES │ 5/20 (25%) Cores │ 10.00/120.0 GiB (8%)  │  ------   │                      4 │             0 min │
+    │ cpu18        │ partitionable   │      YES │ 5/20 (25%) Cores │ 10.00/120.0 GiB (8%)  │  ------   │                      4 │             0 min │
+    │ cpu7         │ partitionable   │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%)  │  ------   │                      2 │             0 min │
+    │ cpu8         │ partitionable   │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%)  │  ------   │                      2 │             0 min │
+    │ cpu7         │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu7         │ partitionable   │       NO │ 5/4 (125%) Cores │ 10.00/4.0 GiB (250%)  │  ------   │                      0 │             0 min │
+    │ cpu7         │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
+    │ cpu8         │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu8         │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
+    │ cpu9         │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/5.0 GiB (200%)  │  ------   │                      0 │             0 min │
+    │ cpu9         │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu9         │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
+    │ cpu10        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/5.0 GiB (200%)  │  ------   │                      0 │             0 min │
+    │ cpu10        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu10        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
+    │ cpu13        │ partitionable   │       NO │ 5/2 (250%) Cores │ 10.00/30.0 GiB (33%)  │  ------   │                      0 │             0 min │
+    │ cpu13        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
+    │ cpu14        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu15        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu16        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu17        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu17        │ partitionable   │       NO │ 5/2 (250%) Cores │ 10.00/12.0 GiB (83%)  │  ------   │                      0 │             0 min │
+    │ cpu18        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu21        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu21        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
+    │ cpu22        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ cpu22        │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/5.88 GiB (170%) │  ------   │                      0 │             0 min │
+    │ gpu1         │ partitionable   │       NO │ 5/1 (500%) Cores │ 10.00/20.0 GiB (50%)  │  ------   │                      0 │             0 min │
+    │ gpu1         │ partitionable   │       NO │ 5/2 (250%) Cores │ 10.00/12.0 GiB (83%)  │  ------   │                      0 │             0 min │
     │ cpu2         │ static    │       NO │ 5/1 (500%) Cores │ 10.00/5.0 GiB (200%)  │  ------   │                      0 │             0 min │
     │ cpu3         │ static    │       NO │ 5/1 (500%) Cores │ 10.00/5.0 GiB (200%)  │  ------   │                      0 │             0 min │
     │ cpu4         │ static    │       NO │ 5/1 (500%) Cores │ 10.00/5.0 GiB (200%)  │  ------   │                      0 │             0 min │

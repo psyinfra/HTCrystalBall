@@ -7,7 +7,7 @@ from rich.table import Table
 def inputs(num_cpu: int, amount_ram: float, amount_disk: float, num_gpu: int,
            num_jobs: int, num_duration: float, max_nodes: int) -> None:
     """
-    Prints converted user input to console using rich tables.
+    Print converted user input to console using rich tables.
 
     Args:
         num_cpu: The requested number CPU cores
@@ -36,7 +36,7 @@ def inputs(num_cpu: int, amount_ram: float, amount_disk: float, num_gpu: int,
 
 def slots(result: dict) -> None:
     """
-    Prints out the slots to the console using rich tables.
+    Print out the slots to the console using rich tables.
 
     Args:
         result: A dictionary of slot configurations.
@@ -94,7 +94,7 @@ def slots(result: dict) -> None:
 
 def results(result: dict, verbose: bool) -> None:
     """
-    Prints out the preview result to the console using rich tables.
+    Print out the preview result to the console using rich tables.
 
     Args:
         result: A dictionary of slot configurations including occupancy values

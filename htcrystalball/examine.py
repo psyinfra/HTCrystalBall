@@ -59,12 +59,10 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
     job_duration = to_minutes(job_duration, duration_unit)
 
     if cpu == 0:
-        logger.warning("No number of CPU workers given --- ABORTING")
-        return False
+        LOGGER.warning("No number of CPU workers given --- ABORTING")
 
     elif ram == 0.0:
-        logger.warning("No RAM amount given --- ABORTING")
-        return False
+        LOGGER.warning("No RAM amount given --- ABORTING")
 
     else:
         check_slots(

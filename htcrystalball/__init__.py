@@ -12,11 +12,11 @@ SLOTS_CONFIGURATION = opj(expanduser('~'), '.htcrystalball')
 logging.basicConfig(level=logging.ERROR)
 
 # Internal logging level
-logger = logging.getLogger('crystal_balls')
-logger.setLevel(level=logging.DEBUG)
+LOGGER = logging.getLogger('crystal_balls')
+LOGGER.setLevel(level=logging.DEBUG)
 
 __all__ = [
     '__version__',
     'SLOTS_CONFIGURATION',
-    'logger'
+    'LOGGER'
 ]

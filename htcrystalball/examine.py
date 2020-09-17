@@ -70,6 +70,7 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
             job_duration, maxnodes, verbose
         )
         return True
+    return False
 
 
 def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
@@ -160,6 +161,15 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
 
 
 def default_preview(slot_name: str, slot_type: str) -> dict:
+    """
+    Defines the default dictionary for slots that don't fit the job
+    Args:
+        slot_name:
+        slot_type:
+
+    Returns:
+
+    """
     return {
         'name': slot_name,
         'type': slot_type,
@@ -173,6 +183,14 @@ def default_preview(slot_name: str, slot_type: str) -> dict:
 
 
 def rename_slot_keys(slot: dict) -> dict:
+    """
+    Renames the keys for the slot dictionary
+    Args:
+        slot: the slot dictionary to have renamed keys
+
+    Returns:
+        renamed: the slot dictionary with renamed keys
+    """
     renamed = {
         'node': slot["UtsnameNodename"],
         'type': slot["SlotType"],

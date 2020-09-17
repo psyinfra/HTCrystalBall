@@ -136,8 +136,9 @@ def peek(params, parsers):
         jobs=params.jobs, job_duration=params.time, maxnodes=params.maxnodes,
         verbose=params.verbose
     )
+    sys.exit(0)
 
 
 def configure(params, parsers):
     print('Not yet implemented')
-    exit(0)
+    sys.exit(0)

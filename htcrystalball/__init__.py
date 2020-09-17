@@ -1,8 +1,10 @@
 """HTCrystalBall - A crystal ball that lets you peek into the future."""
 
-from ._version import __version__
 import logging
+
 from os.path import expanduser, join as opj
+
+from htcrystalball._version import __version__
 
 SLOTS_CONFIGURATION = opj(expanduser('~'), '.htcrystalball')
 

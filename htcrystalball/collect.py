@@ -1,10 +1,13 @@
 """Retrieve, format, and store a system's condor slot configuration."""
 
-from . import SLOTS_CONFIGURATION
-from .utils import kib_to_gib, mib_to_gib
-from typing import Union
 import json
+
 import htcondor
+
+from typing import Union
+
+from htcrystalball import SLOTS_CONFIGURATION
+from htcrystalball.utils import kib_to_gib, mib_to_gib
 
 
 def node_name_in_list(name: str, slots: list) -> Union[int, None]:

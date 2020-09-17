@@ -1,8 +1,10 @@
 """Various non-specific utilities."""
 
-from . import logger
-from argparse import ArgumentTypeError
 import re
+
+from argparse import ArgumentTypeError
+
+from htcrystalball import LOGGER
 
 
 def validate_storage_size(storage: str) -> str:

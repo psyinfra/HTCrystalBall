@@ -1,13 +1,20 @@
 """Module for testing the htcrystalball module."""
-from htcrystalball import examine, collect, utils
-from os import path
-from pytest import fixture, raises as praises
 import argparse
 import json
+
+from os import path
+from pytest import fixture, raises as praises
+
+from htcrystalball import examine, collect, utils
 
 
 @fixture
 def root_dir():
+    """
+    Defines the absolute path to this file.
+    Returns:
+
+    """
     return path.dirname(path.abspath(__file__))
 
 

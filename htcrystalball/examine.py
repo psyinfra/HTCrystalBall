@@ -1,9 +1,10 @@
 """Examines user input on the HTCondor slot configuration."""
 
-from . import display, SLOTS_CONFIGURATION, logger
-from .utils import split_num_str, to_minutes, to_binary_gigabyte
 import math
 import json
+
+from htcrystalball import display, SLOTS_CONFIGURATION, LOGGER
+from htcrystalball.utils import split_num_str, to_minutes, to_binary_gigabyte
 
 
 def filter_slots(slots: dict, slot_type: str) -> list:

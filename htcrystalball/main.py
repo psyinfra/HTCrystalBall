@@ -1,12 +1,18 @@
 """Entry point for HTCrystalBall examination and collection."""
 
-from . import __version__, collect, examine
-from .utils import validate_storage_size, validate_duration
 import argparse
 import sys
 
+from htcrystalball import __version__, collect, examine
+from htcrystalball.utils import validate_storage_size, validate_duration
+
 
 def main():
+    """
+    Defines the command line parser and argument properties
+    Returns:
+
+    """
     description = (
         '%(prog)s - A crystal ball that lets you peek into the future. '
         'To get a preview for any job you are trying ot execute using '

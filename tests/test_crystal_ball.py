@@ -96,8 +96,6 @@ def test_calc_manager(root_dir):
     Tests the method for preparing the slot checking.
     :return:
     """
-
-    root_dir = path.dirname(path.abspath(__file__))
     config_file = path.join(root_dir, 'example_config.json')
 
     assert examine.prepare(

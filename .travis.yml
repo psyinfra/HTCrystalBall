@@ -24,7 +24,7 @@ install:
   - pip list
 script:
   - pyflakes --version && pyflakes *.py
-  - pytest --version && pytest --cov=./ tests/
+  - pytest --version && pytest --cov=htcrystalball/
   - mandoc -T lint man/man1/htcrystalball.1
 after_success:
   - codecov

@@ -9,7 +9,9 @@ from htcrystalball.utils import validate_storage_size, validate_duration
 
 def main():
     """
+
     Defines the command line parser and argument properties
+
     Returns:
 
     """

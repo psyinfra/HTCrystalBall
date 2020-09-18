@@ -26,6 +26,7 @@ script:
   - pyflakes --version && pyflakes *.py
   - pytest --version && pytest --cov=htcrystalball/
   - mandoc -T lint man/man1/htcrystalball.1
+  - python setup.py install
 after_success:
   - codecov
   - python-codacy-coverage -r coverage.xml

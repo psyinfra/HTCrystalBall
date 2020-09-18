@@ -162,12 +162,14 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
 
 def default_preview(slot_name: str, slot_type: str) -> dict:
     """
-    Defines the default dictionary for slots that don't fit the job
+    Defines the default dictionary for slots that don't fit the job.
+
     Args:
-        slot_name:
-        slot_type:
+        slot_name (str): the name of the cpu slot, e.g. "cpu1"
+        slot_type (str): the type of cpu slot, allowed {'dynamic', 'static'}
 
     Returns:
+        dict: default values for a previewed slot
 
     """
     return {

@@ -9,12 +9,7 @@ from htcrystalball import examine, collect, utils
 
 
 @fixture
-def root_dir():
-    """
-    Defines the absolute path to this file.
-    Returns:
-
-    """
+def root_dir() -> str:
     return path.dirname(path.abspath(__file__))
 
 

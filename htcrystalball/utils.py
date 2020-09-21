@@ -1,8 +1,10 @@
 """Various non-specific utilities."""
 
-from . import logger
-from argparse import ArgumentTypeError
 import re
+
+from argparse import ArgumentTypeError
+
+from htcrystalball import LOGGER
 
 
 def validate_storage_size(storage: str) -> str:
@@ -10,7 +12,7 @@ def validate_storage_size(storage: str) -> str:
     pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
 
     if not pat.match(storage):
-        logger.error(f'Invalid storage value given: {storage}')
+        LOGGER.error(f'Invalid storage value given: {storage}')
         raise ArgumentTypeError(f'Invalid storage value given: {storage}')
 
     return storage
@@ -21,7 +23,7 @@ def validate_duration(duration: str) -> str:
     pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
 
     if not pat.match(duration):
-        logger.error(f'Invalid time value given: {duration}')
+        LOGGER.error(f'Invalid time value given: {duration}')
         raise ArgumentTypeError(f'Invalid time value given: {duration}')
 
     return duration

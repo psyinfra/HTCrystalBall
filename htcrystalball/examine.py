@@ -1,9 +1,10 @@
 """Examines user input on the HTCondor slot configuration."""
 
-from . import display, SLOTS_CONFIGURATION, logger
-from .utils import split_num_str, to_minutes, to_binary_gigabyte
 import math
 import json
+
+from htcrystalball import display, SLOTS_CONFIGURATION, LOGGER
+from htcrystalball.utils import split_num_str, to_minutes, to_binary_gigabyte
 
 
 def filter_slots(slots: dict, slot_type: str) -> list:
@@ -58,12 +59,10 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
     job_duration = to_minutes(job_duration, duration_unit)
 
     if cpu == 0:
-        logger.warning("No number of CPU workers given --- ABORTING")
-        return False
+        LOGGER.warning("No number of CPU workers given --- ABORTING")
 
     elif ram == 0.0:
-        logger.warning("No RAM amount given --- ABORTING")
-        return False
+        LOGGER.warning("No RAM amount given --- ABORTING")
 
     else:
         check_slots(
@@ -71,6 +70,7 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
             job_duration, maxnodes, verbose
         )
         return True
+    return False
 
 
 def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
@@ -161,6 +161,17 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
 
 
 def default_preview(slot_name: str, slot_type: str) -> dict:
+    """
+    Defines the default dictionary for slots that don't fit the job.
+
+    Args:
+        slot_name (str): the name of the cpu slot, e.g. "cpu1"
+        slot_type (str): the type of cpu slot, allowed {'dynamic', 'static'}
+
+    Returns:
+        dict: default values for a previewed slot
+
+    """
     return {
         'name': slot_name,
         'type': slot_type,
@@ -174,6 +185,14 @@ def default_preview(slot_name: str, slot_type: str) -> dict:
 
 
 def rename_slot_keys(slot: dict) -> dict:
+    """
+    Renames the keys for the slot dictionary
+    Args:
+        slot: the slot dictionary to have renamed keys
+
+    Returns:
+        renamed: the slot dictionary with renamed keys
+    """
     renamed = {
         'node': slot["UtsnameNodename"],
         'type': slot["SlotType"],

@@ -1,13 +1,15 @@
 """Module for testing the htcrystalball module."""
-from htcrystalball import examine, collect, utils
-from os import path
-from pytest import fixture, raises as praises
 import argparse
 import json
 
+from os import path
+from pytest import fixture, raises as praises
+
+from htcrystalball import examine, collect, utils
+
 
 @fixture
-def root_dir():
+def root_dir() -> str:
     return path.dirname(path.abspath(__file__))
 
 
@@ -89,8 +91,6 @@ def test_calc_manager(root_dir):
     Tests the method for preparing the slot checking.
     :return:
     """
-
-    root_dir = path.dirname(path.abspath(__file__))
     config_file = path.join(root_dir, 'example_config.json')
 
     assert examine.prepare(

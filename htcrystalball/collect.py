@@ -1,10 +1,13 @@
 """Retrieve, format, and store a system's condor slot configuration."""
 
-from . import SLOTS_CONFIGURATION
-from .utils import kib_to_gib, mib_to_gib
-from typing import Union
 import json
+
 import htcondor
+
+from typing import Union
+
+from htcrystalball import SLOTS_CONFIGURATION
+from htcrystalball.utils import kib_to_gib, mib_to_gib
 
 
 def node_name_in_list(name: str, slots: list) -> Union[int, None]:
@@ -17,7 +20,7 @@ def node_name_in_list(name: str, slots: list) -> Union[int, None]:
 
 def format_slots(slots: list) -> dict:
     """
-    Reassigns slot values to new keys for compatibility.
+    Reassign slot values to new keys for compatibility.
 
     The dictionary of slots is formatted into a new dictionary similar to the
     already used key:value pairs in HTCrystalball.
@@ -73,7 +76,7 @@ def format_slots(slots: list) -> dict:
 
 
 def collect_slots(filename: Union[str, None] = None) -> dict:
-    """Gets the condor config and creates a dict."""
+    """Get the condor config and creates a dict."""
     status = {"slots": []}
     projection = [
         "SlotType", "UtsnameNodename", "Name", "TotalSlotCpus",
@@ -119,6 +122,6 @@ def collect_slots(filename: Union[str, None] = None) -> dict:
 
 
 def write_slots(content: dict):
-    """Writes the output dict into a config file."""
+    """Write the output dict into a config file."""
     with open(SLOTS_CONFIGURATION, 'w+') as json_file:
         json.dump(content, json_file)

@@ -1,12 +1,16 @@
 """Entry point for HTCrystalBall examination and collection."""
 
-from . import __version__, collect, examine
-from .utils import validate_storage_size, validate_duration
 import argparse
 import sys
 
+from htcrystalball import __version__, collect, examine
+from htcrystalball.utils import validate_storage_size, validate_duration
 
-def main():
+
+def main() -> None:
+    """
+    Defines the command line parser and argument properties
+    """
     description = (
         '%(prog)s - A crystal ball that lets you peek into the future. '
         'To get a preview for any job you are trying ot execute using '
@@ -112,7 +116,7 @@ def main():
     # Parse arguments
     args = parser.parse_args()
 
-    if not len(sys.argv) > 1:
+    if len(sys.argv) <= 1:
         parser.print_help()
     else:
         args.run(args, parsers=[peek_cmd, configure_cmd])
@@ -130,8 +134,9 @@ def peek(params, parsers):
         jobs=params.jobs, job_duration=params.time, maxnodes=params.maxnodes,
         verbose=params.verbose
     )
+    sys.exit(0)
 
 
 def configure(params, parsers):
     print('Not yet implemented')
-    exit(0)
+    sys.exit(0)

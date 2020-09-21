@@ -1,13 +1,15 @@
 """Module for testing the htcrystalball module."""
-from htcrystalball import examine, collect, utils
-from os import path
-from pytest import fixture, raises as praises
 import argparse
 import json
 
+from os import path
+from pytest import fixture, raises as praises
+
+from htcrystalball import examine, collect, utils
+
 
 @fixture
-def root_dir():
+def root_dir() -> str:
     return path.dirname(path.abspath(__file__))
 
 
@@ -89,8 +91,6 @@ def test_calc_manager(root_dir):
     Tests the method for preparing the slot checking.
     :return:
     """
-
-    root_dir = path.dirname(path.abspath(__file__))
     config_file = path.join(root_dir, 'example_config.json')
 
     assert examine.prepare(
@@ -166,8 +166,8 @@ def test_slot_config(root_dir):
     assert "SlotType" in examine.filter_slots(slots, "static")[0]
     assert examine.filter_slots(slots, "static")[0]["SlotType"] == "static"
 
-    assert "SlotType" in examine.filter_slots(slots, "dynamic")[0]
-    assert examine.filter_slots(slots, "dynamic")[0]["SlotType"] == "dynamic"
+    assert "SlotType" in examine.filter_slots(slots, "partitionable")[0]
+    assert examine.filter_slots(slots, "partitionable")[0]["SlotType"] == "partitionable"
 
     if len(examine.filter_slots(slots, "gpu")) > 0:
         assert "SlotType" in examine.filter_slots(slots, "gpu")[0]
@@ -186,25 +186,25 @@ def test_slot_checking(root_dir):
 
     assert "preview" in examine.check_slots(
         examine.filter_slots(slots, "static"),
-        examine.filter_slots(slots, "dynamic"),
+        examine.filter_slots(slots, "partitionable"),
         examine.filter_slots(slots, "gpu"),
         1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False
     )
     assert "slots" in examine.check_slots(
         examine.filter_slots(slots, "static"),
-        examine.filter_slots(slots, "dynamic"),
+        examine.filter_slots(slots, "partitionable"),
         examine.filter_slots(slots, "gpu"),
         1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False
     )
     assert examine.check_slots(
         examine.filter_slots(slots, "static"),
-        examine.filter_slots(slots, "dynamic"),
+        examine.filter_slots(slots, "partitionable"),
         examine.filter_slots(slots, "gpu"),
         0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False
     ) == {}
     assert examine.check_slots(
         examine.filter_slots(slots, "static"),
-        examine.filter_slots(slots, "dynamic"),
+        examine.filter_slots(slots, "partitionable"),
         examine.filter_slots(slots, "gpu"),
         0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False
     ) == {}
@@ -223,7 +223,7 @@ def test_slot_result(root_dir):
     ram = 10.0
     result = examine.check_slots(
         examine.filter_slots(slots, "static"),
-        examine.filter_slots(slots, "dynamic"),
+        examine.filter_slots(slots, "partitionable"),
         examine.filter_slots(slots, "gpu"),
         1, ram, 0.0, 0, 1, 0.0, 0, verbose=False
     )

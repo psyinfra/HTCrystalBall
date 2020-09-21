@@ -7,7 +7,7 @@
           "TotalSlotCpus": 64,
           "TotalSlotDisk": 3414.34,
           "TotalSlotMemory": 500,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 65
         }
@@ -44,7 +44,7 @@
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3414.46,
           "TotalSlotMemory": 65,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 4
         }
@@ -81,7 +81,7 @@
           "TotalSlotCpus": 64,
           "TotalSlotDisk": 3414.4,
           "TotalSlotMemory": 500,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 65
         }
@@ -106,7 +106,7 @@
           "TotalSlotCpus": 2,
           "TotalSlotDisk": 828.68,
           "TotalSlotMemory": 30,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 7
         }
@@ -119,7 +119,7 @@
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3416.16,
           "TotalSlotMemory": 65,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 3
         }
@@ -132,7 +132,7 @@
           "TotalSlotCpus": 24,
           "TotalSlotDisk": 3414.52,
           "TotalSlotMemory": 210,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 25
         }
@@ -145,7 +145,7 @@
           "TotalSlotCpus": 24,
           "TotalSlotDisk": 3414.33,
           "TotalSlotMemory": 210,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 25
         }
@@ -158,7 +158,7 @@
           "TotalSlotCpus": 1,
           "TotalSlotDisk": 3.68,
           "TotalSlotMemory": 5.88,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 4
         }
@@ -171,7 +171,7 @@
           "TotalSlotCpus": 24,
           "TotalSlotDisk": 3414.59,
           "TotalSlotMemory": 210,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 3
         }
@@ -184,7 +184,7 @@
           "TotalSlotCpus": 20,
           "TotalSlotDisk": 3413.98,
           "TotalSlotMemory": 120,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 5
         }
@@ -197,7 +197,7 @@
           "TotalSlotCpus": 20,
           "TotalSlotDisk": 3414.26,
           "TotalSlotMemory": 120,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 6
         }
@@ -210,7 +210,7 @@
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3415.78,
           "TotalSlotMemory": 65,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 4
         }
@@ -223,7 +223,7 @@
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3416.15,
           "TotalSlotMemory": 65,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 4
         }
@@ -236,7 +236,7 @@
           "TotalSlotCpus": 20,
           "TotalSlotDisk": 3414.22,
           "TotalSlotMemory": 120,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 2
         }
@@ -249,7 +249,7 @@
           "TotalSlotCpus": 32,
           "TotalSlotDisk": 3500.83,
           "TotalSlotMemory": 500,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 4
         }
@@ -262,7 +262,7 @@
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3416.2,
           "TotalSlotMemory": 65,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 4
         }
@@ -275,7 +275,7 @@
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3416.14,
           "TotalSlotMemory": 65,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 1
         }
@@ -301,7 +301,7 @@
           "TotalSlotCpus": 12,
           "TotalSlotDisk": 3414.49,
           "TotalSlotMemory": 65,
-          "SlotType": "dynamic",
+          "SlotType": "partitionable",
           "TotalSlotGPUs": 0,
           "TotalSlots": 2
         }

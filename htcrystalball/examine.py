@@ -1,9 +1,8 @@
 """Examines user input on the HTCondor slot configuration."""
 
 import math
-import json
 
-from htcrystalball import display, SLOTS_CONFIGURATION, LOGGER
+from htcrystalball import display, collect, LOGGER
 from htcrystalball.utils import split_num_str, to_minutes, to_binary_gigabyte
 
 
@@ -11,9 +10,9 @@ def filter_slots(slots: dict, slot_type: str) -> list:
     """Filters the slots stored in a dictionary according to the given type."""
     result = []
     for node in slots:
-        for slot in node["slot_size"]:
+        for slot in slots[node]["slot_size"]:
             if slot["SlotType"] == slot_type:
-                slot["UtsnameNodename"] = node["UtsnameNodename"]
+                slot["UtsnameNodename"] = slots[node]["UtsnameNodename"]
                 result.append(slot)
 
     return result
@@ -21,7 +20,7 @@ def filter_slots(slots: dict, slot_type: str) -> list:
 
 def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
             job_duration: str, maxnodes: int, verbose: bool,
-            config_file: str = SLOTS_CONFIGURATION) -> bool:
+            config_file: str = None) -> bool:
     """
     Prepares for the examination of job requests.
 
@@ -42,13 +41,14 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
     Returns:
         If all needed parameters were given
     """
+    if config_file is not None:
+        config = collect.collect_slots(config_file)
+    else:
+        config = collect.collect_slots()
 
-    with open(config_file) as f:
-        config = json.load(f)['slots']
-
-    slots_static = filter_slots(config, 'static')
-    slots_partitionable = filter_slots(config, 'partitionable')
-    slots_gpu = filter_slots(config, "gpu")
+    slots_static = filter_slots(config, 'Static')
+    slots_partitionable = filter_slots(config, 'Partitionable')
+    slots_gpu = filter_slots(config, "GPU")
 
     [ram, ram_unit] = split_num_str(ram, 0.0, 'GiB')
     ram = to_binary_gigabyte(ram, ram_unit)
@@ -82,9 +82,9 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
     methods.
 
     Args:
-        static: A list of static slot configurations
-        partitionable: A list of partitionable slot configurations
-        gpu: A list of gpu slot configurations
+        static: A list of Static slot configurations
+        partitionable: A list of Partitionable slot configurations
+        gpu: A list of GPU slot configurations
         n_cpus: The requested number of CPU cores
         ram: The requested amount of RAM
         disk_space: The requested amount of disk space
@@ -113,7 +113,7 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
                 ram=ram,
                 job_duration=job_duration,
                 n_jobs=n_jobs,
-                slot_type='partitionable'
+                slot_type='Partitionable'
             )
 
             results['slots'].append(node_dict)
@@ -126,7 +126,7 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
                 ram=ram,
                 job_duration=job_duration,
                 n_jobs=n_jobs,
-                slot_type='static'
+                slot_type='Static'
             )
             results['slots'].append(node_dict)
             results['preview'].append(preview_node)
@@ -140,7 +140,7 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
                 ram=ram,
                 job_duration=job_duration,
                 n_jobs=n_jobs,
-                slot_type='gpu'
+                slot_type='GPU'
             )
             results['slots'].append(node_dict)
             results['preview'].append(preview_node)
@@ -166,7 +166,7 @@ def default_preview(slot_name: str, slot_type: str) -> dict:
 
     Args:
         slot_name (str): the name of the cpu slot, e.g. "cpu1"
-        slot_type (str): the type of cpu slot, allowed {'dynamic', 'static'}
+        slot_type (str): the type of cpu slot, allowed {'Partitionable', 'Static'}
 
     Returns:
         dict: default values for a previewed slot
@@ -212,7 +212,7 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
                        job_duration: float, n_jobs: int, slot_type: str,
                        n_gpu: int = 0) -> (dict, dict):
     """
-    Checks all partitionable slots if they fit the job.
+    Checks all Partitionable slots if they fit the job.
 
     Args:
         slot: The slot to be checked for running the specified job.
@@ -220,28 +220,28 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
         ram: The amount of RAM for a single job
         job_duration: The duration for a single job to execute
         n_jobs: The number of similar jobs to be executed
-        slot_type: The type of slot, allowed {'static', 'partitionable', 'gpu'}
+        slot_type: The type of slot, allowed {'Static', 'Partitionable', 'GPU'}
         n_gpu: Optional. The number of GPU units for a single job
 
     Returns:
         A dictionary of the checked slot and a dictionary with the occupancy
         details of the slot.
     """
-    if slot_type not in ['static', 'partitionable', 'gpu']:
-        raise ValueError(f'slot_type must be static, partitionable, or gpu, '
+    if slot_type not in ['Static', 'Partitionable', 'GPU']:
+        raise ValueError(f'slot_type must be Static, Partitionable or GPU '
                          f'not {slot_type}')
 
     preview = default_preview(slot['UtsnameNodename'], slot_type)
 
     total_cpus = slot['TotalSlotCpus']
     total_ram = slot['TotalSlotMemory']
-    total_slots = slot['TotalSlots'] if slot_type == 'static' else 1
-    total_gpus = slot['TotalSlotGPUs'] if slot_type == 'gpu' else 0
+    total_slots = slot['TotalSlots'] if slot_type == 'Static' else 1
+    total_gpus = slot['TotalSlotGPUs'] if slot_type == 'GPU' else 0
     pct_cpus = int(round((n_cpu / total_cpus) * 100, 0))
     pct_ram = int(round((ram / total_ram) * 100, 0))
     fits_job = n_cpu <= total_cpus and ram <= total_ram
 
-    if slot_type == 'gpu':
+    if slot_type == 'GPU':
         pct_gpu = int(round((n_gpu / total_gpus) * 100, 0))
         fits_job = fits_job and n_gpu <= total_gpus
 
@@ -256,25 +256,25 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
     if fits_job:
         preview['fits'] = 'YES'
 
-        if slot_type == 'partitionable':
+        if slot_type == 'Partitionable':
             preview['sim_jobs'] = min(
                 int(total_cpus / n_cpu),
                 int(total_ram / ram)
             )
-        elif slot_type == 'gpu':
+        elif slot_type == 'GPU':
             preview['sim_jobs'] = min(
                 int(total_gpus / n_gpu),
                 int(total_cpus / n_cpu),
                 int(total_ram / ram)
             )
-        elif slot_type == 'static':
+        elif slot_type == 'Static':
             preview['sim_jobs'] = total_cpus
 
         if job_duration != 0:
             cpu_fit = int(total_cpus / n_cpu)
             ram_fit = int(total_ram / ram)
 
-            if slot_type == 'gpu':
+            if slot_type == 'GPU':
                 gpu_fit = int(total_gpus / n_gpu)
 
                 if ram == 0:
@@ -286,7 +286,7 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
                     (n_jobs / jobs / total_cpus) * job_duration
                 )
 
-            elif slot_type in ['static', 'partitionable']:
+            elif slot_type in ['Static', 'Partitionable']:
                 jobs = cpu_fit if ram == 0 else min(cpu_fit, ram_fit)
                 preview['wall_time_on_idle'] = math.ceil(
                     (n_jobs / jobs / total_slots) * job_duration

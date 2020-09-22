@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from htcrystalball import __version__, collect, examine
+from htcrystalball import __version__, examine
 from htcrystalball.utils import validate_storage_size, validate_duration
 
 
@@ -124,16 +124,10 @@ def main() -> None:
 
 def peek(params, parsers):
     """Peek into the crystal ball to see the future."""
-    # fetch current slot configuration
-    slots_in = collect.collect_slots()
-    slots_out = collect.format_slots(slots_in['slots'])
-    collect.write_slots(slots_out)
-
     examine.prepare(
         cpu=params.cpu, gpu=params.gpu, ram=params.ram, disk=params.disk,
         jobs=params.jobs, job_duration=params.time, maxnodes=params.maxnodes,
-        verbose=params.verbose
-    )
+        verbose=params.verbose)
     sys.exit(0)
 
 

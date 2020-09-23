@@ -20,7 +20,7 @@ def filter_slots(slots: dict, slot_type: str) -> list:
 
 def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
             job_duration: str, maxnodes: int, verbose: bool,
-            config_file: str = None) -> bool:
+            content: object) -> bool:
     """
     Prepares for the examination of job requests.
 
@@ -36,15 +36,12 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
         job_duration: User input of the duration time for a single job
         maxnodes:
         verbose:
-        config_file: optional, alternative file path for slots configuration
+        content: the loaded HTCondor slots configuration
 
     Returns:
         If all needed parameters were given
     """
-    if config_file is not None:
-        config = collect.collect_slots(config_file)
-    else:
-        config = collect.collect_slots()
+    config = collect.collect_slots(content)
 
     slots_static = filter_slots(config, 'Static')
     slots_partitionable = filter_slots(config, 'Partitionable')

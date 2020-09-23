@@ -1,15 +1,39 @@
 """Module for testing the htcrystalball module."""
+
 import argparse
 
-from os import path
-from pytest import fixture, raises as praises
+from pytest import raises as praises
 
 from htcrystalball import examine, collect, utils
 
 
-@fixture
-def root_dir() -> str:
-    return path.dirname(path.abspath(__file__))
+COLL_QUERY = [
+        {
+            "UtsnameNodename": "cpu2",
+            "TotalSlotCpus": "1",
+            "TotalSlotDisk": "287530000",
+            "TotalSlotMemory": "500000",
+            "SlotType": "Static",
+            "TotalSlots": "12"
+        },
+        {
+            "UtsnameNodename": "cpu3",
+            "TotalSlotCpus": "1",
+            "TotalSlotDisk": "287680000",
+            "TotalSlotMemory": "500000",
+            "SlotType": "Partitionable",
+            "TotalSlots": "12"
+        },
+        {
+            "UtsnameNodename": "gpu1",
+            "TotalSlotCpus": "1",
+            "TotalSlotGPUs": "4",
+            "TotalSlotDisk": "287680000",
+            "TotalSlotMemory": "500000",
+            "SlotType": "Partitionable",
+            "TotalSlots": "12"
+        }
+    ]
 
 
 def test_storage_validator():
@@ -85,78 +109,79 @@ def test_conversions():
     assert utils.to_minutes(1.0, "d") == 1440.0
 
 
-def test_calc_manager(root_dir):
+def test_calc_manager():
     """
     Tests the method for preparing the slot checking.
     :return:
     """
-    config_file = path.join(root_dir, 'htcondor_status_long.txt')
+    mocked_content = COLL_QUERY
 
     assert examine.prepare(
         cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True, config_file=config_file
+        maxnodes=0, verbose=True, content=mocked_content
     )
     assert not examine.prepare(
         cpu=0, gpu=1, ram="10GB", disk="0", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True, config_file=config_file
+        maxnodes=0, verbose=True, content=mocked_content
     )
     assert not examine.prepare(
         cpu=1, gpu=0, ram="0", disk="", jobs=1, job_duration="", maxnodes=0,
-        verbose=True, config_file=config_file
+        verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=1, gpu=1, ram="20GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True, config_file=config_file
+        maxnodes=0, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True, config_file=config_file
+        maxnodes=0, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=1, gpu=0, ram="10GB", disk="10GB", jobs=128, job_duration="15m",
-        maxnodes=0, verbose=True, config_file=config_file
+        maxnodes=0, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=1, gpu=0, ram="10GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=1, verbose=True, config_file=config_file
+        maxnodes=1, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=8, gpu=0, ram="10GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=0, verbose=True, config_file=config_file
+        maxnodes=0, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=8, gpu=0, ram="80GB", disk="", jobs=4, job_duration="1h",
-        maxnodes=0, verbose=True, config_file=config_file
+        maxnodes=0, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=2, gpu=0, ram="10GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=3, verbose=True, config_file=config_file
+        maxnodes=3, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=1, gpu=0, ram="20GB", disk="", jobs=1, job_duration="10m",
-        maxnodes=2, verbose=True, config_file=config_file
+        maxnodes=2, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=2, gpu=0, ram="20GB", disk="", jobs=1, job_duration="",
-        maxnodes=2, verbose=True, config_file=config_file
+        maxnodes=2, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=2, gpu=0, ram="20GB", disk="", jobs=32, job_duration="10m",
-        maxnodes=1, verbose=True, config_file=config_file
+        maxnodes=1, verbose=True, content=mocked_content
     )
     assert examine.prepare(
         cpu=2, gpu=5, ram="10GB", disk="", jobs=32, job_duration="10m",
-        maxnodes=1, verbose=True, config_file=config_file
+        maxnodes=1, verbose=True, content=mocked_content
     )
 
 
-def test_slot_config(root_dir):
+def test_slot_config():
     """
     Tests the slot loading method.
     :return:
     """
-    condor_status = path.join(root_dir, 'htcondor_status_long.txt')
-    slots = collect.collect_slots(condor_status)
+    mocked_content = COLL_QUERY
+
+    slots = collect.collect_slots(mocked_content)
 
     assert "SlotType" in slots['cpu2']["slot_size"][0]
 
@@ -171,13 +196,14 @@ def test_slot_config(root_dir):
         assert examine.filter_slots(slots, "GPU")[0]["SlotType"] == "GPU"
 
 
-def test_slot_checking(root_dir):
+def test_slot_checking():
     """
     Tests the slot checking method.
     :return:
     """
-    condor_status = path.join(root_dir, 'htcondor_status_long.txt')
-    slots = collect.collect_slots(condor_status)
+    mocked_content = COLL_QUERY
+
+    slots = collect.collect_slots(mocked_content)
 
     assert "preview" in examine.check_slots(
         examine.filter_slots(slots, "static"),
@@ -205,13 +231,14 @@ def test_slot_checking(root_dir):
     ) == {}
 
 
-def test_slot_result(root_dir):
+def test_slot_result():
     """
     Tests the result slots for correct number of similar jobs based on RAM
     :return:
     """
-    condor_status = path.join(root_dir, 'htcondor_status_long.txt')
-    slots = collect.collect_slots(condor_status)
+    mocked_content = COLL_QUERY
+
+    slots = collect.collect_slots(mocked_content)
 
     ram = 10.0
     result = examine.check_slots(
@@ -335,10 +362,10 @@ def test__memory_conversions():
     assert utils.kib_to_gib(size_disk * 10) == 10.0
 
 
-def test_slot_reader(root_dir):
+def test_slot_reader():
     """
     Testing the slot fetching with an extract of a condor_status command output
     :return:
     """
-    condor_status = path.join(root_dir, 'htcondor_status_long.txt')
-    collect.collect_slots(condor_status)
+    mocked_content = COLL_QUERY
+    collect.collect_slots(mocked_content)

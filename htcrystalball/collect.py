@@ -8,14 +8,15 @@ from htcrystalball.utils import kib_to_gib, mib_to_gib
 
 
 def collect_slots(filename: Union[str, None] = None) -> dict:
-    """Get the condor config and creates a dict."""
-    projection = ["SlotType", "UtsnameNodename", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
+    """Gets the condor config and creates a dict."""
+    query_data = ["SlotType", "UtsnameNodename", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
                   "TotalSlotGPUs"]
     unique_slots = {}
 
     if filename is None:
         coll = htcondor.Collector()
-        content = coll.query(htcondor.AdTypes.Startd, constraint='SlotType != "Dynamic"', projection=projection)
+        # Ignore Slots that are Dynamic as they are dynamically assigned to a job and cannot be predicted
+        content = coll.query(htcondor.AdTypes.Startd, constraint='SlotType != "Dynamic"', projection=query_data)
         for slot in content:
             nodename = slot['UtsnameNodename']
             slot_as_dict = {
@@ -51,7 +52,7 @@ def collect_slots(filename: Union[str, None] = None) -> dict:
                 key = pairs[0].strip().replace("'", "")
                 value = pairs[1].strip().replace("'", "")
 
-                if key in projection:
+                if key in query_data:
                     if key == "UtsnameNodename":
                         nodename = value.replace("\"", "")
                         if nodename not in unique_slots:

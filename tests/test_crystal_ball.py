@@ -1,39 +1,14 @@
 """Module for testing the htcrystalball module."""
 
 import argparse
+import sys
 
 from pytest import raises as praises
 
 from htcrystalball import examine, collect, utils
 
-
-COLL_QUERY = [
-        {
-            "UtsnameNodename": "cpu2",
-            "TotalSlotCpus": "1",
-            "TotalSlotDisk": "287530000",
-            "TotalSlotMemory": "500000",
-            "SlotType": "Static",
-            "TotalSlots": "12"
-        },
-        {
-            "UtsnameNodename": "cpu3",
-            "TotalSlotCpus": "1",
-            "TotalSlotDisk": "287680000",
-            "TotalSlotMemory": "500000",
-            "SlotType": "Partitionable",
-            "TotalSlots": "12"
-        },
-        {
-            "UtsnameNodename": "gpu1",
-            "TotalSlotCpus": "1",
-            "TotalSlotGPUs": "4",
-            "TotalSlotDisk": "287680000",
-            "TotalSlotMemory": "500000",
-            "SlotType": "Partitionable",
-            "TotalSlots": "12"
-        }
-    ]
+sys.modules['htcondor'] = __import__('mock_htcondor')
+from htcondor import Collector as mocked_collector
 
 
 def test_storage_validator():
@@ -114,7 +89,7 @@ def test_calc_manager():
     Tests the method for preparing the slot checking.
     :return:
     """
-    mocked_content = COLL_QUERY
+    mocked_content = mocked_collector().query()
 
     assert examine.prepare(
         cpu=1, gpu=0, ram="10GB", disk="0", jobs=1, job_duration="10m",
@@ -179,7 +154,7 @@ def test_slot_config():
     Tests the slot loading method.
     :return:
     """
-    mocked_content = COLL_QUERY
+    mocked_content = mocked_collector().query()
 
     slots = collect.collect_slots(mocked_content)
 
@@ -201,7 +176,7 @@ def test_slot_checking():
     Tests the slot checking method.
     :return:
     """
-    mocked_content = COLL_QUERY
+    mocked_content = mocked_collector().query()
 
     slots = collect.collect_slots(mocked_content)
 
@@ -236,7 +211,7 @@ def test_slot_result():
     Tests the result slots for correct number of similar jobs based on RAM
     :return:
     """
-    mocked_content = COLL_QUERY
+    mocked_content = mocked_collector().query()
 
     slots = collect.collect_slots(mocked_content)
 
@@ -367,5 +342,5 @@ def test_slot_reader():
     Testing the slot fetching with an extract of a condor_status command output
     :return:
     """
-    mocked_content = COLL_QUERY
+    mocked_content = mocked_collector().query()
     collect.collect_slots(mocked_content)

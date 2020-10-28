@@ -64,7 +64,7 @@ def slots(result: dict) -> None:
                 f"[{color}]{slot['disk']} GiB[/{color}]"
             )
 
-        elif slot['type'] == "gpu":
+        elif slot['type'] == "GPU":
             color = 'purple4'
             table.add_row(
                 f"[{color}]{slot['node']}[/{color}]",

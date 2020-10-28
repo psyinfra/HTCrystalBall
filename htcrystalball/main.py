@@ -22,7 +22,7 @@ def main() -> None:
     )
     usage = (
         '%(prog)s peek -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] '
-        '[-d DURATION] [-v]'
+        '[-t JOB_DURATION] [-m MAX_NODES] [-v]'
     )
     epilog = (
         'PLEASE NOTE: HTCondor always uses binary storage sizes (1 GiB = '

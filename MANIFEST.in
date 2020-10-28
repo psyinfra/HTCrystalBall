@@ -1,3 +1,1 @@
-include config/slots.json
 include man/man1/htcrystalball.1
-include man/man1/fetch_condor_slots.1

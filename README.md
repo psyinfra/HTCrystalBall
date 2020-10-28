@@ -20,9 +20,9 @@ here is a list of hyperlinks for you to skip searching for a particular section:
 
 ## Description
 This project contains of two main parts
-*   fetching an HTCondor slot configuration to create a JSON file with a list of slots
+*   fetching an HTCondor slot configuration to create a list of slots
 
-*   looking for suiting slots in a given configuration to execute user-defined
+*   looking for suiting slots in the given configuration to execute user-defined
 jobs a.k.a. the `crystal ball`
 
 and is intended for HTCondor (server) systems which describe resources as slots
@@ -45,9 +45,9 @@ it that way and only store the key-value pairs for
 
 So if you want to adjust this script to your use-case feel free to add other keys.
 
-As it turns out, the resulting list of slots had more than 500 entries because every single slot
+As it turns out, the resulting list of slots had more than 500 entries because every single slot (static and dynamic created ones)
 would be displayed. But as we don't need every single slot of identical configuration, 
-we chose to filter them out to reduce our number of slot entries and just keep the 
+we chose to filter them out to show all available slot configurations and just keep the
 `TotalSlots` property to reflect that there are multiple slots of the same configuration.
 To also account for the relation to a `node`, we chose to go with a node object in JSON that 
 has various `slot` sizes as children objects. Here you can see an example for a `node` object in JSON:
@@ -68,7 +68,7 @@ the execution time per job, a total `wall time` can also be calculated per `slot
 ## Requirements
 `HTCrystalBall` uses the `rich` module for printing out nicely formatted tables. 
 The module requires Python 3.6+ to run.
-For using the HTCondor API the modules `htcondor` and `classad` have to be installed.
+For using the HTCondor API the module `htcondor` has to be installed.
 
 To also run our tests, we require `pytest` to be installed.
 
@@ -85,11 +85,7 @@ To install and configure `HTCrystalBall` please follow these steps:
 
     `pip3 install .`
 
-3.  if necessary configure the path of the slot configuration file to match your system
-
-    `SLOTS_CONFIGURATION = "config/slots.json"`
-
-4.  adjust the keys to be fetched from the command
+3.  adjust the keys to be fetched from the command in `collect.py`
 
     `if key in ("SlotType", "UtsnameNodename", "Name", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"):`
 
@@ -99,9 +95,9 @@ To use our `crystal ball` your input has to provide at least CPU and RAM require
 while also giving you the ability to pass values familiar parameter you already know from
 writing a [condor submit](https://htcondor.readthedocs.io/en/latest/users-manual/submitting-a-job.html) file:
 
-    htcrystalball -h
+    htcrystalball | htcb -h
     
-    usage: htcrystalball -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-d DURATION] [-v]
+    usage: htcrystalball | htcb -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-d DURATION] [-v]
 
     To get a preview for any job you are trying to execute using HTCondor, please
     pass at least the number of CPUs and the amount of RAM (including units eg.
@@ -149,7 +145,7 @@ When using VERBOSE HTCrystalBall will print out your given Input...
 | JOB DURATION  |     ...     |
 | MAXIMUM NODES |     ...     |
 
-...the current slot configuration of Juseless...
+...the current slot configuration of the cluster...
 
 | Node |   Slot Type   | Total slots | Cores | GPUs | RAM | DISK |
 | ---- | ------------- | ----------- | ----- | ---- | --- | ---- |

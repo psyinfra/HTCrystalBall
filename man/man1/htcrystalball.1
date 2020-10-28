@@ -3,7 +3,7 @@
 .Os \" Current operating system.
 .
 .Sh NAME
-.Nm htcrystalball
+.Nm htcrystalball (htcb)
 .Nd calculate how many of a specified job size can run on an HTCondor pool
 .
 .Sh SYNOPSIS
@@ -64,15 +64,15 @@ See the HTCondor documentation at
 .Sh EXAMPLES
 .Dl htcrystalball \-c 4 \-r 10G
 .
-.Dl htcrystalball \-c 4 \-r 10G \-v
+.Dl htcb \-c 4 \-r 10G \-v
 .
-.Dl htcrystalball \-c 4 \-g 1 \-r 10G
+.Dl htcb \-c 4 \-g 1 \-r 10G
 .
 .Dl htcrystalball \-c 4 \-g 1 \-r 10G \-v
 .
 .Dl htcrystalball \-c 4 \-r 10G \-d 50G \-j 20 \-t 15m
 .
-.Dl htcrystalball \-c 4 \-r 10G \-d 50G \-j 20 \-t 15m \-v
+.Dl htcb \-c 4 \-r 10G \-d 50G \-j 20 \-t 15m \-v
 .
 .Sh SEE ALSO
 The

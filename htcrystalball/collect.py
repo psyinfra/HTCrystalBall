@@ -11,16 +11,16 @@ def collect_slots(content: object) -> dict:
     for slot in content:
         nodename = slot['UtsnameNodename']
         if len(nodename[3:]) == 1:
-            nodename = nodename[:3]+"0"+nodename[3:]
+            nodename = nodename[:3] + "0" + nodename[3:]
 
         slot_as_dict = {
-                        'TotalSlotCpus': int(slot.get('TotalSlotCpus', 0)),
-                        'TotalSlotGPUs': int(slot.get('TotalSlotGPUs', 0)),
-                        'TotalSlots': int(slot.get('TotalSlots', 0)),
-                        'TotalSlotDisk': kib_to_gib(float(slot.get('TotalSlotDisk', 0.0))),
-                        'TotalSlotMemory': mib_to_gib(float(slot.get('TotalSlotMemory', 0.0))),
-                        'SlotType': slot['SlotType']
-                        }
+            'TotalSlotCpus': int(slot.get('TotalSlotCpus', 0)),
+            'TotalSlotGPUs': int(slot.get('TotalSlotGPUs', 0)),
+            'TotalSlots': int(slot.get('TotalSlots', 0)),
+            'TotalSlotDisk': kib_to_gib(float(slot.get('TotalSlotDisk', 0.0))),
+            'TotalSlotMemory': mib_to_gib(float(slot.get('TotalSlotMemory', 0.0))),
+            'SlotType': slot['SlotType']
+        }
         if slot_as_dict['TotalSlotGPUs'] != 0:
             slot_as_dict['SlotType'] = "GPU"
 
@@ -35,8 +35,9 @@ def collect_slots(content: object) -> dict:
             sim_slot_values.append({'node': nodename, "slot": slot_as_dict, "sim_slots": 1})
         elif slot_as_dict in unique_slots[nodename]["slot_size"]:
             for slot_number in range(len(sim_slot_values)):
-                if sim_slot_values[slot_number]["node"] == nodename and sim_slot_values[slot_number]["slot"] == slot_as_dict:
-                   sim_slot_values[slot_number]["sim_slots"] += 1
+                if sim_slot_values[slot_number]["node"] == nodename \
+                        and sim_slot_values[slot_number]["slot"] == slot_as_dict:
+                    sim_slot_values[slot_number]["sim_slots"] += 1
 
     for elem in sim_slot_values:
         for slot_number in range(len(unique_slots[elem["node"]]["slot_size"])):

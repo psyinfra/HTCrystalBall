@@ -158,7 +158,7 @@ def test_slot_config():
 
     slots = collect.collect_slots(mocked_content)
 
-    assert "SlotType" in slots['cpu2']["slot_size"][0]
+    assert "SlotType" in slots['cpu02']["slot_size"][0]
 
     assert "SlotType" in examine.filter_slots(slots, "Static")[0]
     assert examine.filter_slots(slots, "Static")[0]["SlotType"] == "Static"

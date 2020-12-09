@@ -88,18 +88,19 @@ def slots(result: dict) -> None:
     console.print(table)
 
 
-def results(result: dict, verbose: bool, matlab: bool, n_cores: int, n_jobs: int, wall_time: float) -> None:
+def results(result: dict, verbose: bool, matlab: bool,
+            n_cores: int, n_jobs: int, wall_time: float) -> None:
     """
     Print out the preview result to the console using rich tables.
 
     Args:
-        wall_time: time per job, needed for total wall-time execution
-        n_jobs: number of requested jobs for wall-time execution
-        n_cores: number of requested cores for wall-time calculation
-        matlab: A bool telling whether matlab mode output is needed
         result: A dictionary of slot configurations including occupancy values
             for the requested job size.
         verbose: A value to extend the generated output.
+        matlab: A bool telling whether matlab mode output is needed
+        n_cores: number of requested cores for wall-time calculation
+        n_jobs: number of requested jobs for wall-time execution
+        wall_time: time per job, needed for total wall-time execution
     """
     console = Console()
 
@@ -144,10 +145,11 @@ def results(result: dict, verbose: bool, matlab: bool, n_cores: int, n_jobs: int
         console.print(table)
         console.print("TOTAL MATCHES: "+str(total_jobs))
         console.print("")
-        if wall_time > 0.0 and n_jobs > 0:
+        if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:
             time = int(max(n_jobs / total_jobs, 1)*wall_time / 60.0 + 1)
             core_hours = int(n_jobs * wall_time * n_cores / 60.0 + 1)
-            console.print("A total of "+str(core_hours)+" core-hour(s) will be used and will complete in about " +
+            console.print("A total of "+str(core_hours)+" core-hour(s) "
+                          "will be used and will complete in about " +
                           str(time)+" hour(s).")
         else:
             console.print("No --jobs or --jobs-time specified. No duration estimate will be given.")
@@ -167,9 +169,11 @@ def results(result: dict, verbose: bool, matlab: bool, n_cores: int, n_jobs: int
             if wall_time > 0.0 and n_jobs > 0:
                 time = int(max(n_jobs / total_jobs, 1)*wall_time / 60.0 + 1)
                 core_hours = int(n_jobs * wall_time * n_cores / 60.0 + 1)
-                console.print("A total of "+str(core_hours)+" core-hour(s) will be used and will complete in about " +
+                console.print("A total of "+str(core_hours)+" core-hour(s) "
+                              "will be used and will complete in about " +
                               str(time)+" hour(s).")
             else:
-                console.print("No --jobs or --jobs-time specified. No duration estimate will be given.")
+                console.print("No --jobs or --jobs-time specified. "
+                              "No duration estimate will be given.")
             console.print("")
             console.print("The above number(s) are for an idle pool.")

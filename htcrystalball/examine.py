@@ -2,6 +2,7 @@
 
 import math
 
+from operator import itemgetter
 from htcrystalball import display, collect, LOGGER
 from htcrystalball.utils import split_num_str, to_minutes, to_binary_gigabyte
 
@@ -150,9 +151,11 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
         results['preview'] = results['preview'][:max_nodes]
 
     if verbose:
+        results['slots'] = sorted(results['slots'], key=itemgetter('node'))
         display.slots(results)
 
-    display.results(results, verbose)
+    results['preview'] = sorted(results['preview'], key=itemgetter('name'))
+    display.results(results, verbose, max_nodes != 0, n_cpus, n_jobs, job_duration)
 
     return results
 
@@ -196,7 +199,8 @@ def rename_slot_keys(slot: dict) -> dict:
         'total_slots': slot["TotalSlots"],
         'cores': slot["TotalSlotCpus"],
         'disk': slot["TotalSlotDisk"],
-        'ram': slot["TotalSlotMemory"]
+        'ram': slot["TotalSlotMemory"],
+        'sim_slots': slot["SimSlots"]
     }
 
     if slot.get('TotalSlotGPUs', None):
@@ -243,7 +247,7 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
         fits_job = fits_job and n_gpu <= total_gpus
 
         if total_gpus >= 1:
-            preview['gpu_usage'] = f'{n_gpu}/{total_gpus} ({pct_gpu})%'
+            preview['gpu_usage'] = f'{n_gpu}/{total_gpus} ({pct_gpu}%)'
         else:
             preview['gpu_usage'] = 'No GPU resource!'
 

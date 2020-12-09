@@ -262,12 +262,29 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
                 int(total_cpus / n_cpu),
                 int(total_ram / ram)
             )
+            tcores = n_cpu*int(preview['sim_jobs'])
+            tram = ram*preview['sim_jobs']
+            pct_cpus = int(round((n_cpu / total_cpus) * 100 * preview['sim_jobs'], 0))
+            pct_ram = int(round((ram / total_ram) * 100*preview['sim_jobs'], 0))
+
+            preview['core_usage'] = f'{tcores}/{total_cpus} ({pct_cpus}%)'
+            preview['ram_usage'] = f'{tram:.2f}/{total_ram} GiB ({pct_ram}%)'
         elif slot_type == 'GPU':
             preview['sim_jobs'] = min(
                 int(total_gpus / n_gpu),
                 int(total_cpus / n_cpu),
                 int(total_ram / ram)
             )
+
+            tcores = n_cpu*int(preview['sim_jobs'])
+            tram = ram*preview['sim_jobs']
+            tgpu = n_gpu*preview['sim_jobs']
+            pct_cpus = int(round((n_cpu / total_cpus) * 100 * preview['sim_jobs'], 0))
+            pct_ram = int(round((ram / total_ram) * 100*preview['sim_jobs'], 0))
+            pct_gpu = int(round((n_gpu / total_gpus) * 100*preview['sim_jobs'], 0))
+            preview['core_usage'] = f'{tcores}/{total_cpus} ({pct_cpus}%)'
+            preview['ram_usage'] = f'{tram:.2f}/{total_ram} GiB ({pct_ram}%)'
+            preview['gpu_usage'] = f'{tgpu}/{total_gpus} ({pct_gpu}%)'
         elif slot_type == 'Static':
             preview['sim_jobs'] = total_cpus
 
@@ -294,9 +311,11 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float,
                 )
 
     else:
+        preview['core_usage'] = f'{n_cpu}/{total_cpus} ({pct_cpus}%)'
+        preview['ram_usage'] = f'{ram:.2f}/{total_ram} GiB ({pct_ram}%)'
         preview['fits'] = 'NO'
         preview['sim_jobs'] = 0
-
+    preview['sim_slots'] = slot['SimSlots']
     return [rename_slot_keys(slot), preview]
 
 

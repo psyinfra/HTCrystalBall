@@ -44,20 +44,18 @@ def slots(result: dict) -> None:
     console = Console()
     table = Table(show_header=True, header_style="bold magenta")
     table.add_column("Node", style="dim", width=12)
-    table.add_column("Slot Type")
-    table.add_column("Total Slots", justify="right")
+    table.add_column("Slots", justify="right")
     table.add_column("Cores", justify="right")
     table.add_column("GPUs", justify="right")
     table.add_column("RAM", justify="right")
     table.add_column("DISK", justify="right")
 
     for slot in result['slots']:
-        if slot['type'] == "static":
+        if slot['type'] == "Static":
             color = 'dark_blue'
             table.add_row(
                 f"[{color}]{slot['node']}[/{color}]",
-                f"[{color}]{slot['type']}[/{color}]",
-                f"[{color}]{slot['total_slots']}[/{color}]",
+                f"[{color}]1..{slot['sim_slots']}[/{color}]",
                 f"[{color}]{slot['cores']}[/{color}]",
                 f"[{color}]------[/{color}]",
                 f"[{color}]{slot['ram']} GiB[/{color}]",
@@ -68,8 +66,7 @@ def slots(result: dict) -> None:
             color = 'purple4'
             table.add_row(
                 f"[{color}]{slot['node']}[/{color}]",
-                f"[{color}]{slot['type']}[/{color}]",
-                f"[{color}]{slot['total_slots']}[/{color}]",
+                f"[{color}]{slot['sim_slots']}[/{color}]",
                 f"[{color}]{slot['cores']}[/{color}]",
                 f"[{color}]{slot['gpus']}[/{color}]",
                 f"[{color}]{slot['ram']} GiB[/{color}]",
@@ -80,8 +77,7 @@ def slots(result: dict) -> None:
             color = 'dark_red'
             table.add_row(
                 f"[{color}]{slot['node']}[/{color}]",
-                f"[{color}]{slot['type']}[/{color}]",
-                f"[{color}]{slot['total_slots']}[/{color}]",
+                f"[{color}]{slot['sim_slots']}[/{color}]",
                 f"[{color}]{slot['cores']}[/{color}]",
                 f"[{color}]------[/{color}]",
                 f"[{color}]{slot['ram']} GiB[/{color}]",

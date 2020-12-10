@@ -106,7 +106,7 @@ def results(result: dict, verbose: bool, matlab: bool,
 
     # create table headers for verbose output
     if verbose:
-        table = Table(show_header=True, header_style="bold cyan")
+        table = Table(show_header=True, header_style="bold cyan", show_edge=False)
         table.add_column("Jobs", justify="right")
         table.add_column("Node", style="dim", width=12)
         table.add_column("Slot", justify="right")
@@ -145,6 +145,7 @@ def results(result: dict, verbose: bool, matlab: bool,
     if verbose:
         console.print("---------------------- PREVIEW ----------------------")
         console.print(table)
+        console.print("")
         console.print("TOTAL MATCHES: "+str(total_jobs))
         console.print("")
         if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:

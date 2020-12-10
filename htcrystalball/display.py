@@ -112,6 +112,7 @@ def results(result: dict, verbose: bool, matlab: bool,
         table.add_column("Slot", justify="right")
         table.add_column("Slot usage", justify="right")
         table.add_column("RAM usage", justify="center")
+        table.add_column("DISK usage", justify="center")
         table.add_column("GPU usage", justify="center")
 
     total_jobs = 0
@@ -137,6 +138,7 @@ def results(result: dict, verbose: bool, matlab: bool,
                 f"[{color}]{slot['sim_slots']}[/{color}]",
                 f"[{color}]{slot['core_usage']} Cores[/{color}]",
                 f"[{color}]{slot['ram_usage']}[/{color}]",
+                f"[{color}]{slot['disk_usage']}[/{color}]",
                 f"[{color}]{slot['gpu_usage']}[/{color}]"
             )
     # write table and wall-time info to console

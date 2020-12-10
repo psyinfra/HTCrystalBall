@@ -171,7 +171,7 @@ def default_preview(slot_name: str, slot_type: str) -> dict:
         'name': slot_name,
         'type': slot_type,
         'fits': 'NO',
-        'gpu_usage': '------',
+        'gpu_usage': '0/0',
         'core_usage': '------',
         'ram_usage': '------',
         'disk_usage': '------',
@@ -253,8 +253,8 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float, disk: float,
             preview['gpu_usage'] = 'No GPU resource!'
 
     preview['core_usage'] = f'{n_cpu}/{total_cpus} ({percentage_used_cores}%)'
-    preview['ram_usage'] = f'{ram:.2f}/{total_ram}G ({percentage_used_ram}%)'
-    preview['disk_usage'] = f'{disk:.2f}/{total_disk}G ({percentage_used_disk}%)'
+    preview['ram_usage'] = f'{ram:.0f}/{total_ram:.0f}G ({percentage_used_ram}%)'
+    preview['disk_usage'] = f'{disk:.0f}/{total_disk:.0f}G ({percentage_used_disk}%)'
     if fits_job:
         preview['fits'] = 'YES'
 
@@ -289,13 +289,13 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float, disk: float,
         percentage_used_disk = int(round((disk / total_disk) * 100 * preview['sim_jobs'], 0))
 
         preview['core_usage'] = f'{total_used_cores}/{total_cpus} ({percentage_used_cores}%)'
-        preview['ram_usage'] = f'{total_used_ram:.2f}/{total_ram}G ({percentage_used_ram}%)'
-        preview['disk_usage'] = f'{total_used_disk:.2f}/{total_disk}G ({percentage_used_disk}%)'
+        preview['ram_usage'] = f'{total_used_ram:.0f}/{total_ram:.0f}G ({percentage_used_ram}%)'
+        preview['disk_usage'] = f'{total_used_disk:.0f}/{total_disk:.0f}G ({percentage_used_disk}%)'
 
     else:
         preview['core_usage'] = f'{n_cpu}/{total_cpus} ({percentage_used_cores}%)'
-        preview['ram_usage'] = f'{ram:.2f}/{total_ram}G ({percentage_used_ram}%)'
-        preview['disk_usage'] = f'{disk:.2f}/{total_disk}G ({percentage_used_disk}%)'
+        preview['ram_usage'] = f'{ram:.0f}/{total_ram:.0f}G ({percentage_used_ram}%)'
+        preview['disk_usage'] = f'{disk:.0f}/{total_disk:.0f}G ({percentage_used_disk}%)'
         preview['fits'] = 'NO'
         preview['sim_jobs'] = 0
     # add number of similar slots to the result

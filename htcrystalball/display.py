@@ -58,8 +58,8 @@ def slots(result: dict) -> None:
                 f"[{color}]1..{slot['sim_slots']}[/{color}]",
                 f"[{color}]{slot['cores']}[/{color}]",
                 f"[{color}]------[/{color}]",
-                f"[{color}]{slot['ram']} GiB[/{color}]",
-                f"[{color}]{slot['disk']} GiB[/{color}]"
+                f"[{color}]{slot['ram']:.0f}G[/{color}]",
+                f"[{color}]{slot['disk']:.0f}G[/{color}]"
             )
 
         elif slot['type'] == "GPU":
@@ -69,8 +69,8 @@ def slots(result: dict) -> None:
                 f"[{color}]{slot['sim_slots']}[/{color}]",
                 f"[{color}]{slot['cores']}[/{color}]",
                 f"[{color}]{slot['gpus']}[/{color}]",
-                f"[{color}]{slot['ram']} GiB[/{color}]",
-                f"[{color}]{slot['disk']} GiB[/{color}]"
+                f"[{color}]{slot['ram']:.0f}G[/{color}]",
+                f"[{color}]{slot['disk']:.0f}G[/{color}]"
             )
 
         else:
@@ -80,8 +80,8 @@ def slots(result: dict) -> None:
                 f"[{color}]{slot['sim_slots']}[/{color}]",
                 f"[{color}]{slot['cores']}[/{color}]",
                 f"[{color}]------[/{color}]",
-                f"[{color}]{slot['ram']} GiB[/{color}]",
-                f"[{color}]{slot['disk']} GiB[/{color}]"
+                f"[{color}]{slot['ram']:.0f}G[/{color}]",
+                f"[{color}]{slot['disk']:.0f}G[/{color}]"
             )
 
     console.print("---------------------- NODES ----------------------")
@@ -110,10 +110,10 @@ def results(result: dict, verbose: bool, matlab: bool,
         table.add_column("Jobs", justify="right")
         table.add_column("Node", style="dim", width=12)
         table.add_column("Slot", justify="right")
-        table.add_column("Slot usage", justify="right")
-        table.add_column("RAM usage", justify="center")
-        table.add_column("DISK usage", justify="center")
-        table.add_column("GPU usage", justify="center")
+        table.add_column("CPUs", justify="right")
+        table.add_column("RAM", justify="center")
+        table.add_column("Disk", justify="center")
+        table.add_column("GPUs", justify="center")
 
     total_jobs = 0
     for slot in result['preview']:
@@ -136,7 +136,7 @@ def results(result: dict, verbose: bool, matlab: bool,
                 f"[{color}]{node_jobs}[/{color}]",
                 f"[{color}]{slot['name']}[/{color}]",
                 f"[{color}]{slot['sim_slots']}[/{color}]",
-                f"[{color}]{slot['core_usage']} Cores[/{color}]",
+                f"[{color}]{slot['core_usage']}[/{color}]",
                 f"[{color}]{slot['ram_usage']}[/{color}]",
                 f"[{color}]{slot['disk_usage']}[/{color}]",
                 f"[{color}]{slot['gpu_usage']}[/{color}]"

@@ -9,9 +9,7 @@ def collect_slots(content: object) -> dict:
     sim_slot_values = []
 
     for slot in content:
-        nodename = slot['UtsnameNodename']
-        if len(nodename[3:]) == 1:
-            nodename = nodename[:3] + "0" + nodename[3:]
+        nodename = slot['Machine']
 
         slot_as_dict = {
             'TotalSlotCpus': int(slot.get('TotalSlotCpus', 0)),
@@ -26,7 +24,7 @@ def collect_slots(content: object) -> dict:
 
         if nodename not in unique_slots:
             unique_slots[nodename] = {}
-            unique_slots[nodename]['UtsnameNodename'] = nodename
+            unique_slots[nodename]['Machine'] = nodename
             unique_slots[nodename]["slot_size"] = []
             unique_slots[nodename]["slot_size"].append(slot_as_dict)
             sim_slot_values.append({'node': nodename, "slot": slot_as_dict, "sim_slots": 1})

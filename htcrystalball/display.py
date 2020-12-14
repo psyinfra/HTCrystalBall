@@ -148,14 +148,6 @@ def results(result: dict, verbose: bool, matlab: bool,
         console.print("")
         console.print("TOTAL MATCHES: "+str(total_jobs))
         console.print("")
-        if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:
-            time = int(max(n_jobs / total_jobs, 1)*wall_time / 60.0 + 1)
-            core_hours = int(n_jobs * wall_time * n_cores / 60.0 + 1)
-            console.print("A total of "+str(core_hours)+" core-hour(s) "
-                          "will be used and will complete in about " +
-                          str(time)+" hour(s).")
-        else:
-            console.print("No --jobs or --jobs-time specified. No duration estimate will be given.")
     # write slot and wall-time info to console
     else:
         if total_jobs == 0:
@@ -169,14 +161,15 @@ def results(result: dict, verbose: bool, matlab: bool,
                 for slot in result['preview']:
                     console.print(slot['name'])
                 console.print("")
-            if wall_time > 0.0 and n_jobs > 0:
-                time = int(max(n_jobs / total_jobs, 1)*wall_time / 60.0 + 1)
-                core_hours = int(n_jobs * wall_time * n_cores / 60.0 + 1)
-                console.print("A total of "+str(core_hours)+" core-hour(s) "
-                              "will be used and will complete in about " +
-                              str(time)+" hour(s).")
-            else:
-                console.print("No --jobs or --jobs-time specified. "
-                              "No duration estimate will be given.")
-            console.print("")
-            console.print("The above number(s) are for an idle pool.")
+
+    if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:
+        time = int(max(n_jobs / total_jobs, 1)*wall_time / 60.0 + 1)
+        core_hours = int(n_jobs * wall_time * n_cores / 60.0 + 1)
+        console.print("A total of "+str(core_hours)+" core-hour(s) "
+                      "will be used and will complete in about " +
+                      str(time)+" hour(s).")
+    else:
+        console.print("No --jobs or --jobs-time specified. No duration estimate will be given.")
+
+    console.print("")
+    console.print("The above number(s) are for an idle pool.")

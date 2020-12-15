@@ -262,7 +262,8 @@ def test_slot_result():
         for slot in slots:
             slot_name = slot['Machine']
 
-            if slot_name == preview["Machine"] and slot["TotalSlotMemory"] == preview['TotalSlotMemory']:
+            if slot_name == preview["Machine"] and \
+                    slot["TotalSlotMemory"] == preview['TotalSlotMemory']:
                 ram_ratio = int(float(slot["TotalSlotMemory"]) / ram)
 
                 # Assume that number of similar jobs does not exceed RAM ratio

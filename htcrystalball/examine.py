@@ -166,8 +166,8 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float, disk: float,
         slot: The slot to be checked for running the specified job.
         n_cpu: The number of CPU cores for a single job
         ram: The amount of RAM for a single job
-        disk: The number of GPU units for a single job
-        slot_type: The type of slot, allowed {'Static', 'Partitionable', 'GPU'}
+        disk: The amount of disk space for a single job
+        slot_type: The type of slot, allowed {'Static', 'Partitionable'}
         n_gpu: Optional. The number of GPU units for a single job
 
     Returns:

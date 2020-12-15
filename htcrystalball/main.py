@@ -108,38 +108,27 @@ def main() -> None:
         dest='maxnodes'
     )
 
-    # Sub command (configure)
-    configure_cmd = subcommands.add_parser(
-        'configure',
-        help='Generate a slots configuration file for the current system'
-    )
-    configure_cmd.set_defaults(run=configure)
-
     # Parse arguments
     args = parser.parse_args()
 
     if len(sys.argv) <= 1:
         parser.print_help()
     else:
-        args.run(args, parsers=[peek_cmd, configure_cmd])
+        args.run(args, parsers=[peek_cmd])
 
 
 def peek(params, parsers):
     """Peek into the crystal ball to see the future."""
-    query_data = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
-                  "TotalSlotGPUs"]
+    query_data = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk",
+                  "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"]
     coll = htcondor.Collector()
     # Ignore dynamic slots, which are the ephemeral children of partitionable slots, and thus noise.
     # Partitionable slot definitions remain unaltered by the process of dynamic slot creation.
-    content = coll.query(htcondor.AdTypes.Startd, constraint='SlotType != "Dynamic"', projection=query_data)
+    content = coll.query(htcondor.AdTypes.Startd,
+                         constraint='SlotType != "Dynamic"', projection=query_data)
 
     examine.prepare(
         cpu=params.cpu, gpu=params.gpu, ram=params.ram, disk=params.disk,
         jobs=params.jobs, job_duration=params.time, maxnodes=params.maxnodes,
         verbose=params.verbose, content=content)
-    sys.exit(0)
-
-
-def configure(params, parsers):
-    print('Not yet implemented')
     sys.exit(0)

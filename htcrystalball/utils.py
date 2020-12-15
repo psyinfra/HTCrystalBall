@@ -12,7 +12,7 @@ def validate_storage_size(storage: str) -> str:
     pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
 
     if not pat.match(storage):
-        LOGGER.error(f'Invalid storage value given: {storage}')
+        LOGGER.error('Invalid storage value given: %(storage)')
         raise ArgumentTypeError(f'Invalid storage value given: {storage}')
 
     return storage
@@ -23,7 +23,7 @@ def validate_duration(duration: str) -> str:
     pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
 
     if not pat.match(duration):
-        LOGGER.error(f'Invalid time value given: {duration}')
+        LOGGER.error('Invalid time value given: %(duration)')
         raise ArgumentTypeError(f'Invalid time value given: {duration}')
 
     return duration
@@ -101,11 +101,20 @@ def hours_to_days(number: float) -> int:
 
 
 def compare_requested_available(req: float, avail: float) -> str:
+    """
+    Compares requested and available value to return a color code for the verbose output
+    Args:
+        req:
+        avail:
+
+    Returns:
+
+    """
     if req <= 0.01:
         return "green"
-    elif avail < req:
+    if avail < req:
         return "red"
-    elif (req / avail) > 0.95:
+    if (req / avail) > 0.95:
         return "yellow"
-    else:
-        return "green"
+
+    return "green"

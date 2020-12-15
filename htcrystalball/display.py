@@ -24,9 +24,10 @@ def results(result: dict, verbose: bool, matlab: bool,
     color_node = "#add8e6"
     # create table headers for verbose output
     if verbose:
-        table = Table(caption="Prediction per node", show_header=True, header_style="bold cyan", show_edge=False)
+        table = Table(caption="Prediction per node", show_header=True,
+                      header_style="bold cyan", show_edge=False)
         table.add_column("Jobs", justify="right")
-        table.add_column("Node", style="dim", width=12)
+        table.add_column("Node", justify="center")
         table.add_column("Slot", justify="right")
         table.add_column("CPUs", justify="right")
         table.add_column("RAM", justify="center")

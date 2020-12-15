@@ -40,8 +40,10 @@ def results(result: dict, verbose: bool, matlab: bool,
 
         if int(slot['sim_jobs']) == 0:
             node_jobs = 0
+            job_cell = f"[red]{node_jobs}[/red]"
         else:
             node_jobs = slot['sim_jobs']*slot['SimSlots']
+            job_cell = f"{node_jobs}"
         # create table row for verbose output
         if verbose:
             if slot["SimSlots"] != 1:
@@ -53,7 +55,7 @@ def results(result: dict, verbose: bool, matlab: bool,
             color_gpu = compare_requested_available(slot['requested_gpu'], slot['TotalSlotGPUs'])
 
             table.add_row(
-                f"{node_jobs}",
+                job_cell,
                 f"[{color_node}]{slot['Machine']}[/{color_node}]",
                 f"{slot['SimSlots']}",
                 f"[{color_cpu}]{slot['requested_cpu']}/{slot['TotalSlotCpus']}[/{color_cpu}]",

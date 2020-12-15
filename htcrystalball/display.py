@@ -73,12 +73,16 @@ def results(result: dict, verbose: bool, matlab: bool,
             console.print("Job size does not fit any compute slots. "
                           "Use --verbose for details and a per-slot-config analysis.")
         else:
-            console.print(str(total_jobs)+" jobs of this size can run on this pool.")
-            console.print("")
             if matlab:
-                console.print("We suggest using the following nodes:")
+                console.print("A maximum of " + str(total_jobs) + " jobs of this size "
+                              "can run using only " + str(len(result['preview'])) + " nodes.")
+                console.print("")
+                console.print("The following nodes are suggested:")
                 for slot in result['preview']:
                     console.print(slot['Machine'], style=color_node)
+                console.print("")
+            else:
+                console.print(str(total_jobs) + " jobs of this size can run on this pool.")
                 console.print("")
 
     if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:
@@ -95,7 +99,7 @@ def results(result: dict, verbose: bool, matlab: bool,
                       "will be used and will complete in about " +
                       str(time)+" "+unit+".")
     else:
-        console.print("No --jobs or --jobs-time specified. No duration estimate will be given.")
+        console.print("No --jobs or --time specified. No duration estimate will be given.")
 
     console.print("")
     console.print("The above number(s) are for an idle pool.")

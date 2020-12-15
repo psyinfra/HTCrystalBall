@@ -3,7 +3,8 @@
 from rich.console import Console
 from rich.table import Table
 
-from htcrystalball.utils import minutes_to_hours, hours_to_days
+from htcrystalball.utils import minutes_to_hours, hours_to_days, compare_requested_available
+
 
 def results(result: dict, verbose: bool, matlab: bool,
             n_cores: int, n_jobs: int, wall_time: float) -> None:
@@ -44,19 +45,20 @@ def results(result: dict, verbose: bool, matlab: bool,
         if verbose:
             if slot["SimSlots"] != 1:
                 slot["SimSlots"] = "1.."+str(slot["SimSlots"])
-            if slot['fits'] == "YES":
-                color = 'green'
-            else:
-                color = 'red'
+
+            color_cpu = compare_requested_available(slot['requested_cpu'], slot['TotalSlotCpus'])
+            color_ram = compare_requested_available(slot['requested_ram'], slot['TotalSlotMemory'])
+            color_disk = compare_requested_available(slot['requested_disk'], slot['TotalSlotDisk'])
+            color_gpu = compare_requested_available(slot['requested_gpu'], slot['TotalSlotGPUs'])
 
             table.add_row(
-                f"[{color}]{node_jobs}[/{color}]",
-                f"[{color}]{slot['Machine']}[/{color}]",
-                f"[{color}]{slot['SimSlots']}[/{color}]",
-                f"[{color}]{slot['requested_cpu']}/{slot['TotalSlotCpus']}[/{color}]",
-                f"[{color}]{slot['requested_ram']}/{slot['TotalSlotMemory']}G[/{color}]",
-                f"[{color}]{slot['requested_disk']}/{slot['TotalSlotDisk']}G[/{color}]",
-                f"[{color}]{slot['requested_gpu']}/{slot['TotalSlotGPUs']}[/{color}]"
+                f"{node_jobs}",
+                f"{slot['Machine']}",
+                f"{slot['SimSlots']}",
+                f"[{color_cpu}]{slot['requested_cpu']}/{slot['TotalSlotCpus']}[/{color_cpu}]",
+                f"[{color_ram}]{slot['requested_ram']}/{slot['TotalSlotMemory']}G[/{color_ram}]",
+                f"[{color_disk}]{slot['requested_disk']}/{slot['TotalSlotDisk']}G[/{color_disk}]",
+                f"[{color_gpu}]{slot['requested_gpu']}/{slot['TotalSlotGPUs']}[/{color_gpu}]"
             )
     # write table and wall-time info to console
     if verbose:
@@ -75,17 +77,17 @@ def results(result: dict, verbose: bool, matlab: bool,
             if matlab:
                 console.print("We suggest using the following nodes:")
                 for slot in result['preview']:
-                    console.print(slot['Machine'], style = "#add8e6")
+                    console.print(slot['Machine'], style="#add8e6")
                 console.print("")
 
     if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:
         time = int(max(n_jobs / total_jobs, 1)*wall_time + 0.5)
         unit = "minute(s)"
         if time > 100:
-            time = utils.minutes_to_hours(time)
+            time = minutes_to_hours(time)
             unit = "hours"
         if time > 100:
-            time = utils.hours_to_days(time)
+            time = hours_to_days(time)
             unit = "days"
         core_hours = int(n_jobs * wall_time * n_cores / 60.0)
         console.print("A total of "+str(core_hours)+" core-hour(s) "

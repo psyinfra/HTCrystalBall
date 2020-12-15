@@ -98,3 +98,14 @@ def minutes_to_hours(number: float) -> int:
 def hours_to_days(number: float) -> int:
     """Converts hours to days and rounds."""
     return int(number / 24.0 + 0.5)
+
+
+def compare_requested_available(req: float, avail: float) -> str:
+    if req <= 0.01:
+        return "green"
+    elif avail < req:
+        return "red"
+    elif (req / avail) > 0.95:
+        return "yellow"
+    else:
+        return "green"

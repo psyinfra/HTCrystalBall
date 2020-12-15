@@ -20,7 +20,7 @@ class Collector:
         """
         self.query_output = [
             {
-                "UtsnameNodename": "cpu2",
+                "Machine": "cpu2",
                 "TotalSlotCpus": "1",
                 "TotalSlotDisk": "287530000",
                 "TotalSlotMemory": "500000",
@@ -28,7 +28,7 @@ class Collector:
                 "TotalSlots": "12"
             },
             {
-                "UtsnameNodename": "cpu3",
+                "Machine": "cpu3",
                 "TotalSlotCpus": "1",
                 "TotalSlotDisk": "287680000",
                 "TotalSlotMemory": "500000",
@@ -36,7 +36,7 @@ class Collector:
                 "TotalSlots": "12"
             },
             {
-                "UtsnameNodename": "gpu1",
+                "Machine": "gpu1",
                 "TotalSlotCpus": "1",
                 "TotalSlotGPUs": "4",
                 "TotalSlotDisk": "287680000",

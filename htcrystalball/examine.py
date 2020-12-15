@@ -142,40 +142,19 @@ def default_preview(slot_name: str, slot_type: str) -> dict:
 
     """
     return {
-        'name': slot_name,
-        'type': slot_type,
+        'Machine': slot_name,
+        'SlotType': slot_type,
         'fits': 'NO',
-        'gpu_usage': '0/0',
-        'core_usage': '------',
-        'ram_usage': '------',
-        'disk_usage': '------',
-        'sim_jobs': '------'
+        'TotalSlotCpus': 0,
+        'requested_cpu': 0,
+        'TotalSlotGPUs': 0,
+        'requested_gpu': 0,
+        'TotalSlotMemory': 0,
+        'requested_ram': 0,
+        'TotalSlotDisk': 0,
+        'requested_disk': 0,
+        'sim_jobs': 0
     }
-
-
-def rename_slot_keys(slot: dict) -> dict:
-    """
-    Renames the keys for the slot dictionary
-    Args:
-        slot: the slot dictionary to have renamed keys
-
-    Returns:
-        renamed: the slot dictionary with renamed keys
-    """
-    renamed = {
-        'node': slot["UtsnameNodename"],
-        'type': slot["SlotType"],
-        'total_slots': slot["TotalSlots"],
-        'cores': slot["TotalSlotCpus"],
-        'disk': slot["TotalSlotDisk"],
-        'ram': slot["TotalSlotMemory"],
-        'sim_slots': slot["SimSlots"]
-    }
-
-    if slot.get('TotalSlotGPUs', None):
-        renamed['gpus'] = slot['TotalSlotGPUs']
-
-    return renamed
 
 
 def check_slot_by_type(slot: dict, n_cpu: int, ram: float, disk: float,
@@ -273,8 +252,8 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float, disk: float,
         preview['fits'] = 'NO'
         preview['sim_jobs'] = 0
     # add number of similar slots to the result
-    preview['sim_slots'] = slot['SimSlots']
-    return [rename_slot_keys(slot), preview]
+    preview['SimSlots'] = slot['SimSlots']
+    return [slot, preview]
 
 
 def order_node_preview(node_preview: list) -> list:

@@ -38,11 +38,11 @@ def results(result: dict, verbose: bool, matlab: bool,
         if int(slot['sim_jobs']) == 0:
             node_jobs = 0
         else:
-            node_jobs = slot['sim_jobs']*slot['sim_slots']
+            node_jobs = slot['sim_jobs']*slot['SimSlots']
         # create table row for verbose output
         if verbose:
-            if slot["sim_slots"] != 1:
-                slot["sim_slots"] = "1.."+str(slot["sim_slots"])
+            if slot["SimSlots"] != 1:
+                slot["SimSlots"] = "1.."+str(slot["SimSlots"])
             if slot['fits'] == "YES":
                 color = 'green'
             else:

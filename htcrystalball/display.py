@@ -50,12 +50,12 @@ def results(result: dict, verbose: bool, matlab: bool,
 
             table.add_row(
                 f"[{color}]{node_jobs}[/{color}]",
-                f"[{color}]{slot['name']}[/{color}]",
+                f"[{color}]{slot['Machine']}[/{color}]",
                 f"[{color}]{slot['sim_slots']}[/{color}]",
-                f"[{color}]{slot['core_usage']}[/{color}]",
-                f"[{color}]{slot['ram_usage']}[/{color}]",
-                f"[{color}]{slot['disk_usage']}[/{color}]",
-                f"[{color}]{slot['gpu_usage']}[/{color}]"
+                f"[{color}]{slot['requested_cpu']}/{slot['TotalSlotCpus']}[/{color}]",
+                f"[{color}]{slot['requested_ram']}/{slot['TotalSlotMemory']}G[/{color}]",
+                f"[{color}]{slot['requested_disk']}/{slot['TotalSlotDisk']}G[/{color}]",
+                f"[{color}]{slot['requested_gpu']}/{slot['TotalSlotGPUs']}[/{color}]"
             )
     # write table and wall-time info to console
     if verbose:

@@ -166,8 +166,7 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float, disk: float,
         slot: The slot to be checked for running the specified job.
         n_cpu: The number of CPU cores for a single job
         ram: The amount of RAM for a single job
-        job_duration: The duration for a single job to execute
-        n_jobs: The number of similar jobs to be executed
+        disk: The number of GPU units for a single job
         slot_type: The type of slot, allowed {'Static', 'Partitionable', 'GPU'}
         n_gpu: Optional. The number of GPU units for a single job
 
@@ -179,76 +178,31 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float, disk: float,
         raise ValueError(f'slot_type must be Static or Partitionable'
                          f'not {slot_type}')
 
-    preview = default_preview(slot['UtsnameNodename'], slot_type)
+    preview = default_preview(slot['Machine'], slot_type)
+    preview['TotalSlotCpus'] = slot['TotalSlotCpus']
+    preview['TotalSlotMemory'] = slot['TotalSlotMemory']
+    preview['TotalSlotDisk'] = slot['TotalSlotDisk']
+    preview['TotalSlotGPUs'] = slot['TotalSlotGPUs']
 
-    total_cpus = slot['TotalSlotCpus']
-    total_ram = slot['TotalSlotMemory']
-    total_disk = slot["TotalSlotDisk"]
-    total_gpus = slot['TotalSlotGPUs'] if slot_type == 'GPU' else 0
-    percentage_used_cores = int(round((n_cpu / total_cpus) * 100, 0))
-    percentage_used_ram = int(round((ram / total_ram) * 100, 0))
-    percentage_used_disk = 0
-    if disk >= 0.1:
-        used_disk = int(total_disk / disk)
-        percentage_used_disk = int(round((disk / total_disk) * 100, 0))
-    else:
-        disk = 0.0
-        used_disk = int(total_disk / 0.0001)
-    fits_job = n_cpu <= total_cpus and ram <= total_ram and disk <= total_disk
+    preview['requested_cpu'] = n_cpu
+    preview['requested_gpu'] = n_gpu
+    preview['requested_ram'] = ram
+    preview['requested_disk'] = disk
 
-    if slot_type == 'GPU':
-        pct_gpu = int(round((n_gpu / total_gpus) * 100, 0))
-        fits_job = fits_job and n_gpu <= total_gpus
+    fits_job = n_cpu <= slot['TotalSlotCpus'] and ram <= slot['TotalSlotMemory'] \
+        and disk <= slot["TotalSlotDisk"] and n_gpu <= slot['TotalSlotGPUs']
 
-        if total_gpus >= 1:
-            preview['gpu_usage'] = f'{n_gpu}/{total_gpus} ({pct_gpu}%)'
-        else:
-            preview['gpu_usage'] = 'No GPU resource!'
-
-    preview['core_usage'] = f'{n_cpu}/{total_cpus} ({percentage_used_cores}%)'
-    preview['ram_usage'] = f'{ram:.0f}/{total_ram:.0f}G ({percentage_used_ram}%)'
-    preview['disk_usage'] = f'{disk:.0f}/{total_disk:.0f}G ({percentage_used_disk}%)'
     if fits_job:
         preview['fits'] = 'YES'
 
-        if slot_type == 'Partitionable':
-            preview['sim_jobs'] = min(
-                int(total_cpus / n_cpu),
-                int(total_ram / ram),
-                used_disk
-            )
-        elif slot_type == 'GPU':
-            preview['sim_jobs'] = min(
-                int(total_gpus / n_gpu),
-                int(total_cpus / n_cpu),
-                int(total_ram / ram),
-                used_disk
-            )
-            tgpu = n_gpu*preview['sim_jobs']
-            pct_gpu = int(round((n_gpu / total_gpus) * 100*preview['sim_jobs'], 0))
-            preview['gpu_usage'] = f'{tgpu}/{total_gpus} ({pct_gpu}%)'
-        elif slot_type == 'Static':
-            preview['sim_jobs'] = min(
-                int(total_cpus / n_cpu),
-                int(total_ram / ram),
-                used_disk
-            )
-
-        total_used_cores = n_cpu * int(preview['sim_jobs'])
-        total_used_ram = ram * preview['sim_jobs']
-        total_used_disk = disk * preview['sim_jobs']
-        percentage_used_cores = int(round((n_cpu / total_cpus) * 100 * preview['sim_jobs'], 0))
-        percentage_used_ram = int(round((ram / total_ram) * 100 * preview['sim_jobs'], 0))
-        percentage_used_disk = int(round((disk / total_disk) * 100 * preview['sim_jobs'], 0))
-
-        preview['core_usage'] = f'{total_used_cores}/{total_cpus} ({percentage_used_cores}%)'
-        preview['ram_usage'] = f'{total_used_ram:.0f}/{total_ram:.0f}G ({percentage_used_ram}%)'
-        preview['disk_usage'] = f'{total_used_disk:.0f}/{total_disk:.0f}G ({percentage_used_disk}%)'
+        sim_jobs = int(preview['TotalSlotCpus'] / n_cpu) if n_cpu > 0 else 0
+        sim_jobs = min(sim_jobs, int(preview['TotalSlotMemory'] / ram)) if ram > 0.0 else sim_jobs
+        sim_jobs = min(sim_jobs, int(preview['TotalSlotDisk'] / disk)) if disk > 0.0 else sim_jobs
+        sim_jobs = min(sim_jobs, int(preview['TotalSlotGPUs'] / n_gpu)) if n_gpu > 0 else sim_jobs
+        preview['sim_jobs'] = sim_jobs
+        # pct_gpu = int(round((n_gpu / total_gpus) * 100 * preview['sim_jobs'], 0))
 
     else:
-        preview['core_usage'] = f'{n_cpu}/{total_cpus} ({percentage_used_cores}%)'
-        preview['ram_usage'] = f'{ram:.0f}/{total_ram:.0f}G ({percentage_used_ram}%)'
-        preview['disk_usage'] = f'{disk:.0f}/{total_disk:.0f}G ({percentage_used_disk}%)'
         preview['fits'] = 'NO'
         preview['sim_jobs'] = 0
     # add number of similar slots to the result

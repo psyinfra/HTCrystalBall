@@ -21,7 +21,7 @@ def main() -> None:
         'usage example shown above. For JOB duration please use d, h, m, or s'
     )
     usage = (
-        '%(prog)s peek -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] '
+        '%(prog)s -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] '
         '[-t JOB_DURATION] [-m MAX_NODES] [-v]'
     )
     epilog = (
@@ -37,29 +37,16 @@ def main() -> None:
         usage=usage,
         epilog=epilog
     )
-    parser.add_argument(
-        '-v', '--version',
-        action='version',
-        version='%s' % __version__
-    )
 
-    # Sub command (peek)
-    subcommands = parser.add_subparsers(
-        title="htcrystalball commands",
-        description="Entry points for htcrystalball"
-    )
-    peek_cmd = subcommands.add_parser(
-        'peek',
-        help='Peek into the crystal ball to see the future'
-    )
-    peek_cmd.set_defaults(run=peek)
-    peek_cmd.add_argument(
+    parser.set_defaults(run=peek)
+
+    parser.add_argument(
         "-v", "--verbose",
         help="Print extended log to stdout",
         action='store_true',
         dest='verbose'
     )
-    peek_cmd.add_argument(
+    parser.add_argument(
         "-c", "--cpu",
         help="Set number of requested CPU Cores",
         type=int,
@@ -67,40 +54,40 @@ def main() -> None:
         default=0,
         dest='cpu'
     )
-    peek_cmd.add_argument(
+    parser.add_argument(
         "-g", "--gpu",
         help="Set number of requested GPU Units",
         type=int,
         default=0,
         dest='gpu'
     )
-    peek_cmd.add_argument(
+    parser.add_argument(
         "-j", "--jobs",
         help="Set number of jobs to be executed",
         type=int,
         default=1,
         dest='jobs'
     )
-    peek_cmd.add_argument(
+    parser.add_argument(
         "-t", "--time",
         help="Set the duration for one job to be executed",
         type=validate_duration,
         dest='time'
     )
-    peek_cmd.add_argument(
+    parser.add_argument(
         "-d", "--disk",
         help="Set amount of requested disk storage",
         type=validate_storage_size,
         dest='disk'
     )
-    peek_cmd.add_argument(
+    parser.add_argument(
         "-r", "--ram",
         help="Set amount of requested memory storage",
         type=validate_storage_size,
         required=True,
         dest='ram'
     )
-    peek_cmd.add_argument(
+    parser.add_argument(
         "-m", "--maxnodes",
         help="Set maximum of nodes to run jobs on",
         type=int,
@@ -114,7 +101,7 @@ def main() -> None:
     if len(sys.argv) <= 1:
         parser.print_help()
     else:
-        args.run(args, parsers=[peek_cmd])
+        args.run(args, parsers=[parser])
 
 
 def peek(params, parsers):

@@ -1,6 +1,8 @@
 """Examines user input on the HTCondor slot configuration."""
 
 from operator import itemgetter
+from natsort import natsorted, ns
+
 from htcrystalball import display, collect, LOGGER
 from htcrystalball.utils import split_num_str, to_minutes, to_binary_gigabyte
 
@@ -123,7 +125,7 @@ def check_slots(static: list, partitionable: list, n_cpus: int,
     if max_nodes != 0 and len(results['preview']) > max_nodes:
         results['preview'] = results['preview'][:max_nodes]
 
-    results['preview'] = sorted(results['preview'], key=itemgetter('Machine'))
+    results['preview'] = natsorted(results['preview'], key=lambda y: y["Machine"].lower())
     display.results(results, verbose, max_nodes != 0, n_cpus, n_jobs, job_duration)
 
     return results

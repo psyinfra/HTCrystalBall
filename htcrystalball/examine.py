@@ -91,12 +91,6 @@ def check_slots(static: list, partitionable: list, n_cpus: int,
     Returns:
 
     """
-    if verbose:
-        display.inputs(
-            n_cpus, ram, disk_space, n_gpus, n_jobs, job_duration,
-            max_nodes
-        )
-
     results = {'slots': [], 'preview': []}
 
     for node in partitionable:
@@ -128,10 +122,6 @@ def check_slots(static: list, partitionable: list, n_cpus: int,
 
     if max_nodes != 0 and len(results['preview']) > max_nodes:
         results['preview'] = results['preview'][:max_nodes]
-
-    if verbose:
-        results['slots'] = sorted(results['slots'], key=itemgetter('node'))
-        display.slots(results)
 
     results['preview'] = sorted(results['preview'], key=itemgetter('name'))
     display.results(results, verbose, max_nodes != 0, n_cpus, n_jobs, job_duration)

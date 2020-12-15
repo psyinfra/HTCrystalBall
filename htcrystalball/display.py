@@ -23,7 +23,7 @@ def results(result: dict, verbose: bool, matlab: bool,
 
     # create table headers for verbose output
     if verbose:
-        table = Table(show_header=True, header_style="bold cyan", show_edge=False)
+        table = Table(caption="Prediction per node", show_header=True, header_style="bold cyan", show_edge=False)
         table.add_column("Jobs", justify="right")
         table.add_column("Node", style="dim", width=12)
         table.add_column("Slot", justify="right")
@@ -60,7 +60,6 @@ def results(result: dict, verbose: bool, matlab: bool,
             )
     # write table and wall-time info to console
     if verbose:
-        console.print("---------------------- PREVIEW ----------------------")
         console.print(table)
         console.print("")
         console.print("TOTAL MATCHES: "+str(total_jobs))

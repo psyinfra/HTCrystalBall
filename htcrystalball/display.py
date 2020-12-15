@@ -21,7 +21,7 @@ def results(result: dict, verbose: bool, matlab: bool,
         wall_time: time per job, needed for total wall-time execution
     """
     console = Console()
-
+    color_node = "#add8e6"
     # create table headers for verbose output
     if verbose:
         table = Table(caption="Prediction per node", show_header=True, header_style="bold cyan", show_edge=False)
@@ -53,7 +53,7 @@ def results(result: dict, verbose: bool, matlab: bool,
 
             table.add_row(
                 f"{node_jobs}",
-                f"{slot['Machine']}",
+                f"[{color_node}]{slot['Machine']}[/{color_node}]",
                 f"{slot['SimSlots']}",
                 f"[{color_cpu}]{slot['requested_cpu']}/{slot['TotalSlotCpus']}[/{color_cpu}]",
                 f"[{color_ram}]{slot['requested_ram']}/{slot['TotalSlotMemory']}G[/{color_ram}]",
@@ -77,7 +77,7 @@ def results(result: dict, verbose: bool, matlab: bool,
             if matlab:
                 console.print("We suggest using the following nodes:")
                 for slot in result['preview']:
-                    console.print(slot['Machine'], style="#add8e6")
+                    console.print(slot['Machine'], style=color_node)
                 console.print("")
 
     if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:

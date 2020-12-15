@@ -11,7 +11,7 @@ def filter_slots(slots: dict, slot_type: str) -> list:
     for node in slots:
         for slot in slots[node]["slot_size"]:
             if slot["SlotType"] == slot_type:
-                slot["UtsnameNodename"] = slots[node]["UtsnameNodename"]
+                slot["Machine"] = slots[node]["Machine"]
                 result.append(slot)
 
     return result
@@ -123,7 +123,7 @@ def check_slots(static: list, partitionable: list, n_cpus: int,
     if max_nodes != 0 and len(results['preview']) > max_nodes:
         results['preview'] = results['preview'][:max_nodes]
 
-    results['preview'] = sorted(results['preview'], key=itemgetter('name'))
+    results['preview'] = sorted(results['preview'], key=itemgetter('Machine'))
     display.results(results, verbose, max_nodes != 0, n_cpus, n_jobs, job_duration)
 
     return results
@@ -200,6 +200,11 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float, disk: float,
         sim_jobs = min(sim_jobs, int(preview['TotalSlotDisk'] / disk)) if disk > 0.0 else sim_jobs
         sim_jobs = min(sim_jobs, int(preview['TotalSlotGPUs'] / n_gpu)) if n_gpu > 0 else sim_jobs
         preview['sim_jobs'] = sim_jobs
+
+        preview['requested_cpu'] = n_cpu*sim_jobs
+        preview['requested_gpu'] = n_gpu*sim_jobs
+        preview['requested_ram'] = ram*sim_jobs
+        preview['requested_disk'] = disk*sim_jobs
         # pct_gpu = int(round((n_gpu / total_gpus) * 100 * preview['sim_jobs'], 0))
 
     else:

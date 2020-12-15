@@ -3,6 +3,7 @@
 from rich.console import Console
 from rich.table import Table
 
+from htcrystalball.utils import minutes_to_hours, hours_to_days
 
 def results(result: dict, verbose: bool, matlab: bool,
             n_cores: int, n_jobs: int, wall_time: float) -> None:
@@ -33,7 +34,7 @@ def results(result: dict, verbose: bool, matlab: bool,
 
     total_jobs = 0
     for slot in result['preview']:
-        total_jobs += slot['sim_jobs']*slot['sim_slots']
+        total_jobs += slot['sim_jobs']*slot['SimSlots']
 
         if int(slot['sim_jobs']) == 0:
             node_jobs = 0
@@ -51,7 +52,7 @@ def results(result: dict, verbose: bool, matlab: bool,
             table.add_row(
                 f"[{color}]{node_jobs}[/{color}]",
                 f"[{color}]{slot['Machine']}[/{color}]",
-                f"[{color}]{slot['sim_slots']}[/{color}]",
+                f"[{color}]{slot['SimSlots']}[/{color}]",
                 f"[{color}]{slot['requested_cpu']}/{slot['TotalSlotCpus']}[/{color}]",
                 f"[{color}]{slot['requested_ram']}/{slot['TotalSlotMemory']}G[/{color}]",
                 f"[{color}]{slot['requested_disk']}/{slot['TotalSlotDisk']}G[/{color}]",
@@ -75,15 +76,22 @@ def results(result: dict, verbose: bool, matlab: bool,
             if matlab:
                 console.print("We suggest using the following nodes:")
                 for slot in result['preview']:
-                    console.print(slot['name'])
+                    console.print(slot['Machine'], style = "#add8e6")
                 console.print("")
 
     if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:
-        time = int(max(n_jobs / total_jobs, 1)*wall_time / 60.0 + 1)
-        core_hours = int(n_jobs * wall_time * n_cores / 60.0 + 1)
+        time = int(max(n_jobs / total_jobs, 1)*wall_time + 0.5)
+        unit = "minute(s)"
+        if time > 100:
+            time = utils.minutes_to_hours(time)
+            unit = "hours"
+        if time > 100:
+            time = utils.hours_to_days(time)
+            unit = "days"
+        core_hours = int(n_jobs * wall_time * n_cores / 60.0)
         console.print("A total of "+str(core_hours)+" core-hour(s) "
                       "will be used and will complete in about " +
-                      str(time)+" hour(s).")
+                      str(time)+" "+unit+".")
     else:
         console.print("No --jobs or --jobs-time specified. No duration estimate will be given.")
 

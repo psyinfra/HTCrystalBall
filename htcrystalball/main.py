@@ -126,7 +126,7 @@ def main() -> None:
 
 def peek(params, parsers):
     """Peek into the crystal ball to see the future."""
-    query_data = ["SlotType", "UtsnameNodename", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
+    query_data = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots",
                   "TotalSlotGPUs"]
     coll = htcondor.Collector()
     # Ignore dynamic slots, which are the ephemeral children of partitionable slots, and thus noise.

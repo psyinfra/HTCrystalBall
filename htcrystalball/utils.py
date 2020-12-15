@@ -88,3 +88,13 @@ def to_minutes(number: float, unit: str) -> float:
         return number / 60
 
     return number
+
+
+def minutes_to_hours(number: float) -> int:
+    """Converts minutes to hours and rounds."""
+    return int(number / 60.0 + 0.5)
+
+
+def hours_to_days(number: float) -> int:
+    """Converts hours to days and rounds."""
+    return int(number / 24.0 + 0.5)

@@ -19,8 +19,6 @@ def collect_slots(content: object) -> dict:
             'TotalSlotMemory': mib_to_gib(float(slot.get('TotalSlotMemory', 0.0))),
             'SlotType': slot['SlotType']
         }
-        if slot_as_dict['TotalSlotGPUs'] != 0:
-            slot_as_dict['SlotType'] = "GPU"
 
         if nodename not in unique_slots:
             unique_slots[nodename] = {}

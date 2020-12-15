@@ -44,7 +44,6 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
 
     slots_static = filter_slots(config, 'Static')
     slots_partitionable = filter_slots(config, 'Partitionable')
-    slots_gpu = filter_slots(config, "GPU")
 
     [ram, ram_unit] = split_num_str(ram, 0.0, 'GiB')
     ram = to_binary_gigabyte(ram, ram_unit)
@@ -62,14 +61,14 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
 
     else:
         check_slots(
-            slots_static, slots_partitionable, slots_gpu, cpu, ram, disk, gpu, jobs,
+            slots_static, slots_partitionable, cpu, ram, disk, gpu, jobs,
             job_duration, maxnodes, verbose
         )
         return True
     return False
 
 
-def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
+def check_slots(static: list, partitionable: list, n_cpus: int,
                 ram: float, disk_space: float, n_gpus: int,
                 n_jobs: int, job_duration: float, max_nodes: int,
                 verbose: bool) -> dict:
@@ -80,7 +79,6 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
     Args:
         static: A list of Static slot configurations
         partitionable: A list of Partitionable slot configurations
-        gpu: A list of GPU slot configurations
         n_cpus: The requested number of CPU cores
         ram: The requested amount of RAM
         disk_space: The requested amount of disk space
@@ -101,44 +99,30 @@ def check_slots(static: list, partitionable: list, gpu: list, n_cpus: int,
 
     results = {'slots': [], 'preview': []}
 
-    if n_cpus != 0 and n_gpus == 0:
-        for node in partitionable:
-            node_dict, preview_node = check_slot_by_type(
-                slot=node,
-                n_cpu=n_cpus,
-                ram=ram,
-                disk=disk_space,
-                slot_type='Partitionable'
-            )
+    for node in partitionable:
+        node_dict, preview_node = check_slot_by_type(
+            slot=node,
+            n_cpu=n_cpus,
+            n_gpu=n_gpus,
+            ram=ram,
+            disk=disk_space,
+            slot_type='Partitionable'
+        )
 
-            results['slots'].append(node_dict)
-            results['preview'].append(preview_node)
+        results['slots'].append(node_dict)
+        results['preview'].append(preview_node)
 
-        for node in static:
-            node_dict, preview_node = check_slot_by_type(
-                slot=node,
-                n_cpu=n_cpus,
-                ram=ram,
-                disk=disk_space,
-                slot_type='Static'
-            )
-            results['slots'].append(node_dict)
-            results['preview'].append(preview_node)
-
-    elif n_cpus != 0 and n_gpus != 0:
-        for node in gpu:
-            node_dict, preview_node = check_slot_by_type(
-                slot=node,
-                n_cpu=n_cpus,
-                n_gpu=n_gpus,
-                ram=ram,
-                disk=disk_space,
-                slot_type='GPU'
-            )
-            results['slots'].append(node_dict)
-            results['preview'].append(preview_node)
-    else:
-        return {}
+    for node in static:
+        node_dict, preview_node = check_slot_by_type(
+            slot=node,
+            n_cpu=n_cpus,
+            n_gpu=n_gpus,
+            ram=ram,
+            disk=disk_space,
+            slot_type='Static'
+        )
+        results['slots'].append(node_dict)
+        results['preview'].append(preview_node)
 
     results['preview'] = order_node_preview(results['preview'])
 
@@ -160,8 +144,8 @@ def default_preview(slot_name: str, slot_type: str) -> dict:
     Defines the default dictionary for slots that don't fit the job.
 
     Args:
-        slot_name (str): the name of the cpu slot, e.g. "cpu1"
-        slot_type (str): the type of cpu slot, allowed {'Partitionable', 'Static'}
+        slot_name (str): the name of the slot, e.g. "cpu1"
+        slot_type (str): the type of slot, allowed {'Partitionable', 'Static'}
 
     Returns:
         dict: default values for a previewed slot
@@ -222,8 +206,8 @@ def check_slot_by_type(slot: dict, n_cpu: int, ram: float, disk: float,
         A dictionary of the checked slot and a dictionary with the occupancy
         details of the slot.
     """
-    if slot_type not in ['Static', 'Partitionable', 'GPU']:
-        raise ValueError(f'slot_type must be Static, Partitionable or GPU '
+    if slot_type not in ['Static', 'Partitionable']:
+        raise ValueError(f'slot_type must be Static or Partitionable'
                          f'not {slot_type}')
 
     preview = default_preview(slot['UtsnameNodename'], slot_type)

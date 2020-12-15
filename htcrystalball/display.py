@@ -96,7 +96,7 @@ def results(result: dict, verbose: bool, matlab: bool,
             unit = "days"
         core_hours = int(n_jobs * wall_time * n_cores / 60.0)
         console.print("A total of "+str(core_hours)+" core-hour(s) "
-                      "will be used and will complete in about " +
+                      "will be used and " + str(n_jobs) + " job(s) will complete in about " +
                       str(time)+" "+unit+".")
     else:
         console.print("No --jobs or --time specified. No duration estimate will be given.")

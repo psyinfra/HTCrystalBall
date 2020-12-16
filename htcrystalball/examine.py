@@ -57,10 +57,12 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
 
     if cpu == 0:
         LOGGER.warning("No number of CPU workers given --- ABORTING")
-
     elif ram == 0.0:
         LOGGER.warning("No RAM amount given --- ABORTING")
-
+    elif job_duration > 0.0 and jobs == 0:
+        LOGGER.warning("No Job amount for wall-time calculation given --- ABORTING")
+    elif jobs > 0 and job_duration == 0.0:
+        LOGGER.warning("No execution time for Jobs has been given --- ABORTING")
     else:
         check_slots(
             slots_static, slots_partitionable, cpu, ram, disk, gpu, jobs,

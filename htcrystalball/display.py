@@ -94,12 +94,12 @@ def results(result: dict, verbose: bool, matlab: bool,
     if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:
         time = int(max(n_jobs / total_jobs, 1)*wall_time + 0.5)
         unit = "minute(s)"
-        if time > 100:
+        if time >= 60:
             time = minutes_to_hours(time)
-            unit = "hours"
+            unit = "hour(s)"
         if time > 100:
             time = hours_to_days(time)
-            unit = "days"
+            unit = "day(s)"
         core_hours = int(n_jobs * wall_time * n_cores / 60.0)
         console.print("A total of "+str(core_hours)+" core-hour(s) "
                       "will be used and " + str(n_jobs) + " job(s) will complete in about " +

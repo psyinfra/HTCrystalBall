@@ -66,6 +66,10 @@ def results(result: dict, verbose: bool, matlab: bool,
     # write table and wall-time info to console
     if verbose:
         console.print(table)
+        console.print("USAGE:")
+        console.print(f"[green]--- [/green]<= 95%")
+        console.print(f"[yellow]--- [/yellow]> 95%")
+        console.print(f"[red]--- [/red]> 100%")
         console.print("")
         console.print("TOTAL MATCHES: "+str(total_jobs))
         console.print("")

@@ -1,7 +1,6 @@
 """Examines user input on the HTCondor slot configuration."""
 
-from operator import itemgetter
-from natsort import natsorted, ns
+from natsort import natsorted
 
 from htcrystalball import display, collect, LOGGER
 from htcrystalball.utils import split_num_str, to_minutes, to_binary_gigabyte

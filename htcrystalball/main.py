@@ -5,7 +5,7 @@ import sys
 
 import htcondor
 
-from htcrystalball import __version__, examine
+from htcrystalball import examine
 from htcrystalball.utils import validate_storage_size, validate_duration
 
 

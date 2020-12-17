@@ -67,9 +67,9 @@ def results(result: dict, verbose: bool, matlab: bool,
     if verbose:
         console.print(table)
         console.print("USAGE:")
-        console.print(f"[green]--- [/green]<= 95%")
-        console.print(f"[yellow]--- [/yellow]> 95%")
-        console.print(f"[red]--- [/red]> 100%")
+        console.print("[green]--- [/green]<= 95%")
+        console.print("[yellow]--- [/yellow]> 95%")
+        console.print("[red]--- [/red]> 100%")
         console.print("")
         console.print("TOTAL MATCHES: "+str(total_jobs))
         console.print("")

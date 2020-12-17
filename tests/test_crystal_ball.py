@@ -172,7 +172,7 @@ def test_calc_manager():
         cpu=1, gpu=0, ram="20GB", disk="", jobs=1, job_duration="10m",
         maxnodes=2, verbose=True, content=mocked_content
     )
-    assert examine.prepare(
+    assert not examine.prepare(
         cpu=2, gpu=0, ram="20GB", disk="", jobs=1, job_duration="",
         maxnodes=2, verbose=True, content=mocked_content
     )

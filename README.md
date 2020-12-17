@@ -87,7 +87,7 @@ To install and configure `HTCrystalBall` please follow these steps:
 
 3.  adjust the keys to be fetched from the command in `collect.py`
 
-    `if key in ("SlotType", "UtsnameNodename", "Name", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"):`
+    `if key in ("SlotType", "Machine", "Name", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"):`
 
 ## INPUT
 
@@ -124,7 +124,6 @@ Our `crystal ball` will give you a brief summary of the executed slot checking f
 
 |   Slot Type   | Job fits | Amount of similar jobs | Wall Time on Idle |
 | ------------- | -------- | ---------------------- | ----------------- |
-|      gpu      |   ....   |          ....          |       0 min       |
 |    static     |   ....   |          ....          |       0 min       |
 | partitionable |   ....   |          ....          |       0 min       |
 

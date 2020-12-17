@@ -60,7 +60,7 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
         LOGGER.warning("No RAM amount given --- ABORTING")
     elif job_duration > 0.0 and jobs == 0:
         LOGGER.warning("No Job amount for wall-time calculation given --- ABORTING")
-    elif jobs > 0 and job_duration == 0.0:
+    elif jobs > 1 and job_duration == 0.0:
         LOGGER.warning("No execution time for Jobs has been given --- ABORTING")
     else:
         check_slots(

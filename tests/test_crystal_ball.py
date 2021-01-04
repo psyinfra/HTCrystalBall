@@ -203,7 +203,7 @@ def test_slot_config():
 
     slots = collect.collect_slots(mocked_content)
 
-    assert "SlotType" in slots['cpu2']["slot_size"][0]
+    assert "SlotType" in slots['cpu2'][0]
 
     assert "SlotType" in examine.filter_slots(slots, "Static")[0]
     assert examine.filter_slots(slots, "Static")[0]["SlotType"] == "Static"
@@ -288,8 +288,7 @@ def test_slot_in_node():
     """
     slots = [
         {
-            "Machine": "cpu2",
-            "slot_size": [{
+            "cpu2": [{
                 "TotalSlotCpus": 1,
                 "TotalSlotDisk": 287.53,
                 "TotalSlotMemory": 5.0,
@@ -297,8 +296,7 @@ def test_slot_in_node():
             }]
         },
         {
-            "Machine": "cpu3",
-            "slot_size": [{
+            "cpu3": [{
                 "TotalSlotCpus": 1,
                 "TotalSlotDisk": 287.68,
                 "TotalSlotMemory": 5.0,
@@ -306,8 +304,7 @@ def test_slot_in_node():
             }]
         },
         {
-            "Machine": "cpu4",
-            "slot_size": [{
+            "cpu4": [{
                 "TotalSlotCpus": 1,
                 "TotalSlotDisk": 287.68,
                 "TotalSlotMemory": 5.0,
@@ -316,8 +313,7 @@ def test_slot_in_node():
         }
     ]
     slot_a = {
-        "Machine": "cpu4",
-        "slot_size": [{
+        "cpu4": [{
             "TotalSlotCpus": 1,
             "TotalSlotDisk": 287.68,
             "TotalSlotMemory": 5.0,
@@ -325,8 +321,7 @@ def test_slot_in_node():
         }]
     }
     slot_b = {
-        "Machine": "cpu5",
-        "slot_size": [{
+        "cpu5": [{
             "TotalSlotCpus": 1,
             "TotalSlotDisk": 287.68,
             "TotalSlotMemory": 5.0,
@@ -334,8 +329,7 @@ def test_slot_in_node():
         }]
     }
     slot_c = {
-        "Machine": "cpu4",
-        "slot_size": [{
+        "cpu4": [{
             "TotalSlotCpus": 2,
             "TotalSlotDisk": 287.68,
             "TotalSlotMemory": 5.0,

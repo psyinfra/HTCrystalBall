@@ -10,9 +10,9 @@ def filter_slots(slots: dict, slot_type: str) -> list:
     """Filters the slots stored in a dictionary according to the given type."""
     result = []
     for node in slots:
-        for slot in slots[node]["slot_size"]:
+        for slot in slots[node]:
             if slot["SlotType"] == slot_type:
-                slot["Machine"] = slots[node]["Machine"]
+                slot["Machine"] = node
                 result.append(slot)
 
     return result

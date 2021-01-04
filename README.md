@@ -10,67 +10,20 @@ A crystal ball, that lets you peer into the future.
 First, if you are familiar with this README or just want to skip sections, 
 here is a list of hyperlinks for you to skip searching for a particular section:
 
-*   [Description](#Description)
 *   [Requirements](#Requirements)
 *   [Installation](#Installation-and-Configuration)
+*   [Description](#Description)
 *   [Input](#INPUT)
 *   [Output](#OUTPUT)
 *   [Examples](#Examples)
 *   [Testing](#Testing)
 
-## Description
-This project contains of two main parts
-*   fetching an HTCondor slot configuration to create a list of slots
-
-*   looking for suiting slots in the given configuration to execute user-defined
-jobs a.k.a. the `crystal ball`
-
-and is intended for HTCondor (server) systems which describe resources as slots
-rather than nodes. 
-
-Fetching the slots uses the `condor_status` command to get necessary
-information about the various slots. In our particular use-case we went for the `-long` 
-option that gives us way too much information but at least all the information we need. 
-As each line of the command output follows the pattern `key = value` we chose to parse
-it that way and only store the key-value pairs for
-
-*   UtsnameNodename
-*   TotalSlots
-*   Name
-*   TotalSlotCpus
-*   TotalSlotDisk
-*   TotalSlotMemory
-*   TotalSlotGPUs
-*   SlotType
-
-So if you want to adjust this script to your use-case feel free to add other keys.
-
-As it turns out, the resulting list of slots had more than 500 entries because every single slot (static and dynamic created ones)
-would be displayed. But as we don't need every single slot of identical configuration, 
-we chose to filter them out to show all available slot configurations and just keep the
-`TotalSlots` property to reflect that there are multiple slots of the same configuration.
-To also account for the relation to a `node`, we chose to go with a node object in JSON that 
-has various `slot` sizes as children objects. Here you can see an example for a `node` object in JSON:
-    
-    {
-        "node": "cpuXX", 
-        "slot_size": [
-            {"cores": 2, "disk": 51.53, "ram": 30.0, "type": "partitionable", "total_slots": 11},
-            {"cores": 1, "disk": 3.46, "ram": 5.88, "type": "static", "total_slots": 11}
-        ]
-    }
-
-Here comes our `crystal ball` to play its part. The script takes a user input of requested 
-ressources for a single job and checks whether and how it fits into the given slots. 
-If the user provides a parameter for the number of similar `jobs` to be executed and 
-the execution time per job, a total `wall time` can also be calculated per `slot`.
-
 ## Requirements
-`HTCrystalBall` uses the `rich` module for printing out nicely formatted tables. 
-The module requires Python 3.6+ to run.
+`HTCrystalBall` uses the `rich` and `natsort` module for printing out nicely formatted and ordered tables.
+The `rich` module requires Python 3.6+ to run.
 For using the HTCondor API the module `htcondor` has to be installed.
 
-To also run our tests, we require `pytest` to be installed.
+To also run our tests, we require `pytest` and `pyflakes` to be installed.
 
 ## Installation and Configuration
 To install and configure `HTCrystalBall` please follow these steps:
@@ -85,9 +38,45 @@ To install and configure `HTCrystalBall` please follow these steps:
 
     `pip3 install .`
 
-3.  adjust the keys to be fetched from the command in `collect.py`
+3.  (optional) adjust the keys to be queried from the htcondor in `main.py`
 
-    `if key in ("SlotType", "Machine", "Name", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"):`
+    `QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlotGPUs"]`
+
+## Description
+This project contains of five modules
+*   `main.py` to define the command line parser and start manage executiing the other modules
+*   `collect.py` for fetching an HTCondor slot configuration and creating a list of slots
+*   `examine.py` for checking slot configurations whether they fit a given job
+*   `display.py` for formatting and returning output
+*   `utils.py` as a library of methods for the other modules to use
+
+and is intended for HTCondor (server) systems, which describe resources as slots
+rather than nodes.
+
+`collect.py` uses HTCondor's `Collector().query()` method to query the defined attributes about each slot.
+In our particular use-case we decided to ignore all dynamic created slots by using `constraint='SlotType != "Dynamic"'`
+as those slots are created when needed and are not available to the general pool.
+
+So if you want to adjust this script to your use-case feel free to add other keys to `QUERY_DATA` or change other
+parameters of the `Collector().query()` method.
+
+As it turns out, the resulting list of slots had more than 500 entries because every single slot (static and dynamic created ones)
+would be displayed. But as we don't need every single slot of identical configuration,
+we chose to filter them out to show all available slot configurations and just store a counter for each slot configuration
+as the `SimSlots` property to reflect the number of slots with similar configuration.
+Each configuration is assigned to a node with its full name as the key:
+
+    {
+        "cpuXX.htc.test.com": [
+                {"TotalSlotCpus": 2, "TotalSlotDisk": 51.53, "TotalSlotMemory": 30.0, "TotalSlotGPUs": 0, "SlotType": "partitionable", "SimSlots": 11},
+                {"TotalSlotCpus": 1, "TotalSlotDisk": 3.46, "TotalSlotMemory": 5.88, "TotalSlotGPUs": 0, "SlotType": "static", "SimSlots": 11}
+            ]
+    }
+
+Here comes our `crystal ball` to play its part. The script takes a user input of requested
+ressources for a single job and checks whether and how it fits into the given slots.
+If the user provides a parameter for the number of `jobs` to be executed and
+the execution time per job, a total `wall time` can also be calculated.
 
 ## INPUT
 
@@ -97,12 +86,13 @@ writing a [condor submit](https://htcondor.readthedocs.io/en/latest/users-manual
 
     htcrystalball | htcb -h
     
-    usage: htcrystalball | htcb -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-d DURATION] [-v]
+    usage: htcrystalball -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-t TIME] [-m MAX_NODES] [-v]
 
-    To get a preview for any job you are trying to execute using HTCondor, please
-    pass at least the number of CPUs and the amount of RAM (including units eg.
-    100MB, 90M, 10GB, 15G) to this script according to the usage example shown
-    above. For JOB Duration please use d, h, m or s
+    htcrystalball - A crystal ball that lets you peek into the future. To get a
+    preview for any job you are trying ot execute using HTCondor, please pass at
+    least the number of CPUs and the amount of RAM including units (e.g. 100MB,
+    90M, 10GB, 15g) according to the usage example shown above. For JOB duration
+    please use d, h, m, or s
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -113,196 +103,105 @@ writing a [condor submit](https://htcondor.readthedocs.io/en/latest/users-manual
       -t TIME, --time TIME  Set the duration for one job to be executed
       -d DISK, --disk DISK  Set amount of requested disk storage
       -r RAM, --ram RAM     Set amount of requested memory storage
-      -m MAXNODES, --maxnodes  Set maximum of nodes to run jobs on
+      -m MAXNODES, --maxnodes MAXNODES
+                            Set maximum of nodes to run jobs on
     
-    PLEASE NOTE: HTCondor always uses binary storage sizes, so inputs will
-    automatically be treated that way.
+    PLEASE NOTE: HTCondor always uses binary storage sizes (1 GiB = 1024 MiB, 1 GB
+    = 1000 MB), so inputs will automatically be treated that way.
 
 ## OUTPUT
 ### Basic Output
-Our `crystal ball` will give you a brief summary of the executed slot checking for your jobs like this:
+Our `crystal ball` will give you a brief peek of the result when checking your jobs when executing
+the command `htcb --cpu 1 --ram 7500M -j 1`:
 
-|   Slot Type   | Job fits | Amount of similar jobs | Wall Time on Idle |
-| ------------- | -------- | ---------------------- | ----------------- |
-|    static     |   ....   |          ....          |       0 min       |
-| partitionable |   ....   |          ....          |       0 min       |
+    632 jobs of this size can run on this pool.
 
-*   Job fits: If one job fits into a slot it will be highlighted in green color, if not in red.
-*   Amount of similar jobs: number of jobs similar to the one defined, that fit into a slot the same time.
-*   Wall time on Idle: Theoretical execution time for all similar jobs to be executed on a slot.
+    No --jobs or --time specified. No duration estimate will be given.
+
+    The above number(s) are for an idle pool.
+
+The estimated wall time can only be calculated if both the number of `jobs` and `time` per job are being provided.
 
 ### Advanced Output
-When using VERBOSE HTCrystalBall will print out your given Input...
+When using `-v` HTCrystalBall will return the following output:
 
-|   Parameter   | Input Value |
-| ------------- |  ---------  |
-|     CPUS      |     ...     |
-|      RAM      |     ...     |
-|    STORAGE    |     ...     |
-|     GPUS      |     ...     |
-|     JOBS      |     ...     |
-| JOB DURATION  |     ...     |
-| MAXIMUM NODES |     ...     |
+     Jobs ┃       Node        ┃  Slot ┃  CPUs ┃      RAM      ┃     Disk     ┃ GPUs
+    ━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━
+       24 │ cpu1.htc.test.com  │     1 │ 24/24 │ 180.0/210.0G  │ 0.0/3416.06G │ 0/0
+        8 │ cpu2.htc.test.com  │     1 │  8/12 │  60.0/65.0G   │ 0.0/3416.16G │ 0/0
+        8 │ cpu3.htc.test.com  │     1 │  8/12 │  60.0/65.0G   │ 0.0/3415.78G │ 0/0
+        8 │ cpu4.htc.test.com  │     1 │  8/12 │  60.0/65.0G   │ 0.0/3416.2G  │ 0/0
+        8 │ cpu5.htc.test.com  │     1 │  8/12 │  60.0/65.0G   │ 0.0/3414.71G │ 0/0
+        8 │ cpu6.htc.test.com  │     1 │  8/12 │  60.0/65.0G   │ 0.0/3416.14G │ 0/0
+        8 │ cpu7.htc.test.com  │     1 │  8/12 │  60.0/65.0G   │ 0.0/3415.3G  │ 0/0
+        8 │ cpu8.htc.test.com  │     1 │  8/12 │  60.0/65.0G   │ 0.0/3413.49G │ 0/0
+       64 │ cpu9.htc.test.com  │     1 │ 64/64 │ 480.0/500.0G  │ 0.0/3413.33G │ 0/0
+       64 │ cpu10.htc.test.com │     1 │ 64/64 │ 480.0/500.0G  │ 0.0/3415.93G │ 0/0
+       64 │ cpu11.htc.test.com │ 1..64 │   1/1 │   7.5/7.5G    │  0.0/56.19G  │ 0/0
+       64 │ cpu12.htc.test.com │ 1..64 │   1/1 │   7.5/7.5G    │  0.0/56.15G  │ 0/0
+        8 │ cpu13.htc.test.com │  1..4 │   2/2 │  15.0/30.0G   │ 0.0/828.74G  │ 0/0
+       24 │ cpu14.htc.test.com │     1 │ 24/24 │ 180.0/210.0G  │ 0.0/3416.1G  │ 0/0
+       24 │ cpu15.htc.test.com │     1 │ 24/24 │ 180.0/210.0G  │ 0.0/3416.1G  │ 0/0
+       16 │ cpu16.htc.test.com │     1 │ 16/20 │ 120.0/120.0G  │ 0.0/3416.09G │ 0/0
+       16 │ cpu17.htc.test.com │     1 │ 16/20 │ 120.0/120.0G  │ 0.0/3415.32G │ 0/0
+       16 │ cpu18.htc.test.com │     1 │ 16/20 │ 120.0/120.0G  │ 0.0/3416.12G │ 0/0
+       16 │ cpu19.htc.test.com │ 1..16 │   1/1 │   7.5/9.0G    │ 0.0/215.76G  │ 0/0
+       32 │ cpu21.htc.test.com │     1 │ 32/32 │ 240.0/500.0G  │ 0.0/3504.16G │ 0/0
+       32 │ cpu22.htc.test.com │     1 │ 32/32 │ 240.0/500.0G  │ 0.0/3504.21G │ 0/0
+       32 │ cpu23.htc.test.com │ 1..32 │   1/1 │   7.5/15.0G   │ 0.0/110.67G  │ 0/0
+       32 │ cpu24.htc.test.com │ 1..32 │   1/1 │   7.5/15.0G   │ 0.0/110.67G  │ 0/0
+       28 │ cpu25.htc.test.com │     1 │ 28/28 │ 210.0/244.14G │  0.0/138.8G  │ 0/0
+       20 │ gpu1.htc.test.com  │  1..2 │ 10/10 │ 75.0/180.76G  │ 0.0/1613.9G  │ 0/4
+                                  Prediction per node
+    USAGE:
+    --- <= 95%
+    --- > 95%
+    --- > 100%
 
-...the current slot configuration of the cluster...
+    TOTAL MATCHES: 632
 
-| Node |   Slot Type   | Total slots | Cores | GPUs | RAM | DISK |
-| ---- | ------------- | ----------- | ----- | ---- | --- | ---- |
-| Name |      gpu      |     ...     |  ...  | ...  | ... | ...  |
-| Name |     static    |     ...     |  ...  | ...  | ... | ...  |
-| Name | partitionable |     ...     |  ...  | ...  | ... | ...  |
+    No --jobs or --time specified. No duration estimate will be given.
 
-...and a more detailed summary of the slot checking:
-
-| Node |   Slot Type   | Job fits | Slot usage | RAM usage | GPU usage | Amount of similar jobs | Wall Time on Idle |
-| ---- | ------------- | -------- | ---------- | --------- | --------- | ---------------------- | ----------------- |
-| Name |      gpu      |   YES    | ... (x %)  | ... (x %) | ... (x %) |           ...          |      ... min      |
-| Name |     static    |    NO    | ... (x %)  | ... (x %) | ... (x %) |           ...          |      ... min      |
-| Name | partitionable |    NO    | ... (x %)  | ... (x %) | ... (x %) |           ...          |      ... min      |
+    The above number(s) are for an idle pool.
 
 ### Examples
-htcb -c 2 -r 10G -g 2
+Here are some more examples:
 
-    ---------------------- PREVIEW ----------------------
-    ┏━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┓
-    ┃ Slot Type ┃ Job fits ┃ Amount of similar jobs ┃ Wall Time on IDLE ┃
-    ┡━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━┩
-    │ gpu       │      YES │                      2 │             0 min │
-    └───────────┴──────────┴────────────────────────┴───────────────────┘
+htcb --cpu 1 --ram 16G --jobs 1 --maxnodes 2 --time 24h
 
-htcb -c 2 -r 10G -g 2 -v
+    A maximum of 62 jobs of this size can run using only 2 nodes.
 
-    ---------------------- INPUT ----------------------
-    ┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┓
-    ┃ Parameter     ┃ Input Value ┃
-    ┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━┩
-    │ CPUS          │           2 │
-    │ RAM           │   10.00 GiB │
-    │ STORAGE       │    0.00 GiB │
-    │ GPUS          │           2 │
-    │ JOBS          │           1 │
-    │ JOB DURATION  │    0.00 min │
-    │ MAXIMUM NODES │           0 │
-    └───────────────┴─────────────┘
-    ---------------------- NODES ----------------------
-    ┏━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┓
-    ┃ Node         ┃ Slot Type ┃ Total Slots ┃ Cores ┃ GPUs ┃        RAM ┃       DISK ┃
-    ┡━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━┩
-    │ gpu1         │ gpu       │          22 │    10 │    4 │ 180.76 GiB │ 1618.1 GiB │
-    └──────────────┴───────────┴─────────────┴───────┴──────┴────────────┴────────────┘
-    ---------------------- PREVIEW ----------------------
-    ┏━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┓
-    ┃ Node         ┃ Slot Type ┃ Job fits ┃       Slot usage ┃       RAM usage       ┃ GPU usage ┃ Amount of similar jobs ┃ Wall Time on IDLE ┃
-    ┡━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━┩
-    │ gpu1         │ gpu       │      YES │ 2/10 (20%) Cores │ 10.00/180.76 GiB (6%) │ 2/4 (50)% │                      2 │             0 min │
-    └──────────────┴───────────┴──────────┴──────────────────┴───────────────────────┴───────────┴────────────────────────┴───────────────────┘
-
-htcb -c 5 -r 10G
-
-    ---------------------- PREVIEW ----------------------
-    ┏━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┓
-    ┃ Slot Type     ┃ Job fits ┃ Amount of similar jobs ┃ Wall Time on IDLE ┃
-    ┡━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━┩
-    │ partitionable │      YES │                     12 │             0 min │
-    │ partitionable │      YES │                     12 │             0 min │
-    │ partitionable │      YES │                      6 │             0 min │
-    │ partitionable │      YES │                      6 │             0 min │
-    │ partitionable │      YES │                      4 │             0 min │
-    │ partitionable │      YES │                      4 │             0 min │
-    │ partitionable │      YES │                      4 │             0 min │
-    │ partitionable │      YES │                      4 │             0 min │
-    │ partitionable │      YES │                      4 │             0 min │
-    │ partitionable │      YES │                      4 │             0 min │
-    │ partitionable │      YES │                      2 │             0 min │
-    │ partitionable │      YES │                      2 │             0 min │
-    │ partitionable │      YES │                      2 │             0 min │
-    │ partitionable │      YES │                      2 │             0 min │
-    │ partitionable │      YES │                      2 │             0 min │
-    │ partitionable │      YES │                      2 │             0 min │
-    │ partitionable │      YES │                      2 │             0 min │
-    │ partitionable │       NO │                      0 │             0 min │
-    │ static        │       NO │                      0 │             0 min │
-    │ static        │       NO │                      0 │             0 min │
-    │ static        │       NO │                      0 │             0 min │
-    │ static        │       NO │                      0 │             0 min │
-    │ static        │       NO │                      0 │             0 min │
-    └───────────────┴──────────┴────────────────────────┴───────────────────┘
+    The following nodes are suggested:
+    cpu9.htc.inm7.de
+    cpu22.htc.inm7.de
     
-htcb -c 5 -r 10G  -v
+    A total of 24 core-hour(s) will be used and 1 job(s) will complete in about 24 hour(s).
 
-    ---------------------- INPUT ----------------------
-    ┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┓
-    ┃ Parameter     ┃ Input Value ┃
-    ┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━┩
-    │ CPUS          │           5 │
-    │ RAM           │   10.00 GiB │
-    │ STORAGE       │    0.00 GiB │
-    │ GPUS          │           0 │
-    │ JOBS          │           1 │
-    │ JOB DURATION  │    0.00 min │
-    │ MAXIMUM NODES │           0 │
-    └───────────────┴─────────────┘
-    ---------------------- NODES ----------------------
-    ┏━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━┓
-    ┃ Node         ┃ Slot Type     ┃ Total Slots ┃ Cores ┃   GPUs ┃       RAM ┃        DISK ┃
-    ┡━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━┩
-    │ cpu22        │ partitionable │          33 │    32 │ ------ │ 500.0 GiB │ 3504.21 GiB │
-    │ cpu14        │ partitionable │          25 │    24 │ ------ │ 210.0 GiB │ 3414.28 GiB │
-    │ cpu1         │ partitionable │          25 │    24 │ ------ │ 210.0 GiB │ 3414.49 GiB │
-    │ cpu15        │ partitionable │          25 │    24 │ ------ │ 210.0 GiB │ 3414.23 GiB │
-    │ cpu2         │ partitionable │          13 │    12 │ ------ │  65.0 GiB │ 3416.16 GiB │
-    │ cpu13        │ partitionable │          12 │     2 │ ------ │  30.0 GiB │  829.54 GiB │
-    │ cpu16        │ partitionable │          16 │    20 │ ------ │ 120.0 GiB │ 3416.09 GiB │
-    │ cpu3         │ partitionable │          13 │    12 │ ------ │  65.0 GiB │ 3415.78 GiB │
-    │ cpu17        │ partitionable │          16 │    20 │ ------ │ 120.0 GiB │ 3416.06 GiB │
-    │ cpu4         │ partitionable │          13 │    12 │ ------ │  65.0 GiB │  3416.2 GiB │
-    │ cpu5         │ partitionable │          13 │    12 │ ------ │  65.0 GiB │ 3414.52 GiB │
-    │ cpu18        │ partitionable │          16 │    20 │ ------ │ 120.0 GiB │ 3416.12 GiB │
-    │ cpu6         │ partitionable │          13 │    12 │ ------ │  65.0 GiB │ 3416.14 GiB │
-    │ cpu7         │ partitionable │          13 │    12 │ ------ │  65.0 GiB │ 3416.14 GiB │
-    │ cpu8         │ partitionable │          13 │    12 │ ------ │  65.0 GiB │ 3416.14 GiB │
-    │ cpu9         │ partitionable │          65 │    64 │ ------ │ 500.0 GiB │ 3414.53 GiB │
-    │ cpu10        │ partitionable │          65 │    64 │ ------ │ 500.0 GiB │ 3416.04 GiB │
-    │ cpu21        │ partitionable │          33 │    32 │ ------ │ 500.0 GiB │ 3500.75 GiB │
-    │ cpu23        │ static        │          32 │     1 │ ------ │  15.0 GiB │  110.56 GiB │
-    │ cpu11        │ static        │          64 │     1 │ ------ │   7.5 GiB │   56.15 GiB │
-    │ cpu24        │ static        │          32 │     1 │ ------ │  15.0 GiB │  110.56 GiB │
-    │ cpu12        │ static        │          64 │     1 │ ------ │   7.5 GiB │   56.19 GiB │
-    │ cpu19        │ static        │          16 │     1 │ ------ │   9.0 GiB │  215.76 GiB │
-    └──────────────┴───────────────┴─────────────┴───────┴────────┴───────────┴─────────────┘
-    ---------------------- PREVIEW ----------------------
-    ┏━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┓
-    ┃ Node         ┃ Slot Type     ┃ Job fits ┃       Slot usage ┃      RAM usage       ┃ GPU usage ┃ Amount of similar jobs ┃ Wall Time on IDLE ┃
-    ┡━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━┩
-    │ cpu9         │ partitionable │      YES │  5/64 (8%) Cores │ 10.00/500.0 GiB (2%) │  ------   │                     12 │             0 min │
-    │ cpu10        │ partitionable │      YES │  5/64 (8%) Cores │ 10.00/500.0 GiB (2%) │  ------   │                     12 │             0 min │
-    │ cpu22        │ partitionable │      YES │ 5/32 (16%) Cores │ 10.00/500.0 GiB (2%) │  ------   │                      6 │             0 min │
-    │ cpu21        │ partitionable │      YES │ 5/32 (16%) Cores │ 10.00/500.0 GiB (2%) │  ------   │                      6 │             0 min │
-    │ cpu14        │ partitionable │      YES │ 5/24 (21%) Cores │ 10.00/210.0 GiB (5%) │  ------   │                      4 │             0 min │
-    │ cpu1         │ partitionable │      YES │ 5/24 (21%) Cores │ 10.00/210.0 GiB (5%) │  ------   │                      4 │             0 min │
-    │ cpu15        │ partitionable │      YES │ 5/24 (21%) Cores │ 10.00/210.0 GiB (5%) │  ------   │                      4 │             0 min │
-    │ cpu16        │ partitionable │      YES │ 5/20 (25%) Cores │ 10.00/120.0 GiB (8%) │  ------   │                      4 │             0 min │
-    │ cpu17        │ partitionable │      YES │ 5/20 (25%) Cores │ 10.00/120.0 GiB (8%) │  ------   │                      4 │             0 min │
-    │ cpu18        │ partitionable │      YES │ 5/20 (25%) Cores │ 10.00/120.0 GiB (8%) │  ------   │                      4 │             0 min │
-    │ cpu2         │ partitionable │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%) │  ------   │                      2 │             0 min │
-    │ cpu3         │ partitionable │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%) │  ------   │                      2 │             0 min │
-    │ cpu4         │ partitionable │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%) │  ------   │                      2 │             0 min │
-    │ cpu5         │ partitionable │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%) │  ------   │                      2 │             0 min │
-    │ cpu6         │ partitionable │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%) │  ------   │                      2 │             0 min │
-    │ cpu7         │ partitionable │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%) │  ------   │                      2 │             0 min │
-    │ cpu8         │ partitionable │      YES │ 5/12 (42%) Cores │ 10.00/65.0 GiB (15%) │  ------   │                      2 │             0 min │
-    │ cpu13        │ partitionable │       NO │ 5/2 (250%) Cores │ 10.00/30.0 GiB (33%) │  ------   │                      0 │             0 min │
-    │ cpu23        │ static        │       NO │ 5/1 (500%) Cores │ 10.00/15.0 GiB (67%) │  ------   │                      0 │             0 min │
-    │ cpu11        │ static        │       NO │ 5/1 (500%) Cores │ 10.00/7.5 GiB (133%) │  ------   │                      0 │             0 min │
-    │ cpu24        │ static        │       NO │ 5/1 (500%) Cores │ 10.00/15.0 GiB (67%) │  ------   │                      0 │             0 min │
-    │ cpu12        │ static        │       NO │ 5/1 (500%) Cores │ 10.00/7.5 GiB (133%) │  ------   │                      0 │             0 min │
-    │ cpu19        │ static        │       NO │ 5/1 (500%) Cores │ 10.00/9.0 GiB (111%) │  ------   │                      0 │             0 min │
-    └──────────────┴───────────────┴──────────┴──────────────────┴──────────────────────┴───────────┴────────────────────────┴───────────────────┘
+    The above number(s) are for an idle pool.
+
+htcb --cpu 1 --ram 16G --jobs 1 --maxnodes 2 --time 24h -v
+
+     Jobs ┃       Node        ┃ Slot ┃  CPUs ┃     RAM      ┃     Disk     ┃ GPUs
+    ━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━
+       31 │ cpu9.htc.inm7.de  │    1 │ 31/64 │ 496.0/500.0G │ 0.0/3413.33G │ 0/0
+       31 │ cpu22.htc.inm7.de │    1 │ 31/32 │ 496.0/500.0G │ 0.0/3504.21G │ 0/0
+                                 Prediction per node
+    USAGE:
+    --- <= 95%
+    --- > 95%
+    --- > 100%
+
+    TOTAL MATCHES: 62
+
+    A total of 24 core-hour(s) will be used and 1 job(s) will complete in about 24 hour(s).
+
+    The above number(s) are for an idle pool.
+
 
 ## Testing
 Make sure you have the necessary python modules:
 
-`pip3 install pytest`
+`pip3 install pytest natsort`
 
 Run the following command to execute your test:
 

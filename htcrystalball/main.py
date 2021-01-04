@@ -8,6 +8,9 @@ import htcondor
 from htcrystalball import examine
 from htcrystalball.utils import validate_storage_size, validate_duration
 
+QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk",
+              "TotalSlotMemory", "TotalSlotGPUs"]
+
 
 def main() -> None:
     """
@@ -106,13 +109,12 @@ def main() -> None:
 
 def peek(params, parsers):
     """Peek into the crystal ball to see the future."""
-    query_data = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk",
-                  "TotalSlotMemory", "TotalSlots", "TotalSlotGPUs"]
+
     coll = htcondor.Collector()
     # Ignore dynamic slots, which are the ephemeral children of partitionable slots, and thus noise.
     # Partitionable slot definitions remain unaltered by the process of dynamic slot creation.
     content = coll.query(htcondor.AdTypes.Startd,
-                         constraint='SlotType != "Dynamic"', projection=query_data)
+                         constraint='SlotType != "Dynamic"', projection=QUERY_DATA)
 
     examine.prepare(
         cpu=params.cpu, gpu=params.gpu, ram=params.ram, disk=params.disk,

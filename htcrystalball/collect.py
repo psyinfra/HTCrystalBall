@@ -14,7 +14,6 @@ def collect_slots(content: object) -> dict:
         slot_as_dict = {
             'TotalSlotCpus': int(slot.get('TotalSlotCpus', 0)),
             'TotalSlotGPUs': int(slot.get('TotalSlotGPUs', 0)),
-            'TotalSlots': int(slot.get('TotalSlots', 0)),
             'TotalSlotDisk': kib_to_gib(float(slot.get('TotalSlotDisk', 0.0))),
             'TotalSlotMemory': mib_to_gib(float(slot.get('TotalSlotMemory', 0.0))),
             'SlotType': slot['SlotType']

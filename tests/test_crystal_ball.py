@@ -172,8 +172,16 @@ def test_calc_manager():
         cpu=1, gpu=0, ram="20GB", disk="", jobs=1, job_duration="10m",
         maxnodes=2, verbose=True, content=mocked_content
     )
-    assert not examine.prepare(
+    assert examine.prepare(
         cpu=2, gpu=0, ram="20GB", disk="", jobs=1, job_duration="",
+        maxnodes=2, verbose=True, content=mocked_content
+    )
+    assert not examine.prepare(
+        cpu=2, gpu=0, ram="20GB", disk="", jobs=2, job_duration="",
+        maxnodes=2, verbose=True, content=mocked_content
+    )
+    assert not examine.prepare(
+        cpu=2, gpu=0, ram="20GB", disk="", jobs=0, job_duration="10m",
         maxnodes=2, verbose=True, content=mocked_content
     )
     assert examine.prepare(
@@ -286,7 +294,6 @@ def test_slot_in_node():
                 "TotalSlotDisk": 287.53,
                 "TotalSlotMemory": 5.0,
                 "SlotType": "static",
-                "TotalSlots": 12
             }]
         },
         {
@@ -296,7 +303,6 @@ def test_slot_in_node():
                 "TotalSlotDisk": 287.68,
                 "TotalSlotMemory": 5.0,
                 "SlotType": "static",
-                "TotalSlots": 12
             }]
         },
         {
@@ -306,7 +312,6 @@ def test_slot_in_node():
                 "TotalSlotDisk": 287.68,
                 "TotalSlotMemory": 5.0,
                 "SlotType": "static",
-                "TotalSlots": 12
             }]
         }
     ]
@@ -317,7 +322,6 @@ def test_slot_in_node():
             "TotalSlotDisk": 287.68,
             "TotalSlotMemory": 5.0,
             "SlotType": "static",
-            "TotalSlots": 12
         }]
     }
     slot_b = {
@@ -327,7 +331,6 @@ def test_slot_in_node():
             "TotalSlotDisk": 287.68,
             "TotalSlotMemory": 5.0,
             "SlotType": "static",
-            "TotalSlots": 12
         }]
     }
     slot_c = {
@@ -337,7 +340,6 @@ def test_slot_in_node():
             "TotalSlotDisk": 287.68,
             "TotalSlotMemory": 5.0,
             "SlotType": "static",
-            "TotalSlots": 12
         }]
     }
     assert slot_a in slots

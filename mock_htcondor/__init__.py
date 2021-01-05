@@ -25,7 +25,6 @@ class Collector:
                 "TotalSlotDisk": "287530000",
                 "TotalSlotMemory": "500000",
                 "SlotType": "Static",
-                "TotalSlots": "12"
             },
             {
                 "Machine": "cpu3",
@@ -33,7 +32,6 @@ class Collector:
                 "TotalSlotDisk": "287680000",
                 "TotalSlotMemory": "500000",
                 "SlotType": "Partitionable",
-                "TotalSlots": "12"
             },
             {
                 "Machine": "gpu1",
@@ -42,7 +40,6 @@ class Collector:
                 "TotalSlotDisk": "287680000",
                 "TotalSlotMemory": "500000",
                 "SlotType": "Partitionable",
-                "TotalSlots": "12"
             }]
 
     def query(self):

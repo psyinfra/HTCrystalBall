@@ -28,13 +28,13 @@ def collect_slots(content: object) -> dict:
             sim_slot_values.append({'node': nodename, "slot": slot_as_dict, "sim_slots": 1})
         elif slot_as_dict in unique_slots[nodename]:
             for slot_number in range(len(sim_slot_values)):
-                if slot_as_dict == sim_slot_values[slot_number]["slot"] and nodename == sim_slot_values[slot_number]["node"]:
+                if slot_as_dict == sim_slot_values[slot_number]["slot"] \
+                        and nodename == sim_slot_values[slot_number]["node"]:
                     sim_slot_values[slot_number]["sim_slots"] += 1
 
     for elem in sim_slot_values:
         for slot_number in range(len(unique_slots[elem["node"]])):
             if elem["slot"] == unique_slots[elem["node"]][slot_number]:
                 unique_slots[elem["node"]][slot_number]["SimSlots"] = elem["sim_slots"]
-
 
     return unique_slots

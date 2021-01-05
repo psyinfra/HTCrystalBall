@@ -4,11 +4,13 @@ import argparse
 import sys
 
 from pytest import raises as praises
+sys.modules['htcondor'] = __import__('mock_htcondor')
+from htcondor import Collector as mocked_collector
 
 from htcrystalball import examine, collect, utils
 
-sys.modules['htcondor'] = __import__('mock_htcondor')
-from htcondor import Collector as mocked_collector
+
+
 
 
 def test_storage_validator():

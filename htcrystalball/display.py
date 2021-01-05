@@ -1,4 +1,5 @@
 """Display styling functions for console output."""
+import math
 
 from rich.console import Console
 from rich.table import Table
@@ -92,7 +93,7 @@ def results(result: dict, verbose: bool, matlab: bool,
                 console.print("")
 
     if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:
-        time = int(max(n_jobs / total_jobs, 1)*wall_time + 0.5)
+        time = int(max(math.ceil(n_jobs / total_jobs),1)*wall_time + 0.5)
         unit = "minute(s)"
         if time >= 60:
             time = minutes_to_hours(time)

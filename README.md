@@ -6,8 +6,10 @@
 
 A crystal ball, that lets you peer into the future.
 
+`HTCrystalBall` is a tool that - based on given job parameters - analyzes an `HTCondor pool` to give a
+prediction about suitable `slot` configurations, the number of simulaneous executable `jobs` as well as core-hours and wall-time it takes to complete a given number of jobs.
 ## Overview
-First, if you are familiar with this README or just want to skip sections, 
+If you are familiar with this README or just want to skip sections,
 here is a list of hyperlinks for you to skip searching for a particular section:
 
 *   [Requirements](#Requirements)

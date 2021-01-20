@@ -33,8 +33,13 @@ To install and configure `HTCrystalBall` please follow these steps:
 1.  clone this repo to the file system of any machine in your HTCondor cluster
     
     `git clone https://github.com/psyinfra/HTCrystalBall.git`
+2.  create and open a new or existing python `virtualenv` by using the commands
+    
+    `python3 -m venv /path/to/virtual/environment`
+    
+    `source /path/to/virtual/environment/bin/activate`
 
-2.  `cd` into the newly created directory and install python modules using the setup.py
+2.  `cd` into the newly created directory and install python modules using the setup.py to then call the script from the `virtualenv` whenever necessary
 
     `cd HTCrystalBall`
 

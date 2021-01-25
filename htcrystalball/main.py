@@ -47,7 +47,6 @@ def main() -> None:
         "-c", "--cpu",
         help="Set number of requested CPU Cores",
         type=int,
-        required=True,
         default=0,
         dest='cpu'
     )
@@ -81,7 +80,6 @@ def main() -> None:
         "-r", "--ram",
         help="Set amount of requested memory storage",
         type=validate_storage_size,
-        required=True,
         dest='ram'
     )
     parser.add_argument(

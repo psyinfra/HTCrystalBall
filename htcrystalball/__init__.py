@@ -9,7 +9,7 @@ from htcrystalball._version import __version__
 SLOTS_CONFIGURATION = opj(expanduser('~'), '.htcrystalball')
 
 # External (root level) logging level
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.ERROR, format='WARNING: %(message)s')
 
 # Internal logging level
 LOGGER = logging.getLogger('crystal_balls')

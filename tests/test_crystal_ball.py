@@ -4,11 +4,13 @@ import argparse
 import sys
 
 from pytest import raises as praises
+sys.modules['htcondor'] = __import__('mock_htcondor')
+from htcondor import Collector as mocked_collector
 
 from htcrystalball import examine, collect, utils
 
-sys.modules['htcondor'] = __import__('mock_htcondor')
-from htcondor import Collector as mocked_collector
+
+
 
 
 def test_storage_validator():
@@ -62,6 +64,31 @@ def test_split_time():
     assert utils.split_num_str("0" + unit, 0.0, 'min') == (0, unit)
 
 
+def test_time_conversion():
+    """
+    Tests the methods to convert and round to the next greater time dimension.
+    :return:
+    """
+    number = 10
+    assert utils.minutes_to_hours(number) == 0
+    assert utils.hours_to_days(number) == 0
+    number = 30
+    assert utils.minutes_to_hours(number) == 1
+    assert utils.hours_to_days(number) == 1
+    number = 36
+    assert utils.minutes_to_hours(number) == 1
+    assert utils.hours_to_days(number) == 2
+    number = 48
+    assert utils.minutes_to_hours(number) == 1
+    assert utils.hours_to_days(number) == 2
+    number = 60
+    assert utils.minutes_to_hours(number) == 1
+    assert utils.hours_to_days(number) == 3
+    number = 72
+    assert utils.minutes_to_hours(number) == 1
+    assert utils.hours_to_days(number) == 3
+
+
 def test_conversions():
     """
     Tests the number conversion methods for storage size and time.
@@ -82,6 +109,18 @@ def test_conversions():
     assert utils.to_minutes(10, "min") == 10.0
     assert utils.to_minutes(10.0, "s") <= 0.17
     assert utils.to_minutes(1.0, "d") == 1440.0
+
+
+def test_compare_request_available():
+    """
+    Tests the method for comparing ressources and assigning color codes.
+    :return:
+    """
+    assert utils.compare_requested_available(7.8, 8.0) == "yellow"
+    assert utils.compare_requested_available(7, 8) == "green"
+    assert utils.compare_requested_available(8.1, 8) == "red"
+    assert utils.compare_requested_available(8, 8) == "yellow"
+    assert utils.compare_requested_available(0, 8) == "green"
 
 
 def test_calc_manager():
@@ -139,6 +178,14 @@ def test_calc_manager():
         cpu=2, gpu=0, ram="20GB", disk="", jobs=1, job_duration="",
         maxnodes=2, verbose=True, content=mocked_content
     )
+    assert not examine.prepare(
+        cpu=2, gpu=0, ram="20GB", disk="", jobs=2, job_duration="",
+        maxnodes=2, verbose=True, content=mocked_content
+    )
+    assert not examine.prepare(
+        cpu=2, gpu=0, ram="20GB", disk="", jobs=0, job_duration="10m",
+        maxnodes=2, verbose=True, content=mocked_content
+    )
     assert examine.prepare(
         cpu=2, gpu=0, ram="20GB", disk="", jobs=32, job_duration="10m",
         maxnodes=1, verbose=True, content=mocked_content
@@ -158,17 +205,13 @@ def test_slot_config():
 
     slots = collect.collect_slots(mocked_content)
 
-    assert "SlotType" in slots['cpu2']["slot_size"][0]
+    assert "SlotType" in slots['cpu2'][0]
 
     assert "SlotType" in examine.filter_slots(slots, "Static")[0]
     assert examine.filter_slots(slots, "Static")[0]["SlotType"] == "Static"
 
     assert "SlotType" in examine.filter_slots(slots, "Partitionable")[0]
     assert examine.filter_slots(slots, "Partitionable")[0]["SlotType"] == "Partitionable"
-
-    if len(examine.filter_slots(slots, "GPU")) > 0:
-        assert "SlotType" in examine.filter_slots(slots, "GPU")[0]
-        assert examine.filter_slots(slots, "GPU")[0]["SlotType"] == "GPU"
 
 
 def test_slot_checking():
@@ -183,27 +226,23 @@ def test_slot_checking():
     assert "preview" in examine.check_slots(
         examine.filter_slots(slots, "static"),
         examine.filter_slots(slots, "partitionable"),
-        examine.filter_slots(slots, "gpu"),
         1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False
     )
     assert "slots" in examine.check_slots(
         examine.filter_slots(slots, "static"),
         examine.filter_slots(slots, "partitionable"),
-        examine.filter_slots(slots, "gpu"),
         1, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False
     )
     assert examine.check_slots(
         examine.filter_slots(slots, "static"),
         examine.filter_slots(slots, "partitionable"),
-        examine.filter_slots(slots, "gpu"),
         0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False
-    ) == {}
+    ) == {'slots': [], 'preview': []}
     assert examine.check_slots(
         examine.filter_slots(slots, "static"),
         examine.filter_slots(slots, "partitionable"),
-        examine.filter_slots(slots, "gpu"),
         0, 10.0, 0.0, 0, 1, 0.0, 0, verbose=False
-    ) == {}
+    ) == {'slots': [], 'preview': []}
 
 
 def test_slot_result():
@@ -219,7 +258,6 @@ def test_slot_result():
     result = examine.check_slots(
         examine.filter_slots(slots, "Static"),
         examine.filter_slots(slots, "Partitionable"),
-        examine.filter_slots(slots, "GPU"),
         1, ram, 0.0, 0, 1, 0.0, 0, verbose=False
     )
     slots = result["slots"]
@@ -230,16 +268,13 @@ def test_slot_result():
             # Ignore results that do not fit
             continue
 
-        preview_name = preview["name"]
-        preview_ram = preview['ram_usage']
-
         # Find the slot referenced in results (same node-name and RAM)
         for slot in slots:
-            slot_name = slot['node']
-            slot_ram = f'/{slot["ram"]}'
+            slot_name = slot['Machine']
 
-            if slot_name == preview_name and slot_ram in preview_ram:
-                ram_ratio = int(float(slot['ram']) / ram)
+            if slot_name == preview["Machine"] and \
+                    slot["TotalSlotMemory"] == preview['TotalSlotMemory']:
+                ram_ratio = int(float(slot["TotalSlotMemory"]) / ram)
 
                 # Assume that number of similar jobs does not exceed RAM ratio
                 assert preview['sim_jobs'] <= ram_ratio
@@ -255,64 +290,52 @@ def test_slot_in_node():
     """
     slots = [
         {
-            "UtsnameNodename": "cpu2",
-            "slot_size": [{
+            "cpu2": [{
                 "TotalSlotCpus": 1,
                 "TotalSlotDisk": 287.53,
                 "TotalSlotMemory": 5.0,
                 "SlotType": "static",
-                "TotalSlots": 12
             }]
         },
         {
-            "UtsnameNodename": "cpu3",
-            "slot_size": [{
+            "cpu3": [{
                 "TotalSlotCpus": 1,
                 "TotalSlotDisk": 287.68,
                 "TotalSlotMemory": 5.0,
                 "SlotType": "static",
-                "TotalSlots": 12
             }]
         },
         {
-            "UtsnameNodename": "cpu4",
-            "slot_size": [{
+            "cpu4": [{
                 "TotalSlotCpus": 1,
                 "TotalSlotDisk": 287.68,
                 "TotalSlotMemory": 5.0,
                 "SlotType": "static",
-                "TotalSlots": 12
             }]
         }
     ]
     slot_a = {
-        "UtsnameNodename": "cpu4",
-        "slot_size": [{
+        "cpu4": [{
             "TotalSlotCpus": 1,
             "TotalSlotDisk": 287.68,
             "TotalSlotMemory": 5.0,
             "SlotType": "static",
-            "TotalSlots": 12
         }]
     }
     slot_b = {
-        "UtsnameNodename": "cpu5",
-        "slot_size": [{
+        "cpu5": [{
             "TotalSlotCpus": 1,
             "TotalSlotDisk": 287.68,
             "TotalSlotMemory": 5.0,
             "SlotType": "static",
-            "TotalSlots": 12
         }]
     }
     slot_c = {
-        "UtsnameNodename": "cpu4",
-        "slot_size": [{
+        "cpu4": [{
             "TotalSlotCpus": 2,
             "TotalSlotDisk": 287.68,
             "TotalSlotMemory": 5.0,
             "SlotType": "static",
-            "TotalSlots": 12
         }]
     }
     assert slot_a in slots

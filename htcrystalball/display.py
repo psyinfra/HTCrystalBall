@@ -1,98 +1,14 @@
 """Display styling functions for console output."""
+import math
 
 from rich.console import Console
 from rich.table import Table
 
-
-def inputs(num_cpu: int, amount_ram: float, amount_disk: float, num_gpu: int,
-           num_jobs: int, num_duration: float, max_nodes: int) -> None:
-    """
-    Print converted user input to console using rich tables.
-
-    Args:
-        num_cpu: The requested number CPU cores
-        amount_ram: The requested amount of RAM
-        amount_disk: The requested amount of disk space
-        num_gpu: The requested number of GPU units
-        num_jobs: The user-defined amount of similar jobs
-        num_duration: The user-defined estimated duration per job
-        max_nodes: The user-defined maximum number of simultaneous occupied
-            nodes
-    """
-    console = Console()
-    table = Table(show_header=True, header_style="bold blue")
-    table.add_column("Parameter", style="dim")
-    table.add_column("Input Value", justify="right")
-    table.add_row("CPUS", str(num_cpu))
-    table.add_row("RAM", f'{amount_ram:.2f} GiB')
-    table.add_row("STORAGE", f'{amount_disk:.2f} GiB')
-    table.add_row("GPUS", str(num_gpu))
-    table.add_row("JOBS", str(num_jobs))
-    table.add_row("JOB DURATION", f'{num_duration:.2f} min')
-    table.add_row("MAXIMUM NODES", str(max_nodes))
-    console.print("---------------------- INPUT ----------------------")
-    console.print(table)
+from htcrystalball.utils import minutes_to_hours, hours_to_days, compare_requested_available
 
 
-def slots(result: dict) -> None:
-    """
-    Print out the slots to the console using rich tables.
-
-    Args:
-        result: A dictionary of slot configurations.
-    """
-    console = Console()
-    table = Table(show_header=True, header_style="bold magenta")
-    table.add_column("Node", style="dim", width=12)
-    table.add_column("Slot Type")
-    table.add_column("Total Slots", justify="right")
-    table.add_column("Cores", justify="right")
-    table.add_column("GPUs", justify="right")
-    table.add_column("RAM", justify="right")
-    table.add_column("DISK", justify="right")
-
-    for slot in result['slots']:
-        if slot['type'] == "static":
-            color = 'dark_blue'
-            table.add_row(
-                f"[{color}]{slot['node']}[/{color}]",
-                f"[{color}]{slot['type']}[/{color}]",
-                f"[{color}]{slot['total_slots']}[/{color}]",
-                f"[{color}]{slot['cores']}[/{color}]",
-                f"[{color}]------[/{color}]",
-                f"[{color}]{slot['ram']} GiB[/{color}]",
-                f"[{color}]{slot['disk']} GiB[/{color}]"
-            )
-
-        elif slot['type'] == "GPU":
-            color = 'purple4'
-            table.add_row(
-                f"[{color}]{slot['node']}[/{color}]",
-                f"[{color}]{slot['type']}[/{color}]",
-                f"[{color}]{slot['total_slots']}[/{color}]",
-                f"[{color}]{slot['cores']}[/{color}]",
-                f"[{color}]{slot['gpus']}[/{color}]",
-                f"[{color}]{slot['ram']} GiB[/{color}]",
-                f"[{color}]{slot['disk']} GiB[/{color}]"
-            )
-
-        else:
-            color = 'dark_red'
-            table.add_row(
-                f"[{color}]{slot['node']}[/{color}]",
-                f"[{color}]{slot['type']}[/{color}]",
-                f"[{color}]{slot['total_slots']}[/{color}]",
-                f"[{color}]{slot['cores']}[/{color}]",
-                f"[{color}]------[/{color}]",
-                f"[{color}]{slot['ram']} GiB[/{color}]",
-                f"[{color}]{slot['disk']} GiB[/{color}]"
-            )
-
-    console.print("---------------------- NODES ----------------------")
-    console.print(table)
-
-
-def results(result: dict, verbose: bool) -> None:
+def results(result: dict, verbose: bool, matlab: bool,
+            n_cores: int, n_jobs: int, wall_time: float) -> None:
     """
     Print out the preview result to the console using rich tables.
 
@@ -100,65 +16,95 @@ def results(result: dict, verbose: bool) -> None:
         result: A dictionary of slot configurations including occupancy values
             for the requested job size.
         verbose: A value to extend the generated output.
+        matlab: A bool telling whether matlab mode output is needed
+        n_cores: number of requested cores for wall-time calculation
+        n_jobs: number of requested jobs for wall-time execution
+        wall_time: time per job, needed for total wall-time execution
     """
     console = Console()
-    table = Table(show_header=True, header_style="bold cyan")
-
+    color_node = "#add8e6"
+    # create table headers for verbose output
     if verbose:
-        table.add_column("Node", style="dim", width=12)
+        table = Table(caption="Prediction per node", show_header=True,
+                      header_style="bold cyan", show_edge=False)
+        table.add_column("Jobs", justify="right")
+        table.add_column("Node", justify="center")
+        table.add_column("Slot", justify="right")
+        table.add_column("CPUs", justify="right")
+        table.add_column("RAM", justify="center")
+        table.add_column("Disk", justify="center")
+        table.add_column("GPUs", justify="center")
 
-    table.add_column("Slot Type")
-    table.add_column("Job fits", justify="right")
-
-    if verbose:
-        table.add_column("Slot usage", justify="right")
-        table.add_column("RAM usage", justify="center")
-        table.add_column("GPU usage", justify="center")
-
-    table.add_column("Amount of similar jobs", justify="right")
-    table.add_column("Wall Time on IDLE", justify="right")
-
+    total_jobs = 0
     for slot in result['preview']:
-        if slot['fits'] == "YES":
-            color = 'green'
-            if verbose:
-                table.add_row(
-                    f"[{color}]{slot['name']}[/{color}]",
-                    f"[{color}]{slot['type']}[/{color}]",
-                    f"[{color}]{slot['fits']}[/{color}]",
-                    f"[{color}]{slot['core_usage']} Cores[/{color}]",
-                    f"[{color}]{slot['ram_usage']}[/{color}]",
-                    f"[{color}]{slot['gpu_usage']}[/{color}]",
-                    f"[{color}]{slot['sim_jobs']}[/{color}]",
-                    f"[{color}]{slot['wall_time_on_idle']} min[/{color}]"
-                )
-            else:
-                table.add_row(
-                    f"[{color}]{slot['type']}[/{color}]",
-                    f"[{color}]{slot['fits']}[/{color}]",
-                    f"[{color}]{slot['sim_jobs']}[/{color}]",
-                    f"[{color}]{slot['wall_time_on_idle']} min[/{color}]"
-                )
-        else:
-            color = 'red'
-            if verbose:
-                table.add_row(
-                    f"[{color}]{slot['name']}[/{color}]",
-                    f"[{color}]{slot['type']}[/{color}]",
-                    f"[{color}]{slot['fits']}[/{color}]",
-                    f"[{color}]{slot['core_usage']} Cores[/{color}]",
-                    f"[{color}]{slot['ram_usage']}[/{color}]",
-                    f"[{color}]{slot['gpu_usage']}[/{color}]",
-                    f"[{color}]{slot['sim_jobs']}[/{color}]",
-                    f"[{color}]{slot['wall_time_on_idle']} min[/{color}]"
-                )
-            else:
-                table.add_row(
-                    f"[{color}]{slot['type']}[/{color}]",
-                    f"[{color}]{slot['fits']}[/{color}]",
-                    f"[{color}]{slot['sim_jobs']}[/{color}]",
-                    f"[{color}]{slot['wall_time_on_idle']} min[/{color}]"
-                )
+        total_jobs += slot['sim_jobs']*slot['SimSlots']
 
-    console.print("---------------------- PREVIEW ----------------------")
-    console.print(table)
+        if int(slot['sim_jobs']) == 0:
+            node_jobs = 0
+            job_cell = f"[red]{node_jobs}[/red]"
+        else:
+            node_jobs = slot['sim_jobs']*slot['SimSlots']
+            job_cell = f"{node_jobs}"
+        # create table row for verbose output
+        if verbose:
+            if slot["SimSlots"] != 1:
+                slot["SimSlots"] = "1.."+str(slot["SimSlots"])
+
+            color_cpu = compare_requested_available(slot['requested_cpu'], slot['TotalSlotCpus'])
+            color_ram = compare_requested_available(slot['requested_ram'], slot['TotalSlotMemory'])
+            color_disk = compare_requested_available(slot['requested_disk'], slot['TotalSlotDisk'])
+            color_gpu = compare_requested_available(slot['requested_gpu'], slot['TotalSlotGPUs'])
+
+            table.add_row(
+                job_cell,
+                f"[{color_node}]{slot['Machine']}[/{color_node}]",
+                f"{slot['SimSlots']}",
+                f"[{color_cpu}]{slot['requested_cpu']}/{slot['TotalSlotCpus']}[/{color_cpu}]",
+                f"[{color_ram}]{slot['requested_ram']}/{slot['TotalSlotMemory']}G[/{color_ram}]",
+                f"[{color_disk}]{slot['requested_disk']}/{slot['TotalSlotDisk']}G[/{color_disk}]",
+                f"[{color_gpu}]{slot['requested_gpu']}/{slot['TotalSlotGPUs']}[/{color_gpu}]"
+            )
+    # write table and wall-time info to console
+    if verbose:
+        console.print(table)
+        console.print("LEGEND:")
+        console.print("[green]█[/green] (<= 95%); [yellow]█[/yellow] (95-100%); [red]█[/red] (> 100%)")
+        console.print("")
+        console.print("TOTAL MATCHES: "+str(total_jobs))
+        console.print("")
+    # write slot and wall-time info to console
+    else:
+        if total_jobs == 0:
+            console.print("Job size does not fit any compute slots. "
+                          "Use --verbose for details and a per-slot-config analysis.")
+        else:
+            if matlab:
+                console.print("A maximum of " + str(total_jobs) + " jobs of this size "
+                              "can run using only " + str(len(result['preview'])) + " nodes.")
+                console.print("")
+                console.print("The following nodes are suggested:")
+                for slot in result['preview']:
+                    console.print(slot['Machine'], style=color_node)
+                console.print("")
+            else:
+                console.print(str(total_jobs) + " jobs of this size can run on this pool.")
+                console.print("")
+
+    if wall_time > 0.0 and n_jobs > 0 and total_jobs > 0:
+        time = int(max(math.ceil(n_jobs / total_jobs),1)*wall_time + 0.5)
+        unit = "minute(s)"
+        if time >= 60:
+            time = minutes_to_hours(time)
+            unit = "hour(s)"
+        if time > 100:
+            time = hours_to_days(time)
+            unit = "day(s)"
+        core_hours = int(n_jobs * wall_time * n_cores / 60.0)
+        console.print("A total of "+str(core_hours)+" core-hour(s) "
+                      "will be used and " + str(n_jobs) + " job(s) will complete in about " +
+                      str(time)+" "+unit+".")
+    else:
+        console.print("No --jobs or --time specified. No duration estimate will be given.")
+
+    console.print("")
+    console.print("The above number(s) are for an idle pool.")

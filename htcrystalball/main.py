@@ -27,18 +27,12 @@ def main() -> None:
         '%(prog)s -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] '
         '[-t TIME] [-m MAX_NODES] [-v]'
     )
-    epilog = (
-        'PLEASE NOTE: HTCondor always uses binary storage sizes (1 GiB = '
-        '1024 MiB, 1 GB = 1000 MB), so inputs will automatically be treated '
-        'that way.'
-    )
 
     # Main command
     parser = argparse.ArgumentParser(
         prog='htcrystalball',
         description=description,
-        usage=usage,
-        epilog=epilog
+        usage=usage
     )
 
     parser.set_defaults(run=peek)

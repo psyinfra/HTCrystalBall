@@ -230,5 +230,5 @@ def order_node_preview(node_preview: list) -> list:
         A list of checked nodes sorted by number of similar executable jobs.
     """
     return sorted(
-        node_preview, key=lambda nodes: (nodes["sim_jobs"]), reverse=True
+        node_preview, key=lambda nodes: (nodes["sim_jobs"], -nodes["TotalSlotCpus"]), reverse=True
     )

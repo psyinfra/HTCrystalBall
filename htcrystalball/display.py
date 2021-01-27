@@ -99,7 +99,7 @@ def results(result: dict, verbose: bool, matlab: bool,
         if time > 100:
             time = hours_to_days(time)
             unit = "day(s)"
-        core_hours = int(n_jobs * wall_time * n_cores / 60.0)
+        core_hours = math.ceil(n_jobs * wall_time * n_cores / 60.0)
         console.print("A total of "+str(core_hours)+" core-hour(s) "
                       "will be used and " + str(n_jobs) + " job(s) will complete in about " +
                       str(time)+" "+unit+".")

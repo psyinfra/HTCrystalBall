@@ -12,7 +12,6 @@ def validate_storage_size(storage: str) -> str:
     pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
 
     if not pat.match(storage):
-        LOGGER.error('Invalid storage value given: %(storage)')
         raise ArgumentTypeError(f'Invalid storage value given: {storage}')
 
     return storage
@@ -23,7 +22,6 @@ def validate_duration(duration: str) -> str:
     pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
 
     if not pat.match(duration):
-        LOGGER.error('Invalid time value given: %(duration)')
         raise ArgumentTypeError(f'Invalid time value given: {duration}')
 
     return duration

@@ -9,7 +9,7 @@ from htcrystalball import LOGGER
 
 def validate_storage_size(storage: str) -> str:
     """Validates whether disk and ram input is formatted correctly."""
-    pat = re.compile(r"^[0-9]+([kKmMgGtTpP]i?[bB]?)$")
+    pat = re.compile(r"^[0-9]+(\.[0-9])?([kKmMgGtTpP]i?[bB]?)$")
 
     if not pat.match(storage):
         raise ArgumentTypeError(f'Invalid storage value given: {storage}')
@@ -19,7 +19,7 @@ def validate_storage_size(storage: str) -> str:
 
 def validate_duration(duration: str) -> str:
     """Validates time input for job duration."""
-    pat = re.compile(r"^([0-9]+([dDhHmMsS]?))?$")
+    pat = re.compile(r"^([0-9]+(\.[0-9])?([dDhHmMsS]?))?$")
 
     if not pat.match(duration):
         raise ArgumentTypeError(f'Invalid time value given: {duration}')

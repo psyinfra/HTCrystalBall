@@ -20,7 +20,7 @@ def main() -> None:
         '%(prog)s - A crystal ball that lets you peek into the future. '
         'To get a preview for any job you are trying ot execute using '
         'HTCondor, please pass at least the number of CPUs and the amount of '
-        'RAM including units (e.g. 100MB, 90M, 10GB, 15g) according to the '
+        'RAM including units (e.g. 100MB, 90M, 10GB, 15g, 7.5G) according to the '
         'usage example shown above. For JOB duration please use d, h, m, or s'
     )
     usage = (

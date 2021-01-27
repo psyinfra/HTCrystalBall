@@ -112,7 +112,7 @@ def compare_requested_available(req: float, avail: float) -> str:
         return "green"
     if avail < req:
         return "red"
-    if (req / avail) > 0.95:
+    if (req / avail) > 0.90:
         return "yellow"
 
     return "green"

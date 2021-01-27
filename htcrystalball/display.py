@@ -68,7 +68,7 @@ def results(result: dict, verbose: bool, matlab: bool,
     if verbose:
         console.print(table)
         console.print("LEGEND:")
-        console.print("[green]█[/green] (<= 95%); [yellow]█[/yellow] (95-100%); [red]█[/red] (> 100%)")
+        console.print("[green]█[/green] (<= 90%); [yellow]█[/yellow] (90-100%); [red]█[/red] (> 100%)")
         console.print("")
         console.print("TOTAL MATCHES: "+str(total_jobs))
         console.print("")

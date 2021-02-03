@@ -91,7 +91,7 @@ To use our `crystal ball` your input has to provide at least CPU and RAM require
 while also giving you the ability to pass values familiar parameter you already know from
 writing a [condor submit](https://htcondor.readthedocs.io/en/latest/users-manual/submitting-a-job.html) file:
 
-    htcrystalball | htcb -h
+    htcrystalball | htcb --help
     
     usage: htcrystalball -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-t TIME] [-m MAX_NODES] [-v]
 
@@ -119,7 +119,7 @@ writing a [condor submit](https://htcondor.readthedocs.io/en/latest/users-manual
 ## OUTPUT
 ### Basic Output
 Our `crystal ball` will give you a brief peek of the result when checking your jobs when executing
-the command `htcb --cpu 1 --ram 7500M -j 1`:
+the command `htcb --cpu 1 --ram 7500M --jobs 1`:
 
     632 jobs of this size can run on this pool.
 
@@ -130,7 +130,7 @@ the command `htcb --cpu 1 --ram 7500M -j 1`:
 The estimated wall time can only be calculated if both the number of `jobs` and `time` per job are being provided.
 
 ### Advanced Output
-When using `-v` HTCrystalBall will return the following output:
+When using `--verbose` HTCrystalBall will return the following output:
 
      Jobs ┃       Node        ┃  Slot ┃  CPUs ┃      RAM      ┃     Disk     ┃ GPUs
     ━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━
@@ -160,10 +160,8 @@ When using `-v` HTCrystalBall will return the following output:
        28 │ cpu25.htc.test.com │     1 │ 28/28 │ 210.0/244.14G │  0.0/138.8G  │ 0/0
        20 │ gpu1.htc.test.com  │  1..2 │ 10/10 │ 75.0/180.76G  │ 0.0/1613.9G  │ 0/4
                                   Prediction per node
-    USAGE:
-    --- <= 95%
-    --- > 95%
-    --- > 100%
+    LEGEND:
+    █ (<= 90%); █ (90-100%); █ (> 100%)
 
     TOTAL MATCHES: 632
 
@@ -174,36 +172,61 @@ When using `-v` HTCrystalBall will return the following output:
 ### Examples
 Here are some more examples:
 
-htcb --cpu 1 --ram 16G --jobs 1 --maxnodes 2 --time 24h
+#### Single-core with huge RAM
+htcb --cpu 1 --ram 128G --disk 1T
 
-    A maximum of 62 jobs of this size can run using only 2 nodes.
+    17 jobs of this size can run on this pool.
+
+    No --jobs or --time specified. No duration estimate will be given.
+
+    The above number(s) are for an idle pool.
+
+#### Big multi-core with medium RAM
+htcb --cpu 16 --ram 16G --disk 100G --jobs 20 --time 5h
+
+    19 jobs of this size can run on this pool.
+
+    A total of 1600 core-hour(s) will be used and 20 job(s) will complete in about 10 hour(s).
+
+    The above number(s) are for an idle pool.
+    
+#### Matlab mode
+htcb --cpu 16 --ram 16G --disk 100G --maxnodes 2 --jobs 20 --time 5h
+
+    A maximum of 8 jobs of this size can run using only 2 nodes.
 
     The following nodes are suggested:
     cpu9.htc.inm7.de
-    cpu22.htc.inm7.de
+    cpu10.htc.inm7.de
+
+    A total of 1600 core-hour(s) will be used and 20 job(s) will complete in about 15 hour(s).
+
+    The above number(s) are for an idle pool.
+
+htcb --cpu 16 --ram 16G --disk 100G --maxnodes 2 --verbose
+
+     Jobs ┃       Node        ┃ Slot ┃  CPUs ┃     RAM     ┃      Disk      ┃ GPUs
+    ━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━
+        4 │ cpu9.htc.inm7.de  │    1 │ 64/64 │ 64.0/500.0G │ 400.0/3412.41G │ 0/0
+        4 │ cpu10.htc.inm7.de │    1 │ 64/64 │ 64.0/500.0G │ 400.0/3415.17G │ 0/0
+                                  Prediction per node
+    LEGEND:
+    █ (<= 90%); █ (90-100%); █ (> 100%)
+
+    TOTAL MATCHES: 8
+
+    No --jobs or --time specified. No duration estimate will be given.
+
+    The above number(s) are for an idle pool.
     
-    A total of 24 core-hour(s) will be used and 1 job(s) will complete in about 24 hour(s).
+#### GPU job
+htcb --cpu 1 --gpu 1 --ram 8G --disk 64G --jobs 10 --time 2h
+
+    8 jobs of this size can run on this pool.
+
+    A total of 20 core-hour(s) will be used and 10 job(s) will complete in about 4 hour(s).
 
     The above number(s) are for an idle pool.
-
-htcb --cpu 1 --ram 16G --jobs 1 --maxnodes 2 --time 24h -v
-
-     Jobs ┃       Node        ┃ Slot ┃  CPUs ┃     RAM      ┃     Disk     ┃ GPUs
-    ━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━
-       31 │ cpu9.htc.inm7.de  │    1 │ 31/64 │ 496.0/500.0G │ 0.0/3413.33G │ 0/0
-       31 │ cpu22.htc.inm7.de │    1 │ 31/32 │ 496.0/500.0G │ 0.0/3504.21G │ 0/0
-                                 Prediction per node
-    USAGE:
-    --- <= 95%
-    --- > 95%
-    --- > 100%
-
-    TOTAL MATCHES: 62
-
-    A total of 24 core-hour(s) will be used and 1 job(s) will complete in about 24 hour(s).
-
-    The above number(s) are for an idle pool.
-
 
 ## Testing
 Make sure you have the necessary python modules:

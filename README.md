@@ -8,6 +8,13 @@ A crystal ball, that lets you peer into the future.
 
 `HTCrystalBall` is a tool that - based on given job parameters - analyzes an `HTCondor pool` to give a
 prediction about suitable `slot` configurations, the number of simulaneous executable `jobs` as well as core-hours and wall-time it takes to complete a given number of jobs.
+
+With `HTCrystalBall` you can:
+- guess your job resources more quickly
+- play around with different numbers without blocking resources
+- explore an HTCondor pool faster
+- get quick recommendations on nodes when being limited e.g. by licensing constraints for MATLAB
+
 ## Overview
 If you are familiar with this README or just want to skip sections,
 here is a list of hyperlinks for you to skip searching for a particular section:
@@ -190,7 +197,7 @@ htcb --cpu 16 --ram 16G --disk 100G --jobs 20 --time 5h
 
     The above number(s) are for an idle pool.
     
-#### Matlab mode
+#### max-nodes mode (a.k.a. Matlab mode)
 htcb --cpu 16 --ram 16G --disk 100G --maxnodes 2 --jobs 20 --time 5h
 
     A maximum of 8 jobs of this size can run using only 2 nodes.

@@ -24,13 +24,13 @@ restrictions).
 Its arguments are as follows:
 .Bl -tag -width Ds
 .
-.It Ar c | Ar Ar cpu
+.It Ar \-c | Ar \-\-cpu
 The number of CPU cores.
 .
-.It Ar r | Ar Ar ram
+.It Ar \-r | Ar \-\-ram
 The amount of RAM, including a unit (e.g. 10G).
 .
-.It Ar OPTIONS
+.It OPTIONS
 .
 .It Fl h | Fl Fl help
 Prints a summary of
@@ -49,8 +49,11 @@ The number of jobs to be executed.
 .It Fl t | Fl Fl time
 The estimated time for one job to be executed.
 .
-.It Fl m | Fl Fl max\[hy]nodes
+.It Fl m | Fl Fl maxnodes
 pass the maximum number of nodes for all jobs to be executed (due to Matlab licensing)
+.
+.It Fl v | Fl Fl verbose
+print out a table for a slot config overview executable jobs
 .El
 .
 .Sh CONFIG
@@ -62,17 +65,20 @@ See the HTCondor documentation at
 .Ex -std
 .
 .Sh EXAMPLES
-.Dl htcrystalball \-c 4 \-r 10G
+Simple small job:
+.Dl htcb \-\-cpu 1 \-\-ram 7500M \-\-jobs 1
 .
-.Dl htcb \-c 4 \-r 10G \-v
+Single-core with huge RAM:
+.Dl htcb \-\-cpu 1 \-\-ram 128G \-\-disk 1T
 .
-.Dl htcb \-c 4 \-g 1 \-r 10G
+Big multi-core with medium RAM:
+.Dl htcb \-\-cpu 16 \-\-ram 16G \-\-disk 100G \-\-jobs 20 \-\-time 5h
 .
-.Dl htcrystalball \-c 4 \-g 1 \-r 10G \-v
+max-nodes mode (a.k.a. Matlab mode):
+.Dl htcb \-\-cpu 16 \-\-ram 16G \-\-disk 100G \-\-maxnodes 2 \-\-jobs 20 \-\-time 5h
 .
-.Dl htcrystalball \-c 4 \-r 10G \-d 50G \-j 20 \-t 15m
-.
-.Dl htcb \-c 4 \-r 10G \-d 50G \-j 20 \-t 15m \-v
+GPU job:
+.Dl htcb \-\-cpu 1 \-\-gpu 1 \-\-ram 8G \-\-disk 64G \-\-jobs 10 \-\-time 2h
 .
 .Sh SEE ALSO
 The

@@ -38,11 +38,11 @@ familiar with
 [Python virtual environments](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/),
 we recommend that you read up on them.
 
-## Configuration
+### Optional configuration
 
 TODO:
 
-3.  (optional) adjust the keys to be queried from the htcondor in `main.py`
+If you want to include or exclude `condor_status` attributes to be fetched from the HTCondor pool, you can adjust the parameter `QUERY_DATA` in `main.py` which is a list of strings that represent the keys of the attributes. See example below:
 
     `QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlotGPUs"]`
 

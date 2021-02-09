@@ -44,7 +44,7 @@ TODO:
 
 If you want to include or exclude `condor_status` attributes to be fetched from the HTCondor pool, you can adjust the parameter `QUERY_DATA` in `main.py` which is a list of strings that represent the keys of the attributes. See example below:
 
-    `QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlotGPUs"]`
+    QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlotGPUs"]
 
 ## Usage
 

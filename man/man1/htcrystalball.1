@@ -29,10 +29,10 @@ matching (aiding those with node\[hy]level licensing restrictions).
 The arguments are as follows:
 .Bl -tag -width Ds
 .
-.It Ar \-c | Ar \-\-cpu
+.It Fl c | Fl Fl cpu Ar number
 The number of CPU cores per job.
 .
-.It Ar \-r | Ar \-\-ram
+.It Fl r | Fl Fl ram Ar size
 The amount of RAM per job, including a unit (e.g. 10G).
 .
 .It OPTIONS
@@ -42,19 +42,19 @@ Prints a summary of
 .Nm Ap s
 command\[hy]line options and exits.
 .
-.It Fl g | Fl Fl gpu
+.It Fl g | Fl Fl gpu Ar number
 The number of GPUs per job.
 .
-.It Fl d | Fl Fl disk
+.It Fl d | Fl Fl disk Ar size
 The disk space per job, including a unit (e.g. 50G).
 .
-.It Fl j | Fl Fl jobs
+.It Fl j | Fl Fl jobs Ar number
 The number of jobs to be executed.
 .
-.It Fl t | Fl Fl time
+.It Fl t | Fl Fl time Ar time
 The estimated time for one job to be executed.
 .
-.It Fl m | Fl Fl maxnodes
+.It Fl m | Fl Fl maxnodes Ar number
 The maximum number of nodes jobs can be executed on.
 Sometimes necessary due to software license restrictions.
 .

@@ -131,7 +131,7 @@ No --jobs or --time specified. No duration estimate will be given.
 The above number(s) are for an idle pool.
 ```
 
-### Runtime Projection
+### Big job with runtime projection
 ```
 $ htcb --cpu 16 --ram 16G --disk 100G --jobs 20 --time 5h
 

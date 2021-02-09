@@ -21,10 +21,13 @@
 .
 .Sh DESCRIPTION
 .Nm
-calculates how many jobs (of a user\[hy]specified number and size) can run
-on an HTCondor pool.
-It also can estimate runtime (core hours and wall time) and node\[hy]specific
-matching (aiding those with node\[hy]level licensing restrictions).
+calculates how many jobs
+.Pq of a user\[hy]specified number and size
+can run on an HTCondor pool.
+It also can estimate runtime
+.Pq core hours and wall time
+and node\[hy]specific matching
+.Pq aiding those with node\[hy]level licensing restrictions .
 .Pp
 The arguments are as follows:
 .Bl -tag -width Ds
@@ -33,7 +36,8 @@ The arguments are as follows:
 The number of CPU cores per job.
 .
 .It Fl r | Fl Fl ram Ar size
-The amount of RAM per job, including a unit (e.g. 10G).
+The amount of RAM per job, including a unit
+.Pq e.g. 10G .
 .
 .It OPTIONS
 .
@@ -46,7 +50,8 @@ command\[hy]line options and exits.
 The number of GPUs per job.
 .
 .It Fl d | Fl Fl disk Ar size
-The disk space per job, including a unit (e.g. 50G).
+The disk space per job, including a unit
+.Pq e.g. 50G .
 .
 .It Fl j | Fl Fl jobs Ar number
 The number of jobs to be executed.
@@ -86,7 +91,7 @@ The
 .Nm
 repository is available at
 .Lk https://github.com/psyinfra/HTCrystalBall .
-Bug reports, patches, and (constructive) input are always welcome.
+Bug reports, patches, and constructive input are always welcome.
 .
 .Sh AUTHORS
 .Nm

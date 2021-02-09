@@ -56,42 +56,6 @@ To install and configure `HTCrystalBall` please follow these steps:
 
     `QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlotGPUs"]`
 
-## Description
-This project contains of five modules
-*   `main.py` to define the command line parser and start manage executiing the other modules
-*   `collect.py` for fetching an HTCondor slot configuration and creating a list of slots
-*   `examine.py` for checking slot configurations whether they fit a given job
-*   `display.py` for formatting and returning output
-*   `utils.py` as a library of methods for the other modules to use
-
-and is intended for HTCondor (server) systems, which describe resources as slots
-rather than nodes.
-
-`collect.py` uses HTCondor's `Collector().query()` method to query the defined attributes about each slot.
-In our particular use-case we decided to ignore all dynamic created slots by using `constraint='SlotType != "Dynamic"'`
-as those slots are created when needed and are not available to the general pool.
-
-So if you want to adjust this script to your use-case feel free to add other keys to `QUERY_DATA` or change other
-parameters of the `Collector().query()` method.
-
-As it turns out, the resulting list of slots had more than 500 entries because every single slot (static and dynamic created ones)
-would be displayed. But as we don't need every single slot of identical configuration,
-we chose to filter them out to show all available slot configurations and just store a counter for each slot configuration
-as the `SimSlots` property to reflect the number of slots with similar configuration.
-Each configuration is assigned to a node with its full name as the key:
-
-    {
-        "cpuXX.htc.test.com": [
-                {"TotalSlotCpus": 2, "TotalSlotDisk": 51.53, "TotalSlotMemory": 30.0, "TotalSlotGPUs": 0, "SlotType": "partitionable", "SimSlots": 11},
-                {"TotalSlotCpus": 1, "TotalSlotDisk": 3.46, "TotalSlotMemory": 5.88, "TotalSlotGPUs": 0, "SlotType": "static", "SimSlots": 11}
-            ]
-    }
-
-Here comes our `crystal ball` to play its part. The script takes a user input of requested
-ressources for a single job and checks whether and how it fits into the given slots.
-If the user provides a parameter for the number of `jobs` to be executed and
-the execution time per job, a total `wall time` can also be calculated.
-
 ## INPUT
 
 To use our `crystal ball` your input has to provide at least CPU and RAM requirements 

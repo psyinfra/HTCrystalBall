@@ -108,7 +108,9 @@ def peek(params, parsers):
         content = coll.query(htcondor.AdTypes.Startd,
                              constraint='SlotType != "Dynamic"', projection=QUERY_DATA)
     except htcondor.HTCondorLocateError as e:
-        LOGGER.error(str(e))
+        LOGGER.error(str(e)+"\n You seem to run HTCrystalBall on a system that has no htcondor pool.\n"
+                            "For information about htcondor pools, you can go to\n"
+                            "https://htcondor.readthedocs.io/en/latest/admin-manual/introduction-admin-manual.html")
         sys.exit(0)
 
     examine.prepare(

@@ -50,28 +50,30 @@ QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlo
 ## Usage
 
 ```
-htcrystalball | htcb --help
-
 usage: htcrystalball -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-t TIME] [-m MAX_NODES] [-v]
 
-htcrystalball - A crystal ball that lets you peek into the future. To get a
-preview for any job you are trying ot execute using HTCondor, please pass at
-least the number of CPUs and the amount of RAM including units (e.g. 100MB, 90M,
-10GB, 15g) according to the usage example shown above. For JOB duration please
-use d, h, m, or s.
+htcrystalball - calculates how many jobs (of a user‐specified number and size)
+can run on an HTCondor pool. It also can estimate runtime (core hours and wall
+time) and node‐specific matching (aiding those with node‐level licensing
+restrictions).
 
 optional arguments:
   -h, --help            show this help message and exit
-  -v, --verbose         Print extended log to stdout
-  -c CPU, --cpu CPU     Set number of requested CPU Cores
-  -g GPU, --gpu GPU     Set number of requested GPU Units
-  -j JOBS, --jobs JOBS  Set number of jobs to be executed
-  -t TIME, --time TIME  Set the duration for one job to be executed
-  -d DISK, --disk DISK  Set amount of requested disk storage
-  -r RAM, --ram RAM     Set amount of requested memory storage
+  -c CPU, --cpu CPU     The number of CPU cores per job.
+  -r RAM, --ram RAM     The amount of RAM per job, including a unit (e.g.
+                        10G).
+  -g GPU, --gpu GPU     The number of GPUs per job.
+  -d DISK, --disk DISK  The disk space per job, including a unit (e.g. 50G).
+  -j JOBS, --jobs JOBS  The number of jobs to be executed.
+  -t TIME, --time TIME  The estimated time for one job to be executed.
   -m MAXNODES, --maxnodes MAXNODES
-                        Set maximum of nodes to run jobs on
+                        The maximum number of nodes jobs can be executed on.
+                        Sometimes necessary due to software license
+                        restrictions.
+  -v, --verbose         Prints a table listing each node, its resources, and
+                        proposed usage.
 ```
+
 ## Examples
 
 ### Basic Output

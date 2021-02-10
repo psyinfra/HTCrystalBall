@@ -17,11 +17,10 @@ def main() -> None:
     Defines the command line parser and argument properties
     """
     description = (
-        '%(prog)s - A crystal ball that lets you peek into the future. '
-        'To get a preview for any job you are trying ot execute using '
-        'HTCondor, please pass at least the number of CPUs and the amount of '
-        'RAM including units (e.g. 100MB, 90M, 10GB, 15g, 7.5G) according to the '
-        'usage example shown above. For JOB duration please use d, h, m, or s'
+        '%(prog)s - calculates how many jobs (of a user‐specified number and '
+        'size) can run on an HTCondor pool. It also can estimate runtime (core '
+        'hours and wall time) and node‐specific matching (aiding those with '
+        'node‐level licensing restrictions).'
     )
     usage = (
         '%(prog)s -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] '
@@ -38,56 +37,56 @@ def main() -> None:
     parser.set_defaults(run=peek)
 
     parser.add_argument(
-        "-v", "--verbose",
-        help="Print extended log to stdout",
-        action='store_true',
-        dest='verbose'
-    )
-    parser.add_argument(
         "-c", "--cpu",
-        help="Set number of requested CPU Cores",
+        help="The number of CPU cores per job.",
         type=int,
         default=0,
         dest='cpu'
     )
     parser.add_argument(
+        "-r", "--ram",
+        help="The amount of RAM per job, including a unit (e.g. 10G).",
+        type=validate_storage_size,
+        dest='ram'
+    )
+    parser.add_argument(
         "-g", "--gpu",
-        help="Set number of requested GPU Units",
+        help="The number of GPUs per job.",
         type=int,
         default=0,
         dest='gpu'
     )
     parser.add_argument(
+        "-d", "--disk",
+        help="The disk space per job, including a unit (e.g. 50G).",
+        type=validate_storage_size,
+        dest='disk'
+    )
+    parser.add_argument(
         "-j", "--jobs",
-        help="Set number of jobs to be executed",
+        help="The number of jobs to be executed.",
         type=int,
         default=1,
         dest='jobs'
     )
     parser.add_argument(
         "-t", "--time",
-        help="Set the duration for one job to be executed",
+        help="The estimated time for one job to be executed.",
         type=validate_duration,
         dest='time'
     )
     parser.add_argument(
-        "-d", "--disk",
-        help="Set amount of requested disk storage",
-        type=validate_storage_size,
-        dest='disk'
-    )
-    parser.add_argument(
-        "-r", "--ram",
-        help="Set amount of requested memory storage",
-        type=validate_storage_size,
-        dest='ram'
-    )
-    parser.add_argument(
         "-m", "--maxnodes",
-        help="Set maximum of nodes to run jobs on",
+        help="The maximum number of nodes jobs can be executed on. Sometimes necessary due to software license restrictions.",
         type=int,
         default=0,
         dest='maxnodes'
+    )
+    parser.add_argument(
+        "-v", "--verbose",
+        help="Prints a table listing each node, its resources, and proposed usage.",
+        action='store_true',
+        dest='verbose'
     )
 
     # Parse arguments

@@ -65,7 +65,8 @@ optional arguments:
   -g GPU, --gpu GPU     The number of GPUs per job.
   -d DISK, --disk DISK  The disk space per job, including a unit (e.g. 50G).
   -j JOBS, --jobs JOBS  The number of jobs to be executed.
-  -t TIME, --time TIME  The estimated time for one job to be executed.
+  -t TIME, --time TIME  The estimated time for one job to be executed,
+                        including a unit (e.g. 1h).
   -m MAXNODES, --maxnodes MAXNODES
                         The maximum number of nodes jobs can be executed on.
                         Sometimes necessary due to software license

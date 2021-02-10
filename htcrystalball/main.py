@@ -71,7 +71,7 @@ def main() -> None:
     )
     parser.add_argument(
         "-t", "--time",
-        help="The estimated time for one job to be executed.",
+        help="The estimated time for one job to be executed, including a unit (e.g. 1h).",
         type=validate_duration,
         dest='time'
     )

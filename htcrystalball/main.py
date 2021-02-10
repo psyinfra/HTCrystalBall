@@ -2,10 +2,18 @@
 
 import argparse
 import sys
+import warnings
 
-import htcondor
+from htcrystalball import examine, LOGGER
 
-from htcrystalball import examine
+with warnings.catch_warnings(record=True) as w:
+    warnings.simplefilter("always")
+    import htcondor
+
+    if len(w) == 1 and issubclass(w[-1].category, UserWarning):
+        LOGGER.warning("No condor_config source found, a null condor_config will be used.")
+
+
 from htcrystalball.utils import validate_storage_size, validate_duration
 
 QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk",
@@ -100,8 +108,8 @@ def main() -> None:
 
 def peek(params, parsers):
     """Peek into the crystal ball to see the future."""
-
     coll = htcondor.Collector()
+
     # Ignore dynamic slots, which are the ephemeral children of partitionable slots, and thus noise.
     # Partitionable slot definitions remain unaltered by the process of dynamic slot creation.
     content = coll.query(htcondor.AdTypes.Startd,

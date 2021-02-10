@@ -11,7 +11,7 @@ with warnings.catch_warnings(record=True) as w:
     import htcondor
 
     if len(w) == 1 and issubclass(w[-1].category, UserWarning):
-        LOGGER.warning("No condor_config source found, a null condor_config will be used.")
+        LOGGER.warning("No condor pool found, an empty pool will be used. You will only be able to explore the usage of htcb.")
 
 
 from htcrystalball.utils import validate_storage_size, validate_duration

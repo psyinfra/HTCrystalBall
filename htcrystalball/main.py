@@ -5,7 +5,7 @@ import sys
 
 import htcondor
 
-from htcrystalball import examine
+from htcrystalball import examine, LOGGER
 from htcrystalball.utils import validate_storage_size, validate_duration
 
 QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk",
@@ -100,12 +100,18 @@ def main() -> None:
 
 def peek(params, parsers):
     """Peek into the crystal ball to see the future."""
-
     coll = htcondor.Collector()
+
     # Ignore dynamic slots, which are the ephemeral children of partitionable slots, and thus noise.
     # Partitionable slot definitions remain unaltered by the process of dynamic slot creation.
-    content = coll.query(htcondor.AdTypes.Startd,
-                         constraint='SlotType != "Dynamic"', projection=QUERY_DATA)
+    try:
+        content = coll.query(htcondor.AdTypes.Startd,
+                             constraint='SlotType != "Dynamic"', projection=QUERY_DATA)
+    except htcondor.HTCondorLocateError as e:
+        LOGGER.error(str(e)+"\n You seem to run HTCrystalBall on a system that has no htcondor pool.\n"
+                            "For information about htcondor pools, you can go to\n"
+                            "https://htcondor.readthedocs.io/en/latest/admin-manual/introduction-admin-manual.html")
+        sys.exit(0)
 
     examine.prepare(
         cpu=params.cpu, gpu=params.gpu, ram=params.ram, disk=params.disk,

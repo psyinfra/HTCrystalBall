@@ -129,6 +129,8 @@ def parse_submit_file(path):
     if os.path.isfile(path):
         submit_file = open(path, "r")
         for submit_line in submit_file:
+            # remove multiple blanks and whitespaces
+            submit_line = ' '.join(submit_line.split())
             if "request_cpus" in submit_line:
                 params["cpu"] = int(submit_line.split("=")[1].strip())
             elif "request_GPUs" in submit_line:
@@ -139,7 +141,6 @@ def parse_submit_file(path):
                 params["disk"] = submit_line.split("=")[1].strip()
             if "queue" in submit_line or "Queue" in submit_line:
                 queue_line = submit_line.split(" ")
-                print(submit_line)
                 if len(queue_line) == 1:
                     params["jobs"] = 1
                 else:

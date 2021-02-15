@@ -131,19 +131,16 @@ def test_submit_parser():
         d.write('test.submit', b'request_cpus = 1\n' + b'request_memory = 6000MB\n' + b'Queue 10')
         assert utils.parse_submit_file(d.path+'/test.submit')["cpu"] == 1
         assert utils.parse_submit_file(d.path+'/test.submit')["ram"] == "6000MB"
-        assert utils.parse_submit_file(d.path+'/test.submit')["jobs"] == 10
 
     with TempDirectory() as d:
         d.write('test.submit', b'request_cpus=1\n' + b'request_memory=6000MB\n' + b'Queue 10')
         assert utils.parse_submit_file(d.path+'/test.submit')["cpu"] == 1
         assert utils.parse_submit_file(d.path+'/test.submit')["ram"] == "6000MB"
-        assert utils.parse_submit_file(d.path+'/test.submit')["jobs"] == 10
 
     with TempDirectory() as d:
         d.write('test.submit', b'request_cpus=16\n' + b'request_memory=6GB\n' + b'Queue     10')
         assert utils.parse_submit_file(d.path+'/test.submit')["cpu"] == 16
         assert not utils.parse_submit_file(d.path+'/test.submit')["ram"] == "6000MB"
-        assert utils.parse_submit_file(d.path+'/test.submit')["jobs"] == 10
 
 
 def test_calc_manager():
@@ -235,7 +232,7 @@ def test_calc_manager():
 
     with TempDirectory() as d:
         d.write('test.submit', b'request_cpus = 1\n' + b'Queue 10')
-        assert not examine.prepare(
+        assert examine.prepare(
             cpu=0, gpu=0, ram="1G", disk="", jobs=1, job_duration="",
             maxnodes=0, file=d.path+'/test.submit', verbose=True, content=mocked_content
         )

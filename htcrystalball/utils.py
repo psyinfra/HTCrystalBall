@@ -5,8 +5,6 @@ import os
 
 from argparse import ArgumentTypeError
 
-from htcrystalball import LOGGER
-
 
 def validate_storage_size(storage: str) -> str:
     """Validates whether disk and ram input is formatted correctly."""

@@ -116,3 +116,13 @@ def compare_requested_available(req: float, avail: float) -> str:
         return "yellow"
 
     return "green"
+
+
+def parse_submit_file(path):
+    submit_file = open(path, "r")
+    for submit_line in submit_file:
+        if "request_" in submit_line:
+            print(submit_line.split("=")[1].strip())
+        if "queue" in submit_line:
+            print(submit_line)
+    submit_file.close()

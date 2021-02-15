@@ -3,7 +3,7 @@
 from natsort import natsorted
 
 from htcrystalball import display, collect, LOGGER
-from htcrystalball.utils import split_num_str, to_minutes, to_binary_gigabyte
+from htcrystalball.utils import split_num_str, to_minutes, to_binary_gigabyte, parse_submit_file
 
 
 def filter_slots(slots: dict, slot_type: str) -> list:
@@ -19,14 +19,12 @@ def filter_slots(slots: dict, slot_type: str) -> list:
 
 
 def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
-            job_duration: str, maxnodes: int, verbose: bool,
+            job_duration: str, maxnodes: int, file: str, verbose: bool,
             content: object) -> bool:
     """
     Prepares for the examination of job requests.
-
     Loads the slot configuration, handles user input, and invokes checks for a
     given job request provided the request is valid.
-
     Args:
         cpu: User input of CPU cores
         gpu: User input of GPU units
@@ -34,6 +32,7 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
         disk: User input of the amount of disk space
         jobs: User input of the number of similar jobs
         job_duration: User input of the duration time for a single job
+        file: A path to a .submit file
         maxnodes:
         verbose:
         content: the loaded HTCondor slots configuration
@@ -45,6 +44,9 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
 
     slots_static = filter_slots(config, 'Static')
     slots_partitionable = filter_slots(config, 'Partitionable')
+
+    if file != "":
+        parse_submit_file(file)
 
     [ram, ram_unit] = split_num_str(ram, 0.0, 'GiB')
     ram = to_binary_gigabyte(ram, ram_unit)

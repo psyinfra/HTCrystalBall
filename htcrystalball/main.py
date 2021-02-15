@@ -24,7 +24,7 @@ def main() -> None:
     )
     usage = (
         '%(prog)s -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] '
-        '[-t TIME] [-m MAX_NODES] [-v]'
+        '[-t TIME] [-m MAX_NODES] [-f FILE] [-v]'
     )
 
     # Main command

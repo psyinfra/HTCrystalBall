@@ -56,8 +56,6 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
                 ram = file_params["ram"]
             if file_params["disk"] != "":
                 disk = file_params["disk"]
-            if file_params["jobs"] != 1:
-                jobs = file_params["jobs"]
         except ArgumentTypeError:
             LOGGER.warning("Wrong storage unit given in .submit file --- ABORTING")
             return False

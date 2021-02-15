@@ -121,8 +121,7 @@ def parse_submit_file(path):
     params = {"cpu": 0,
               "gpu": 0,
               "ram": "",
-              "disk": "",
-              "jobs": 1
+              "disk": ""
               }
     if os.path.isfile(path):
         submit_file = open(path, "r")
@@ -139,11 +138,5 @@ def parse_submit_file(path):
             elif "request_disk" in submit_line:
                 params["disk"] = submit_line.split("=")[1].strip()
                 validate_storage_size(params["disk"])
-            if "queue" in submit_line or "Queue" in submit_line:
-                queue_line = submit_line.split(" ")
-                if len(queue_line) == 1:
-                    params["jobs"] = 1
-                else:
-                    params["jobs"] = int(queue_line[1].strip())
         submit_file.close()
     return params

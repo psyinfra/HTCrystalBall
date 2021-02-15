@@ -13,8 +13,10 @@ use-cases are:
 
 * A quick calculator to estimate the core-hours and wall-time of a job-cluster
   on a pool.
+
 * An educational tool to help those new to job schedulers better understand
   the concept of throughput and how jobs, job-sizes, and slots match.
+
 * When only a fixed number of compute nodes should be used (for example:
   floating software license restrictions), the `--maxnodes` flag presents a
   list of nodes that enable the highest job throughput while remaining withing
@@ -28,7 +30,7 @@ use-cases are:
 which (currently) only runs on Linux.
 
 This software can be installed directly from GitHub.
-```
+```shell
 pip3 install git+https://github.com/psyinfra/HTCrystalBall.git
 ```
 
@@ -43,7 +45,7 @@ If you want to include or exclude `condor_status` attributes to be fetched from
 the HTCondor pool, you can adjust the parameter `QUERY_DATA` in `main.py`; it
 is a list of strings that represent the keys of the attributes. For example:
 
-```
+```python
 QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlotGPUs"]
 ```
 

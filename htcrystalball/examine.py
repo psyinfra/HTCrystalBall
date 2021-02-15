@@ -46,7 +46,17 @@ def prepare(cpu: int, gpu: int, ram: str, disk: str, jobs: int,
     slots_partitionable = filter_slots(config, 'Partitionable')
 
     if file != "":
-        parse_submit_file(file)
+        file_params = parse_submit_file(file)
+        if file_params["cpu"] != 0:
+            cpu = file_params["cpu"]
+        if file_params["gpu"] != 0:
+            gpu = file_params["gpu"]
+        if file_params["ram"] != "":
+            ram = file_params["ram"]
+        if file_params["disk"] != "":
+            disk = file_params["disk"]
+        if file_params["jobs"] != 1:
+            jobs = file_params["jobs"]
 
     [ram, ram_unit] = split_num_str(ram, 0.0, 'GiB')
     ram = to_binary_gigabyte(ram, ram_unit)

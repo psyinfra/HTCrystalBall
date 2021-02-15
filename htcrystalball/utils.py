@@ -120,11 +120,24 @@ def compare_requested_available(req: float, avail: float) -> str:
 
 
 def parse_submit_file(path):
+    params = {"cpu": 0,
+              "gpu": 0,
+              "ram": "",
+              "disk": "",
+              "jobs": 1
+              }
     if os.path.isfile(path):
         submit_file = open(path, "r")
         for submit_line in submit_file:
-            if "request_" in submit_line:
-                print(submit_line.split("=")[1].strip())
+            if "request_cpus" in submit_line:
+                params["cpu"] = int(submit_line.split("=")[1].strip())
+            elif "request_GPUs" in submit_line:
+                params["gpu"] = int(submit_line.split("=")[1].strip())
+            elif "request_memory" in submit_line:
+                params["ram"] = submit_line.split("=")[1].strip()
+            elif "request_disk" in submit_line:
+                params["disk"] = submit_line.split("=")[1].strip()
             if "queue" in submit_line:
                 print(submit_line)
         submit_file.close()
+    return params

@@ -137,8 +137,10 @@ def parse_submit_file(path):
                 params["gpu"] = int(submit_line.split("=")[1].strip())
             elif "request_memory" in submit_line:
                 params["ram"] = submit_line.split("=")[1].strip()
+                validate_storage_size(params["ram"])
             elif "request_disk" in submit_line:
                 params["disk"] = submit_line.split("=")[1].strip()
+                validate_storage_size(params["disk"])
             if "queue" in submit_line or "Queue" in submit_line:
                 queue_line = submit_line.split(" ")
                 if len(queue_line) == 1:

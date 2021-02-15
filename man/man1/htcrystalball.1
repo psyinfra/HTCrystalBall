@@ -17,6 +17,7 @@
 .Op Fl j Ar num
 .Op Fl t Ar time
 .Op Fl m Ar num
+.Op Fl f Ar path
 .Op Fl v
 .
 .Sh DESCRIPTION
@@ -63,6 +64,9 @@ The estimated time for one job to be executed, including unit
 .It Fl m | Fl Fl maxnodes Ar number
 The maximum number of nodes jobs can be executed on.
 Sometimes necessary due to software license restrictions.
+.
+.It Fl f | Fl Fl file Ar path
+The path to a condor submit-file for parsing resource requests.
 .
 .It Fl v | Fl Fl verbose
 Prints a table listing each node, its resources, and proposed usage.

@@ -50,7 +50,7 @@ QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlo
 ## Usage
 
 ```
-usage: htcrystalball -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-t TIME] [-m MAX_NODES] [-v]
+usage: htcrystalball -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-t TIME] [-m MAX_NODES] [-f FILE] [-v]
 
 htcrystalball - calculates how many jobs (of a user‐specified number and size)
 can run on an HTCondor pool. It also can estimate runtime (core hours and wall
@@ -71,6 +71,8 @@ optional arguments:
                         The maximum number of nodes jobs can be executed on.
                         Sometimes necessary due to software license
                         restrictions.
+  -f FILE, --file FILE  A path to an htcondor .submit-file. Results in not
+                        having to provide additional hardware parameters.
   -v, --verbose         Prints a table listing each node, its resources, and
                         proposed usage.
 ```
@@ -185,7 +187,7 @@ The above number(s) are for an idle pool.
 To run the tests, make sure you have the following python modules installed:
 
 ```
-pip3 install pytest natsort
+pip3 install pytest natsort testfixtures
 ```
 
 Run the following command to execute your test:

@@ -68,14 +68,20 @@ optional arguments:
   -t TIME, --time TIME  The estimated time for one job to be executed,
                         including a unit (e.g. 1h).
   -m MAXNODES, --maxnodes MAXNODES
-                        The maximum number of nodes jobs can be executed on.
+                        The maximum number of nodes where jobs can be executed on.
                         Sometimes necessary due to software license
                         restrictions.
-  -f FILE, --file FILE  A path to an htcondor .submit-file. Results in not
-                        having to provide additional hardware parameters.
+  -f FILE, --file FILE  A path to an htcondor .submit-file. Uses parsed requirements instead of typed hardware
+                        requirements for CPU, GPU, RAM and DISK.
   -v, --verbose         Prints a table listing each node, its resources, and
                         proposed usage.
 ```
+
+  **NOTE**
+
+    If a path to an `HTCondor` submit-file is provided in `--file`, `htcrystalball` will parse the file and
+    use the resource parameters provided by the file instead of typed parameters. Until now the parameters that can be replaced by parsed ones
+    are `CPU`, `GPU`, `RAM` and `DISK`.
 
 ## Examples
 

@@ -77,14 +77,16 @@ def main() -> None:
     )
     parser.add_argument(
         "-m", "--maxnodes",
-        help="The maximum number of nodes jobs can be executed on. Sometimes necessary due to software license restrictions.",
+        help="The maximum number of nodes where jobs can be executed on. Sometimes necessary "
+             "due to software license restrictions.",
         type=int,
         default=0,
         dest='maxnodes'
     )
     parser.add_argument(
         "-f", "--file",
-        help="A path to an htcondor .submit-file. Results in not having to provide additional hardware parameters.",
+        help="A path to an htcondor .submit-file. Uses parsed requirements instead of typed hardware "
+             "requirements for CPU, GPU, RAM and DISK.",
         type=str,
         default=0,
         dest='file'

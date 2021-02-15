@@ -2,7 +2,6 @@
 
 import argparse
 import sys
-import os
 
 from pytest import raises as praises
 from testfixtures import TempDirectory

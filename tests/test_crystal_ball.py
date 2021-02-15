@@ -10,9 +10,6 @@ from htcondor import Collector as mocked_collector
 from htcrystalball import examine, collect, utils
 
 
-
-
-
 def test_storage_validator():
     """
     Tests the storage input validator.

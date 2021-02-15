@@ -137,7 +137,12 @@ def parse_submit_file(path):
                 params["ram"] = submit_line.split("=")[1].strip()
             elif "request_disk" in submit_line:
                 params["disk"] = submit_line.split("=")[1].strip()
-            if "queue" in submit_line:
+            if "queue" in submit_line or "Queue" in submit_line:
+                queue_line = submit_line.split(" ")
                 print(submit_line)
+                if len(queue_line) == 1:
+                    params["jobs"] = 1
+                else:
+                    params["jobs"] = int(queue_line[1].strip())
         submit_file.close()
     return params

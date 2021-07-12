@@ -65,6 +65,7 @@ setup(
     ],
     tests_require=[
         'pytest>=6.0.1',
+        'testfixtures>=6.17.0'
     ],
     extras_require={
         'devel-docs': [

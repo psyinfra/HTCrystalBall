@@ -12,8 +12,10 @@ use-cases are:
 
 * A quick calculator to estimate the core-hours and wall-time of a job-cluster
   on a pool.
+
 * An educational tool to help those new to job schedulers better understand
   the concept of throughput and how jobs, job-sizes, and slots match.
+
 * When only a fixed number of compute nodes should be used (for example:
   floating software license restrictions), the `--maxnodes` flag presents a
   list of nodes that enable the highest job throughput while remaining withing
@@ -27,7 +29,7 @@ use-cases are:
 which (currently) only runs on Linux.
 
 This software can be installed directly from GitHub.
-```
+```shell
 pip3 install git+https://github.com/psyinfra/HTCrystalBall.git
 ```
 
@@ -42,14 +44,14 @@ If you want to include or exclude `condor_status` attributes to be fetched from
 the HTCondor pool, you can adjust the parameter `QUERY_DATA` in `main.py`; it
 is a list of strings that represent the keys of the attributes. For example:
 
-```
+```python
 QUERY_DATA = ["SlotType", "Machine", "TotalSlotCpus", "TotalSlotDisk", "TotalSlotMemory", "TotalSlotGPUs"]
 ```
 
 ## Usage
 
 ```
-usage: htcrystalball -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-t TIME] [-m MAX_NODES] [-v]
+usage: htcrystalball -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] [-t TIME] [-m MAX_NODES] [-f FILE] [-v]
 
 htcrystalball - calculates how many jobs (of a user‐specified number and size)
 can run on an HTCondor pool. It also can estimate runtime (core hours and wall
@@ -67,12 +69,20 @@ optional arguments:
   -t TIME, --time TIME  The estimated time for one job to be executed,
                         including a unit (e.g. 1h).
   -m MAXNODES, --maxnodes MAXNODES
-                        The maximum number of nodes jobs can be executed on.
+                        The maximum number of nodes where jobs can be executed on.
                         Sometimes necessary due to software license
                         restrictions.
+  -f FILE, --file FILE  A path to an htcondor .submit-file. Uses parsed requirements instead of typed hardware
+                        requirements for CPU, GPU, RAM and DISK.
   -v, --verbose         Prints a table listing each node, its resources, and
                         proposed usage.
 ```
+
+  **NOTE**
+
+    If a path to an `HTCondor` submit-file is provided in `--file`, `htcrystalball` will parse the file and
+    use the resource parameters provided by the file instead of typed parameters. Until now the parameters that can be replaced by parsed ones
+    are `CPU`, `GPU`, `RAM` and `DISK`.
 
 ## Examples
 
@@ -184,7 +194,7 @@ The above number(s) are for an idle pool.
 To run the tests, make sure you have the following python modules installed:
 
 ```
-pip3 install pytest natsort
+pip3 install pytest natsort testfixtures
 ```
 
 Run the following command to execute your test:

@@ -1,10 +1,9 @@
 """Various non-specific utilities."""
 
 import re
+import os
 
 from argparse import ArgumentTypeError
-
-from htcrystalball import LOGGER
 
 
 def validate_storage_size(storage: str) -> str:
@@ -116,3 +115,28 @@ def compare_requested_available(req: float, avail: float) -> str:
         return "yellow"
 
     return "green"
+
+
+def parse_submit_file(path):
+    params = {"cpu": 0,
+              "gpu": 0,
+              "ram": "",
+              "disk": ""
+              }
+    if os.path.isfile(path):
+        submit_file = open(path, "r")
+        for submit_line in submit_file:
+            # remove multiple blanks and whitespaces
+            submit_line = ' '.join(submit_line.split())
+            if "request_cpus" in submit_line:
+                params["cpu"] = int(submit_line.split("=")[1].strip())
+            elif "request_GPUs" in submit_line:
+                params["gpu"] = int(submit_line.split("=")[1].strip())
+            elif "request_memory" in submit_line:
+                params["ram"] = submit_line.split("=")[1].strip()
+                validate_storage_size(params["ram"])
+            elif "request_disk" in submit_line:
+                params["disk"] = submit_line.split("=")[1].strip()
+                validate_storage_size(params["disk"])
+        submit_file.close()
+    return params

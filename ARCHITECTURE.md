@@ -21,7 +21,8 @@ property to reflect the number of slots with similar configuration.
 
 Each configuration is assigned to a node with its full name as the key:
 
-```
+```json
+
     {
         "cpuXX.htc.test.com": [
                 {"TotalSlotCpus": 2, "TotalSlotDisk": 51.53, "TotalSlotMemory": 30.0, "TotalSlotGPUs": 0, "SlotType": "partitionable", "SimSlots": 11},

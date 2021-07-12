@@ -24,7 +24,7 @@ def main() -> None:
     )
     usage = (
         '%(prog)s -c CPU -r RAM [-g GPU] [-d DISK] [-j JOBS] '
-        '[-t TIME] [-m MAX_NODES] [-v]'
+        '[-t TIME] [-m MAX_NODES] [-f FILE] [-v]'
     )
 
     # Main command
@@ -77,10 +77,19 @@ def main() -> None:
     )
     parser.add_argument(
         "-m", "--maxnodes",
-        help="The maximum number of nodes jobs can be executed on. Sometimes necessary due to software license restrictions.",
+        help="The maximum number of nodes where jobs can be executed on. Sometimes necessary "
+             "due to software license restrictions.",
         type=int,
         default=0,
         dest='maxnodes'
+    )
+    parser.add_argument(
+        "-f", "--file",
+        help="A path to an htcondor .submit-file. Uses parsed requirements instead of typed hardware "
+             "requirements for CPU, GPU, RAM and DISK.",
+        type=str,
+        default=0,
+        dest='file'
     )
     parser.add_argument(
         "-v", "--verbose",
@@ -115,6 +124,6 @@ def peek(params, parsers):
 
     examine.prepare(
         cpu=params.cpu, gpu=params.gpu, ram=params.ram, disk=params.disk,
-        jobs=params.jobs, job_duration=params.time, maxnodes=params.maxnodes,
+        jobs=params.jobs, job_duration=params.time, maxnodes=params.maxnodes, file=params.file,
         verbose=params.verbose, content=content)
     sys.exit(0)
